@@ -1,0 +1,62 @@
+/* Custom Stylesheet */
+/**
+ * Use this file to override Materialize files so you can update
+ * the core Materialize files in the future
+ *
+ * Made By MaterializeCSS.com
+ */
+main {
+    height: 100%;
+}
+header, main, footer {
+  padding-left: 300px;
+}
+
+@media only screen and (max-width : 992px) {
+  header, main, footer {
+    padding-left: 0;
+  }
+}
+.icon-block {
+  padding: 0 15px;
+}
+.icon-block .material-icons {
+	font-size: inherit;
+}
+.app-column {
+    height: 90vh;
+    overflow-y: scroll;
+    padding: 0px 0px 0px 10px;
+}
+#search-modal {
+    min-height: 90%;
+    max-height: 90%;
+}
+#main-app-container {
+    height: 95vh;
+
+}
+#app-body-container {
+    height: 95vh;
+    /* margin: 0 10px 0 10px;*/
+
+}
+#webpage_viewer{
+    height: 50%;
+}
+#notes_section{
+    max-height: 25%;
+}
+#display_notes{
+    overflow-y: scroll !important;
+    height: 20vh !important;
+}
+#project-nav{
+    height: 100%;
+    border-right-style: solid;
+    border-right-width: 1px;
+    border-color: #e0e0e0;
+}
+#logo-span {
+    font-size: 40pt;
+}
