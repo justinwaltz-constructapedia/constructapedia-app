@@ -7,7 +7,7 @@ function NewProject(props){
 
     function searchForPlans(userInput) {
         if (planTitleValue.trim().length > 0) {
-            props.createPlan({title:planTitleValue});
+            props.createNewPlan({title:planTitleValue});
         }
         getSearchResults(userInput).then((res) => {
             props.updateSearchResults(res);

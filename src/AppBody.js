@@ -29,10 +29,10 @@ function AppBody (props) {
     }
     function createNewPlan(plan){
         postPlan(plan)
-        .then( (planId) => {
-            console.log(typeof planId, planId)
+        .then( (res) => {
+            console.log(typeof res, res)
             const currentPlans = userPlans;
-            getPlan(planId).then((createdPlan) => {
+            getPlan(res.id).then((createdPlan) => {
                 currentPlans.push(createdPlan);
                 setUserPlans(currentPlans);
             })
