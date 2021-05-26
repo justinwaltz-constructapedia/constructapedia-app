@@ -1,6 +1,7 @@
 import React, {useState, useEffect, useRef} from 'react';
 import M from "materialize-css";
 import "materialize-css/dist/css/materialize.min.css";
+import Preloader from "../utility_components/Preloader.js";
 import {getUserData} from '../api/userApi.js';
 import {postAuthLogin, postAuthSignUp} from '../api/authApi';
 
@@ -13,6 +14,8 @@ function Authorization(props) {
     const [confirmPassword, setConfirmPassword] = useState("");
     const [name, setName] = useState("");
     const [rememberMe, setRememberMe] = useState(true);
+    const [sidenavIsLoading, setSidenavIsLoading] = useState(false);
+
     useEffect(() => {
         const sidenavOptions = {
             inDuration: 250,
@@ -32,6 +35,7 @@ function Authorization(props) {
         setRememberMe(value);
     };
     function handleSignIn() {
+        setSidenavIsLoading(true);
         postAuthLogin(email, password, rememberMe).then((success) => {
             console.log(success);
             if (success === true) {
@@ -51,10 +55,12 @@ function Authorization(props) {
             } else {
                 console.log("failed sign in", success);
             }
+            setSidenavIsLoading(false);
         })
         //Maybe a redirect here or in handleLogin to get the /#signInForm out of the URL
     }
     function handleSignUp(){
+        setSidenavIsLoading(true);
         postAuthSignUp(name,email,password).then((success) => {
             if (success === true) {
                 handleSignIn();
@@ -99,6 +105,7 @@ function Authorization(props) {
                                 </p>
                                 <button className="btn waves-effect waves-light blue" type="submit" name="action">Sign In</button>
                             </form>
+                            {sidenavIsLoading && <Preloader/>}
                         </div>
                     </li>
                     <li className="white">
@@ -138,6 +145,7 @@ function Authorization(props) {
                                 </p>
                                 <button className="btn waves-effect waves-light blue" type="submit" name="action">Sign Up</button>
                             </form>
+                            {sidenavIsLoading && <Preloader/>}
                         </div>
                     </li>
                 </ul>

@@ -8,13 +8,16 @@ function ProjectDetails (props) {
             <div className="nav-wrapper">
                 <div className="row blue">
                     <div className="col s12">
-                        <h5 className="center-align white-text header">{props.projectDraft.title}</h5>
+                        <h5 className="center-align white-text header">{props.planDraft.title}</h5>
                     </div>
                 </div>
             </div>
             <div className="row">
-                <ProjectEditingForm projectDraft={props.projectDraft} updateProjectDraft={props.updateProjectDraft} saveProjectChanges={props.saveProjectChanges}
-                            handleMainAppView={props.handleMainAppView}/>
+                <ProjectEditingForm
+                    planDraft={props.planDraft}
+                    changeOrUpdatePlanDraft={props.changeOrUpdatePlanDraft}
+                    savePlanChanges={props.savePlanChanges}
+                    handleMainAppView={props.handleMainAppView}/>
             </div>
         </div>
     )
@@ -37,11 +40,12 @@ function ProjectEditingForm (props) {
         }
 
     }
-    function saveProject() {
-        const projectToChange = props.projectDraft;
-        console.log(projectToChange);
-        props.updateProjectDraft(projectToChange);
-        props.saveProjectChanges();
+    function savePlan() {
+        const changeFieldsObject =
+        const planId = props.planDraft.id;
+        console.log(changeFieldsObject);
+        props.savePlanChanges(planId, changeFieldsObject, true);
+        //props.changeOrUpdatePlanDraft();
     }
 
 
@@ -57,22 +61,22 @@ function ProjectEditingForm (props) {
                 </div>
                 <div className="divider"></div>
                 <div className="row">
-                    <SimpleCheckboxSection projectDraft={props.projectDraft} updateProjectDraft={props.updateProjectDraft} listType="tools"/>
-                    <SimpleCheckboxSection projectDraft={props.projectDraft} updateProjectDraft={props.updateProjectDraft} listType="materials"/>
+                    <SimpleCheckboxSection planDraft={props.planDraft} updatePlanDraft={props.updatePlanDraft} listType="tools"/>
+                    <SimpleCheckboxSection planDraft={props.planDraft} updatePlanDraft={props.updatePlanDraft} listType="materials"/>
                 </div>
                 <div className="divider"></div>
-                <ProjectStepsSection projectDraft={props.projectDraft} updateProjectDraft={props.updateProjectDraft}/>
+                <ProjectStepsSection planDraft={props.planDraft} updatePlanDraft={props.updatePlanDraft}/>
                 <div className="divider"></div>
                 <div className="row">
-                {props.projectDraft.video_urls.length > 0
+                {props.planDraft.video_urls.length > 0
                     &&
                     <div className="video-container">
-                        <iframe title="video1" src={props.projectDraft.video_urls[0]} frameBorder="0" allowFullScreen></iframe>
+                        <iframe title="video1" src={props.planDraft.video_urls[0]} frameBorder="0" allowFullScreen></iframe>
                     </div>
                 }
                 </div>
                 <div className="row center-align">
-                    <button className="btn waves-effect waves-light blue" type="button" name="action" onClick={saveProject}>Save</button>
+                    <button className="btn waves-effect waves-light blue" type="button" name="action" onClick={savePlan}>Save</button>
                     <button className="btn waves-effect waves-light blue" type="button" name="action" onClick={()=> props.handleMainAppView('SearchResults')}>Add From Other Sites</button>
                 </div>
             </div>

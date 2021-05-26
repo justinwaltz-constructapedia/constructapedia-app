@@ -27,14 +27,14 @@ function Project(props){
             {view === 'projects'
                 ? <UserProjects
                     name={props.user.name}
-                    userProjects={props.userProjects}
+                    userPlans={props.userPlans}
                     changeView={changeView}
                     handleMainAppView={props.handleMainAppView}
-                    changeToNewProject={props.changeToNewProject}/>
+                    changeOrUpdatePlanDraft={props.changeOrUpdatePlanDraft}/>
                 : <NewProject
                     changeView={changeView}
                     updateSearchResults={props.updateSearchResults}
-                    projectDraft={props.projectDraft}
+                    planDraft={props.planDraft}
                     createPlan={props.createPlan}
                     handleMainAppView={props.handleMainAppView}/>
             }

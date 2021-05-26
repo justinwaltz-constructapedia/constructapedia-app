@@ -3,11 +3,11 @@ import SearchBar from '../utility_components/SearchBar.js'
 import {getSearchResults} from '../api/searchApi.js';
 
 function NewProject(props){
-    const [projectTitleValue, setProjectTitleValue] = useState('');
+    const [planTitleValue, setPlanTitleValue] = useState('');
 
-    function searchForProjects(userInput) {
-        if (projectTitleValue.trim().length > 0) {
-            props.createPlan({title:projectTitleValue});
+    function searchForPlans(userInput) {
+        if (planTitleValue.trim().length > 0) {
+            props.createPlan({title:planTitleValue});
         }
         getSearchResults(userInput).then((res) => {
             props.updateSearchResults(res);
@@ -22,12 +22,12 @@ function NewProject(props){
             </div>
             <div className="row">
                 <div className="input-field col s12">
-                    <input id="new_title_input" type="text" value={projectTitleValue} onChange={(e)=> setProjectTitleValue(e.target.value)} />
+                    <input id="new_title_input" type="text" value={planTitleValue} onChange={(e)=> setPlanTitleValue(e.target.value)} />
                     <label htmlFor="new_title_input">Project Title</label>
                 </div>
             </div>
             <div className="row">
-                <SearchBar handleSearch={searchForProjects}/>
+                <SearchBar handleSearch={searchForPlans}/>
             </div>
         </div>
     )

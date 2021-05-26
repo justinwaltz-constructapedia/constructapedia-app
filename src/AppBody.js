@@ -4,23 +4,18 @@ import SearchResults from './search_col/SearchResults.js';
 import ProjectDetails from './notebook_col/ProjectDetails.js';
 //import Preloader from './utility_components/Preloader.js';
 
-import {postNewProject, getUserProjects, putProjectUpdate, postPlan, getPlan} from './api/projectsApi';
+import {getUserPlans, putPlanUpdate, postPlan, getPlan, deletePlan} from './api/projectsApi';
 
 function AppBody (props) {
     const [mainAppView, setMainAppView] = useState(false);
-    const [userProjects, setUserProjects] = useState([]);
-    const [projectDraft, setProjectDraft] = useState({id:"",title: "",tools: [],materials: [],project_steps: [],video_urls: []});
+    const [userPlans, setUserPlans] = useState([]);
+    const [planDraft, setPlanDraft] = useState({id:"",title: "",tools: [],materials: [],project_steps: [],video_urls: []});
     const [results, setResults] = useState([]);
 
     useEffect(() => {
-        getUserProjects().then((projects) => {
-            setUserProjects(projects);
+        getUserPlans().then((plans) => {
+            setUserPlans(plans);
         })
-        /*
-        getPlan().then((res) => {
-            console.log(res)
-        })
-        */
     },[])
 
     function handleMainAppView (view) {
@@ -29,105 +24,64 @@ function AppBody (props) {
     function updateSearchResults(resultsArr){
         setResults(resultsArr);
     }
-    function changeToNewProject (selectedProject) {
-        setProjectDraft(selectedProject);
+    function changeOrUpdatePlanDraft (newPlan) {
+        setPlanDraft(newPlan);
     }
-    function updateProjectDraft(project){
-        const projectDraftCopy = projectDraft;
-        for (let i = 0; i < project.tools.length; i++) {
-            if (projectDraftCopy.tools.includes(project.tools[i])){
-                continue;
-            } else {
-                projectDraftCopy.tools.push(project.tools[i]);
-            }
-        }
-        for (let i = 0; i < project.materials.length; i++) {
-            if (projectDraftCopy.materials.includes(project.materials[i])){
-                continue;
-            } else {
-                projectDraftCopy.materials.push(project.materials[i]);
-            }
-        }
-        for (let i = 0; i < project.video_urls.length; i++) {
-            if (projectDraftCopy.video_urls.includes(project.video_urls[i])){
-                continue;
-            } else {
-                projectDraftCopy.video_urls.push(project.video_urls[i]);
-            }
-        }
-        for (let i = 0; i < project.project_steps.length; i++) {
-            projectDraftCopy.project_steps.splice(i, 0, project.project_steps[i])
-        }
-        console.log(projectDraftCopy);
-        setProjectDraft(projectDraftCopy);
-        console.log(projectDraft);
-        return;
-    }
-
-    function createNewProject(project){
-        delete project.id;
-        postNewProject(project)
-        .then( (projectId) => {
-            console.log(typeof projectId, projectId)
-            const currentUser = props.user;
-            currentUser.projects.push(projectId);
-            props.updateUser(currentUser);
-          })
+    function createNewPlan(plan){
+        postPlan(plan)
+        .then( (planId) => {
+            console.log(typeof planId, planId)
+            const currentPlans = userPlans;
+            getPlan(planId).then((createdPlan) => {
+                currentPlans.push(createdPlan);
+                setUserPlans(currentPlans);
+            })
+        })
         .catch(err => console.log(err));
     }
 
-    function createPlan (plan) {
-        postPlan(plan)
-        .then ((planId) => {
-            console.log(planId)
-        })
-    }
-    function saveProjectChanges () {
-        const projectToSave = projectDraft
-        console.log(projectDraft);
-        putProjectUpdate(projectToSave).then((res) => {
-            if (res === true) {
-                importUserProjects();
-                console.log(projectDraft);
+    function savePlanChanges (planId, planUpdateObj, performPlanDraftUpdate) {
+        console.log(planUpdateObj);
+        putProjectUpdate(planId, planUpdateObj).then((res) => {
+            if (res === 1) {
+                getPlan(planId).then((updatedPlan) => {
+                    const currentPlans = userPlans;
+                    const indexOfPlanToReplace = currentPlans.findIndex((currentPlan) => { currentPlan.id === planId });
+                    console.log(indexOfPlanToReplace);
+                    currentPlans[indexOfPlanToReplace] = updatedPlan;
+                    setUserPlans(currentPlans);
+                    if (performPlanDraftUpdate){
+                        changeOrUpdatePlanDraft(updatedPlan)
+                    }
+                })
             } else {
                 console.log("fail");
             }
         })
     }
 
-    function importUserProjects() {
-        getUserProjects()
-        .then( (projectsArr) => {
-            console.log(typeof projectsArr, projectsArr)
-            setUserProjects(projectsArr);
-            console.log(projectDraft);
-        })
-        .catch(err => console.log(err));
-    }
-
     return (
         <main id="main-app-container" className="row">
             <Project
                 user={props.user}
-                userProjects={userProjects}
+                userPlans={userPlans}
                 updateSearchResults={updateSearchResults}
-                projectDraft={projectDraft}
-                changeToNewProject={changeToNewProject}
-                updateProjectDraft={updateProjectDraft}
-                createPlan={createPlan}
+                planDraft={planDraft}
+                changeOrUpdatePlanDraft={changeOrUpdatePlanDraft}
+                createNewPlan={createNewPlan}
                 handleMainAppView={handleMainAppView}
             />
             {mainAppView === 'ProjectDetails' &&
                 <ProjectDetails
-                    projectDraft={projectDraft}
-                    updateProjectDraft={updateProjectDraft}
-                    saveProjectChanges={saveProjectChanges}
+                    planDraft={planDraft}
+                    changeOrUpdatePlanDraft={changeOrUpdatePlanDraft}
+                    savePlanChanges={savePlanChanges}
                     handleMainAppView={handleMainAppView}/>
             }
             {mainAppView === 'SearchResults' &&
                 <SearchResults
                     results={results}
-                    updateProjectDraft={updateProjectDraft}
+                    changeOrUpdatePlanDraft={changeOrUpdatePlanDraft}
                     updateSearchResults={updateSearchResults}
                     handleMainAppView={handleMainAppView}/>
             }
@@ -136,3 +90,47 @@ function AppBody (props) {
 }
 
 export default AppBody;
+
+
+/*
+function updateProjectDraft(project){
+    const projectDraftCopy = projectDraft;
+    for (let i = 0; i < project.tools.length; i++) {
+        if (projectDraftCopy.tools.includes(project.tools[i])){
+            continue;
+        } else {
+            projectDraftCopy.tools.push(project.tools[i]);
+        }
+    }
+    for (let i = 0; i < project.materials.length; i++) {
+        if (projectDraftCopy.materials.includes(project.materials[i])){
+            continue;
+        } else {
+            projectDraftCopy.materials.push(project.materials[i]);
+        }
+    }
+    for (let i = 0; i < project.video_urls.length; i++) {
+        if (projectDraftCopy.video_urls.includes(project.video_urls[i])){
+            continue;
+        } else {
+            projectDraftCopy.video_urls.push(project.video_urls[i]);
+        }
+    }
+    for (let i = 0; i < project.project_steps.length; i++) {
+        projectDraftCopy.project_steps.splice(i, 0, project.project_steps[i])
+    }
+    console.log(projectDraftCopy);
+    setProjectDraft(projectDraftCopy);
+    console.log(projectDraft);
+    return;
+}
+function importUserProjects() {
+    getUserProjects()
+    .then( (projectsArr) => {
+        console.log(typeof projectsArr, projectsArr)
+        setUserProjects(projectsArr);
+        console.log(projectDraft);
+    })
+    .catch(err => console.log(err));
+}
+*/

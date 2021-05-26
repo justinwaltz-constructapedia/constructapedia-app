@@ -1,13 +1,13 @@
 import React from 'react';
 
 function UserProjects(props) {
-    const projects = props.userProjects;
+    const plans = props.userPlans;
 
-    const projectsList = projects.map((project) => {
+    const plansList = plans.map((plan) => {
             return (
-                <li key={project.id} className="bold">
+                <li key={plan.id} className="bold">
                     <div className="collapsible-header">
-                        <h6 className="valign-wrapper" onClick={()=>selectProject(project.id)}>{project.title} <i className="material-icons">chevron_right</i></h6>
+                        <h6 className="valign-wrapper" onClick={()=>selectPlan(plan.id)}>{plan.title} <i className="material-icons">chevron_right</i></h6>
                     </div>
                     <div className="collapsible-body">
                         <ul>
@@ -17,10 +17,10 @@ function UserProjects(props) {
                 </li>
             )
     })
-    function selectProject(id){
-        const selectedProject = projects.find(project => project.id === id);
-        console.log(selectedProject)
-        props.changeToNewProject(selectedProject);
+    function selectPlan(id){
+        const selectedPlan = plans.find(plan => plan.id === id);
+        console.log(selectedPlan)
+        props.changeOrUpdatePlanDraft(selectedPlan);
         props.handleMainAppView('ProjectDetails');
     }
     return (
@@ -31,7 +31,7 @@ function UserProjects(props) {
                     <button className="btn waves-effect waves-light blue" onClick={()=>{props.changeView('search')}}><i className="material-icons left">add</i>New Project</button>
                 </div>
                 <ul className="collapsible collapsible-accordion">
-                    {projectsList}
+                    {plansList}
                 </ul>
             </div>
         </div>

@@ -48,9 +48,11 @@ function SearchResults(props) {
                             <BottomModalContent modalType="search" heading={urlToViewHeading} urlToView={urlToView}/>
                         </div>
                         <SearchBar handleSearch={searchForProjects}/>
-                        <ul>
-                            {resultsList}
-                        </ul>
+                        <div className="container">
+                            <div className="row">
+                                {resultsList}
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -67,19 +69,21 @@ function ResultListItem(props) {
         });
     }
     return(
-            <li className="card hoverable">
-                <div className="card-image">
-                    <img src={props.image} alt="Result" />
-                    <span className="card-title"></span>
+            <div className="col s12 m6 l4">
+                <div className="card medium hoverable">
+                    <div className="card-image">
+                        <img src={props.image} alt="Result" />
+                        <span className="card-title"></span>
+                    </div>
+                    <div className="card-content">
+                        <p>{props.title}</p>
+                    </div>
+                    <div className="card-action">
+                        <button className="waves-effect waves-light blue btn" onClick={()=>props.updateUrlToView(props.link, props.title)}>View Page</button>
+                        <button className="waves-effect waves-light blue btn" onClick={()=>scrapePage(props.link)}>Auto Import</button>
+                    </div>
                 </div>
-                <div className="card-content">
-                    <p>{props.title}</p>
-                </div>
-                <div className="card-action">
-                    <button className="waves-effect waves-light blue btn" onClick={()=>props.updateUrlToView(props.link, props.title)}>View Page</button>
-                    <button className="waves-effect waves-light blue btn" onClick={()=>scrapePage(props.link)}>Auto Import</button>
-                </div>
-            </li>
+            </div>
     )
 }
 

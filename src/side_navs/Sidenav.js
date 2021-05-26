@@ -1,23 +1,15 @@
-import React, {useState} from 'react';
+import React from 'react';
 import Authorization from './Authorization.js';
 import UserAccount from './UserAccount.js';
 
 function Sidenav(props) {
     const isLoggedIn = props.isLoggedIn;
-    const sidenavIsLoading = useState(false);
-    if (!sidenavIsLoading) {
-        return (
-            <div>
-                {(isLoggedIn) ? <UserAccount handleLogout={props.handleLogout}/> : <Authorization handleLogin={props.handleLogin}/>}
-            </div>
-        )
-    } else {
-        //add in Preloader with ul and id etc (maybe best in other file)
-        return (
-            <div></div>
-        )
-    }
 
+    return (
+        <div>
+            {(isLoggedIn) ? <UserAccount handleLogout={props.handleLogout}/> : <Authorization handleLogin={props.handleLogin} />}
+        </div>
+    )
 }
 
 export default Sidenav;
