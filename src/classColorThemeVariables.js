@@ -1,7 +1,8 @@
 function getColorTheme (selectedOption) {
     const baseThemeColors = {
-        primary = "white",
-        secondary = "blue"
+        primary : "black",
+        secondary : "black",
+        text : "white-text"
     }
     if (selectedOption === "base") {
         return baseThemeColors;

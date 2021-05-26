@@ -2,12 +2,13 @@ import React from 'react';
 import Authorization from './Authorization.js';
 import UserAccount from './UserAccount.js';
 
+
 function Sidenav(props) {
     const isLoggedIn = props.isLoggedIn;
 
     return (
         <div>
-            {(isLoggedIn) ? <UserAccount handleLogout={props.handleLogout}/> : <Authorization handleLogin={props.handleLogin} />}
+            {(isLoggedIn) ? <UserAccount handleLogout={props.handleLogout}/> : <Authorization handleLogin={props.handleLogin} colorTheme={props.colorTheme}/>}
         </div>
     )
 }

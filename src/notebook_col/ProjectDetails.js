@@ -41,7 +41,7 @@ function ProjectEditingForm (props) {
 
     }
     function savePlan() {
-        const changeFieldsObject =
+        const changeFieldsObject = []
         const planId = props.planDraft.id;
         console.log(changeFieldsObject);
         props.savePlanChanges(planId, changeFieldsObject, true);

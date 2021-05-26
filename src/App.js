@@ -5,6 +5,8 @@ import Footer from './Footer.js';
 import AppBody from './AppBody.js';
 import Preloader from './utility_components/Preloader.js';
 import {getUserData} from './api/userApi';
+import {getColorTheme} from './classColorThemeVariables.js';
+
 
 class App extends React.Component {
     constructor(props){
@@ -15,7 +17,8 @@ class App extends React.Component {
         this.state = {
             isLoggedIn: false,
             isLoading: false,
-            user: {}
+            user: {},
+            selectedColorTheme: getColorTheme("base")
         };
     }
     componentDidMount() {
@@ -33,6 +36,7 @@ class App extends React.Component {
             })
 
         }
+        console.log(this.state.selectedColorTheme)
     }
 
     updateUser(userObj){
@@ -52,12 +56,13 @@ class App extends React.Component {
 
     render() {
         const isLoggedIn = this.state.isLoggedIn;
+        const colorTheme = this.state.selectedColorTheme
 //Probably need to refactor so there is only one render method
         //this.handleLogout()
         if (!isLoggedIn){
             return (
-                <div>
-                    <nav className="top-nav blue z-depth-0">
+                <div className= {colorTheme.primary}>
+                    <nav className={`top-nav ${colorTheme.primary} z-depth-0`}>
                         <div className="nav-wrapper">
                             <a href="index.html" className="brand-logo center">Contruct-A-Project</a>
                             <ul className="right">
@@ -65,13 +70,17 @@ class App extends React.Component {
                             </ul>
                         </div>
                     </nav>
-                    <Sidenav isLoggedIn={isLoggedIn} handleLogin={this.handleLogin} handleLogout={this.handleLogout}/>
+                    <Sidenav
+                      isLoggedIn={isLoggedIn}
+                      handleLogin={this.handleLogin}
+                      handleLogout={this.handleLogout}
+                      colorTheme={colorTheme}/>
                     <div id="app-body-container" className="container">
                         <div className="section no-pad-bot center-align" id="index-banner">
-                            { this.state.isLoading ? <Preloader /> : <h5>Sign up or log in to start planning.</h5> }
+                            { this.state.isLoading ? <Preloader /> : <h5 className= {colorTheme.text}>Sign up or log in to start planning.</h5> }
                         </div>
                     </div>
-                    <Footer />
+
                 </div>
             );
         } else {
@@ -86,7 +95,6 @@ class App extends React.Component {
                         user={this.state.user}
                         updateUser={this.updateUser}
                         isLoading={this.state.isLoading}/>
-                    <Footer />
                 </div>
             );
         }

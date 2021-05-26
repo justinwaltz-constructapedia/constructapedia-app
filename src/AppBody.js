@@ -42,11 +42,12 @@ function AppBody (props) {
 
     function savePlanChanges (planId, planUpdateObj, performPlanDraftUpdate) {
         console.log(planUpdateObj);
-        putProjectUpdate(planId, planUpdateObj).then((res) => {
+        putPlanUpdate(planId, planUpdateObj).then((res) => {
             if (res === 1) {
                 getPlan(planId).then((updatedPlan) => {
                     const currentPlans = userPlans;
-                    const indexOfPlanToReplace = currentPlans.findIndex((currentPlan) => { currentPlan.id === planId });
+                    const searchIndex = (item) => item.id === planId;
+                    const indexOfPlanToReplace = currentPlans.findIndex(searchIndex);
                     console.log(indexOfPlanToReplace);
                     currentPlans[indexOfPlanToReplace] = updatedPlan;
                     setUserPlans(currentPlans);

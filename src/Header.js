@@ -3,7 +3,7 @@ function Header (props) {
 
     return (
         <header>
-            <nav className="top-nav blue z-depth-0">
+            <nav className="top-nav black z-depth-0">
                 <div className="nav-wrapper">
                     <a href="index.html" className="brand-logo center">Contruct-A-Project</a>
                     <ul className="right">

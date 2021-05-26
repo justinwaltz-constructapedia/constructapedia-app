@@ -72,7 +72,7 @@ function getUserPlans() {
 }
 
 //API call to update a single plan in DB, update object contains entire field(s) on the plan doc
-function putProjectUpdate(planId, planUpdateObj) {
+function putPlanUpdate(planId, planUpdateObj) {
     const access_token = localStorage.getItem('access_token');
     console.log(planUpdateObj)
     let success;
@@ -109,7 +109,6 @@ function deletePlan(planId) {
       }
     } )
     .then((httpResponse) => {
-        success = httpResponse.ok
         if (httpResponse.ok) {
             return httpResponse.json();
         } else {
