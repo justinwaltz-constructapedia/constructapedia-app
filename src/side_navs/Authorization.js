@@ -5,6 +5,7 @@ import Preloader from "../utility_components/Preloader.js";
 import {getUserData} from '../api/userApi.js';
 import {postAuthLogin, postAuthSignUp} from '../api/authApi';
 
+
 function Authorization(props) {
     const sidenav = useRef(null);
     const signUpDropdown = useRef(null);
@@ -71,7 +72,7 @@ function Authorization(props) {
     }
 
     return (
-        <ul ref={sidenav} id="slide-out" className="sidenav">
+        <ul ref={sidenav} id="slide-out" className={`sidenav ${props.colorTheme.primary}`}>
             <li>
                 <div className="user-view center-align">
                   <a href="index.html"><img src="http://via.placeholder.com/120x120" alt="Logo" /></a>
