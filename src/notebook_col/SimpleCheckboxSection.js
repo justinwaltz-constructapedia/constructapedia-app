@@ -2,33 +2,63 @@ import React, {useState} from 'react';
 
 function SimpleCheckboxSection (props) {
     const [newItemValue, setNewItemValue] = useState("");
-    const checkboxElements = makeListOfCheckboxElements(props.projectDraft[props.listType]);
+
+    const checkboxElements = makeListOfCheckboxElements(props.planDraft.checks);
     const displayListType = props.listType.trim().replace(/^\w/, (c) => c.toUpperCase());
 
+    function handleInputChange(event) {
+        const target = event.target;
+        const value = target.value;
+        if (target.type === 'checkbox'){
+            const newChecks = props.userPlans.checks
+            const checkedAttribute = target.checked;
+            const indexOfCheckToChange = newChecks.findIndex(check => check.text_value === value)
+            console.log(newChecks,checkedAttribute,indexOfCheckToChange)
+            newChecks[indexOfCheckToChange].is_complete = checkedAttribute;
+            console.log(newChecks)
+            props.saveSpecificPlanChanges({checks:newChecks});
+        } else {
+            setNewItemValue(value)
+        }
+    }
     function makeListOfCheckboxElements (arr) {
         return (
             <div>
                 {arr.map((listItem, i)=>{
-                    //add checked="checked" attribute to the input
-                    return (
-                        <p key={i}>
-                            <label>
-                                <input type="checkbox" className="filled-in" />
-                                <span>{listItem}</span>
-                            </label>
-                        </p>
-                    )
+                    //add checked="checked" attribute to the input, make the onChange effect the db
+                    if (listItem.item_type===props.listType) {
+                        return (
+                            <p key={i}>
+                                <label>
+                                    <input type="checkbox"
+                                        value={listItem.text_value}
+                                        className="filled-in"
+                                        checked={listItem.is_complete}
+                                        onChange={(e)=>handleInputChange(e)}/>
+                                    <span>{listItem.text_value}</span>
+                                </label>
+                            </p>
+                        )
+                    }else{
+                        return null;
+                    }
+
                 })}
             </div>
         )
     }
     function addNewItem () {
-        const newProjectDraft = props.projectDraft;
-        const listToUpdate = props.listType
-        if (newItemValue.length > 0) {
-            newProjectDraft[listToUpdate].push(newItemValue);
-            console.log(newProjectDraft)
-            props.updateProjectDraft(newProjectDraft);
+        const newPlanDraft = props.planDraft;
+        if (newItemValue.trim().length > 0) {
+            const newCheck = {
+                text_value:newItemValue,
+                //is_complete:
+                item_type:props.listType
+            }
+            newPlanDraft.checks.push(newCheck);
+            props.saveSpecificPlanChanges({checks:newPlanDraft.checks})
+            console.log(newPlanDraft)
+            props.changeOrUpdatePlanDraft(newPlanDraft);
             setNewItemValue("");
         }
     }
@@ -40,7 +70,7 @@ function SimpleCheckboxSection (props) {
                     <div>
                         <button onClick={addNewItem} className="btn-floating btn-small waves-effect waves-light blue" type="button"><i className="material-icons">add</i></button>
                         <div className="input-field inline">
-                            <input id={"new_" + props.listType} type="text" className="validate" value={newItemValue} onChange={(e) => setNewItemValue(e.target.value)}/>
+                            <input id={"new_" + props.listType} type="text" className="validate" value={newItemValue} onChange={(e) => handleInputChange(e)}/>
                             <label htmlFor={"new_" + props.listType}>Add New {displayListType}</label>
                         </div>
                     </div>

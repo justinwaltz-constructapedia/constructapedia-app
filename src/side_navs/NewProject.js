@@ -49,7 +49,9 @@ function NewProject(props){
                     <p>Will your project have substeps or just a single list of actions? (You can change this later)</p>
                 </div>
                 <div class="switch center-align">
-                    //Add substeps to DB and settings button to plan list to change or delete settings info
+                    {
+                        //Add substeps to DB and settings button to plan list to change or delete settings info
+                    }
                     <label>
                         Actions
                         <input disabled checked type="checkbox"  onChange={(e)=> setIsSubStepsOn(e.target.value)} />
