@@ -74,7 +74,7 @@ function Authorization(props) {
             <li>
                 <div className="user-view center-align">
                   <a href="index.html"><img src="http://via.placeholder.com/120x120" alt="Logo" /></a>
-                  <h4 className="center-align">Sign Up/Login</h4>
+                  <h4 className= "center-align">Sign Up/Login</h4>
                 </div>
             </li>
             <li><div className="divider"></div></li>
