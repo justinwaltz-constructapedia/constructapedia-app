@@ -32,6 +32,9 @@ header, main, footer {
     min-height: 90%;
     max-height: 90%;
 }
+.no-margin{
+    margin: 0 0 0 0;
+}
 #main-app-container {
     height: 95vh;
 

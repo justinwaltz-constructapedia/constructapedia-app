@@ -8,7 +8,9 @@ function Sidenav(props) {
 
     return (
         <div>
-            {(isLoggedIn) ? <UserAccount handleLogout={props.handleLogout}/> : <Authorization handleLogin={props.handleLogin} colorTheme={props.colorTheme}/>}
+            {(isLoggedIn)
+                ? <UserAccount user={props.user} handleLogout={props.handleLogout}/>
+                : <Authorization handleLogin={props.handleLogin} colorTheme={props.colorTheme}/>}
         </div>
     )
 }

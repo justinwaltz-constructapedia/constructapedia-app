@@ -11,7 +11,10 @@ function UserProjects(props) {
                     </div>
                     <div className="collapsible-body">
                         <ul>
-                            <li>Major Project Steps</li>
+                            <li>
+                                <button className="btn waves-effect waves-light blue" onClick={()=>{props.deleteSelectedPlan(plan.id)}}>
+                                        <i className="material-icons left">delete_forever</i>Delete Project</button>
+                            </li>
                         </ul>
                     </div>
                 </li>

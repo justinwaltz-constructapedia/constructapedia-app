@@ -11,7 +11,7 @@ function SearchBar (props) {
             }
             }>
             <div className="row">
-                <div className="col s12">
+                <div className="col s12 center-align">
                     <div className="input-field inline">
                         <input id="search_input" type="text" value={searchValue} className="validate" onChange={(e)=> setSearchValue(e.target.value)} />
                         <label htmlFor="search_input">Search for a Project</label>

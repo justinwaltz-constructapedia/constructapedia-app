@@ -30,7 +30,8 @@ function Project(props){
                     userPlans={props.userPlans}
                     changeView={changeView}
                     handleMainAppView={props.handleMainAppView}
-                    changeOrUpdatePlanDraft={props.changeOrUpdatePlanDraft}/>
+                    changeOrUpdatePlanDraft={props.changeOrUpdatePlanDraft}
+                    deleteSelectedPlan={props.deleteSelectedPlan}/>
                 : <NewProject
                     changeView={changeView}
                     updateSearchResults={props.updateSearchResults}
