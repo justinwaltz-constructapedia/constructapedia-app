@@ -60,7 +60,12 @@ function AppBody (props) {
             }
         })
     }
-
+    function deleteSelectedPlan (planId) {
+        deletePlan(planId).then((res) => {
+            //if plan Id is same as current plan then clear the main view
+            console.log(res);
+        })
+    }
     return (
         <main id="main-app-container" className="row">
             <Project
@@ -71,6 +76,7 @@ function AppBody (props) {
                 changeOrUpdatePlanDraft={changeOrUpdatePlanDraft}
                 createNewPlan={createNewPlan}
                 handleMainAppView={handleMainAppView}
+                deleteSelectedPlan={deleteSelectedPlan}
             />
             {mainAppView === 'ProjectDetails' &&
                 <ProjectDetails

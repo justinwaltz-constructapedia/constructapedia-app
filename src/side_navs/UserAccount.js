@@ -17,23 +17,34 @@ function UserAccount(props) {
      });
     return (
         <ul ref={sidenav} id="slide-out" className="sidenav">
-        <div className="container">
+            <li className="center-align blue section">
+                <h5 className="no-margin">User Account</h5>
+            </li>
             <li>
-                <div className="user-view">
-                    <a href="#user"><img className="circle" alt="avatar" src="images/yuna.jpg"/></a>
-                    <a href="#name"><span className="name">User Account</span></a>
-                    <a href="#email"><span className="email">jdandturk@gmail.com</span></a>
-                    <button className="waves-effect waves-light btn blue" onClick={props.handleLogout}>Log Out</button>
+                <div className="container">
+                    <div className="user-view">
+                        <div className="row">
+                            <div className="col s4 offset-s2">
+                                <img className="circle" alt="avatar" src="./user-avatar.jpg"/>
+                            </div>
+                        </div>
+                        <a href="#name"><span className="name">{props.user.name}</span></a>
+                        <a href="#email"><span className="email">{props.user.email}</span></a>
+                        <button className="waves-effect waves-light btn blue" onClick={props.handleLogout}>Log Out</button>
+                    </div>
                 </div>
             </li>
 
-        </div>
+
         </ul>
     )
 }
 
 export default UserAccount;
 /*
+
+
+
 <li><a href="#!"><i className="material-icons">cloud</i>First Link With Icon</a></li>
 <li><a href="#!">Second Link</a></li>
 <li><div className="divider"></div></li>

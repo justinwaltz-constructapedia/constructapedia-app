@@ -1,7 +1,7 @@
 import React from 'react';
 import Header from './Header.js';
 import Sidenav from './side_navs/Sidenav.js'
-import Footer from './Footer.js';
+//import Footer from './Footer.js';
 import AppBody from './AppBody.js';
 import Preloader from './utility_components/Preloader.js';
 import {getUserData} from './api/userApi';
@@ -71,10 +71,10 @@ class App extends React.Component {
                         </div>
                     </nav>
                     <Sidenav
-                      isLoggedIn={isLoggedIn}
-                      handleLogin={this.handleLogin}
-                      handleLogout={this.handleLogout}
-                      colorTheme={colorTheme}/>
+                        isLoggedIn={isLoggedIn}
+                        handleLogin={this.handleLogin}
+                        handleLogout={this.handleLogout}
+                        colorTheme={colorTheme}/>
                     <div id="app-body-container" className="container">
                         <div className="section no-pad-bot center-align" id="index-banner">
                             { this.state.isLoading ? <Preloader /> : <h5 className= {colorTheme.text}>Sign up or log in to start planning.</h5> }
@@ -90,7 +90,7 @@ class App extends React.Component {
                             handleLoginClick={this.handleLogin}
                             handleLogoutClick={this.handleLogout}
                             handleLogout={this.handleLogout}/>
-                    <Sidenav isLoggedIn={isLoggedIn} handleLogin={this.handleLogin} handleLogout={this.handleLogout}/>
+                    <Sidenav user={this.state.user} isLoggedIn={isLoggedIn} handleLogin={this.handleLogin} handleLogout={this.handleLogout}/>
                     <AppBody
                         user={this.state.user}
                         updateUser={this.updateUser}
