@@ -50,7 +50,6 @@ function getPlan (planId) {
 //API call to get all user plans from DB (should this just return id, title and major subplans?)
 function getUserPlans() {
     const access_token = localStorage.getItem('access_token');
-    const user_id = localStorage.getItem('user_id');
     return fetch( `https://constructapediawebapi.herokuapp.com/plans/`, {
         method:"GET",
         headers: {
@@ -75,7 +74,6 @@ function getUserPlans() {
 function putPlanUpdate(planId, planUpdateObj) {
     const access_token = localStorage.getItem('access_token');
     console.log(planUpdateObj)
-    let success;
     return fetch( `https://constructapediawebapi.herokuapp.com/plan/${planId}`, {
         method: "PUT",
         headers: {
@@ -85,7 +83,6 @@ function putPlanUpdate(planId, planUpdateObj) {
       body: JSON.stringify(planUpdateObj)
     } )
     .then((httpResponse) => {
-        success = httpResponse.ok
         if (httpResponse.ok) {
             return httpResponse.json();
         } else {
@@ -94,7 +91,7 @@ function putPlanUpdate(planId, planUpdateObj) {
     })
     .then( (json) => {
         console.log(json, json.result)
-        return success;
+        return json.result;
     })
     .catch(err => console.log(err));
 }

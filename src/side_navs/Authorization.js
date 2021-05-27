@@ -8,7 +8,6 @@ import {postAuthLogin, postAuthSignUp} from '../api/authApi';
 
 function Authorization(props) {
     const sidenav = useRef(null);
-    const signUpDropdown = useRef(null);
     const authDropdown = useRef(null);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -25,7 +24,6 @@ function Authorization(props) {
             edge: 'right'
         };
         M.Sidenav.init(sidenav.current, sidenavOptions);
-        M.Collapsible.init(signUpDropdown.current);
         M.Collapsible.init(authDropdown.current);
     },[]);
 
