@@ -47,7 +47,7 @@ function SimpleCheckboxSection (props) {
             </div>
         )
     }
-    function addNewItem () {
+    function addNewChecklistItem () {
         const newPlanDraft = props.planDraft;
         if (newItemValue.trim().length > 0) {
             const newCheck = {
@@ -68,7 +68,8 @@ function SimpleCheckboxSection (props) {
                     <h5>{displayListType}</h5>
                     {checkboxElements}
                     <div>
-                        <button onClick={addNewItem} className="btn-floating btn-small waves-effect waves-light blue" type="button"><i className="material-icons">add</i></button>
+                        <button id={"add-"+props.listType+"-btn"}
+                            onClick={addNewChecklistItem} className="btn-floating btn-small waves-effect waves-light blue" type="button"><i className="material-icons">add</i></button>
                         <div className="input-field inline">
                             <input id={"new_" + props.listType} type="text" className="validate" value={newItemValue} onChange={(e) => handleInputChange(e)}/>
                             <label htmlFor={"new_" + props.listType}>Add New {displayListType}</label>
