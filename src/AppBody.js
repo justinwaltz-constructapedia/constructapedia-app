@@ -27,19 +27,11 @@ function AppBody (props) {
     function changeOrUpdatePlanDraft (newPlan) {
         setPlanDraft(newPlan);
     }
-    function createNewPlan(plan){
-        postPlan(plan)
-        .then( (res) => {
-            console.log(typeof res, res)
-            const currentPlans = userPlans;
-            getPlan(res.id).then((createdPlan) => {
-                currentPlans.push(createdPlan);
-                setUserPlans(currentPlans);
-            })
-        })
-        .catch(err => console.log(err));
+    function addUserPlan(plan){
+        const currentPlans = userPlans;
+        currentPlans.push(plan);
+        setUserPlans(currentPlans);
     }
-
     function savePlanChanges (planId, planUpdateObj, performPlanDraftUpdate) {
         console.log(planUpdateObj);
         putPlanUpdate(planId, planUpdateObj).then((res) => {
@@ -60,11 +52,8 @@ function AppBody (props) {
             }
         })
     }
-    function deleteSelectedPlan (planId) {
-        deletePlan(planId).then((res) => {
-            //if plan Id is same as current plan then clear the main view
-            console.log(res);
-        })
+    function removeUserPlan (plan) {
+        //update userPlans Arr
     }
     return (
         <main id="main-app-container" className="row">
@@ -74,7 +63,7 @@ function AppBody (props) {
                 updateSearchResults={updateSearchResults}
                 planDraft={planDraft}
                 changeOrUpdatePlanDraft={changeOrUpdatePlanDraft}
-                createNewPlan={createNewPlan}
+                addUserPlan={addUserPlan}
                 handleMainAppView={handleMainAppView}
                 deleteSelectedPlan={deleteSelectedPlan}
             />

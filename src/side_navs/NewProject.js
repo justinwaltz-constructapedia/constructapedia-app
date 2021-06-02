@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import SearchBar from '../utility_components/SearchBar.js'
 import {getSearchResults} from '../api/searchApi.js';
+import {postPlan, getPlan} from '../api/projectsApi.js';
 
 function NewProject(props){
     const [planTitleValue, setPlanTitleValue] = useState('');
@@ -9,9 +10,16 @@ function NewProject(props){
 
     function createBlankPlan () {
         if (planTitleValue.trim().length > 0) {
-            //add substep when DB gets updated
-            props.createNewPlan({title:planTitleValue,goal:planGoalValue});
-            props.changeView('projects');
+            //add isSubstepsOn
+
+            postPlan({title:planTitleValue, goal:planGoalValue, is_substeps_on:isSubstepsOn}).then((res) => {
+                getPlan(res.id).then((createdPlan) => {
+                    props.addUserPlan(createdPlan);
+                    props.changeView('projects');
+                })
+                .catch(err => console.log(err));
+            })
+
             //update plan draft
         }else{
             alert("needs title value");
@@ -48,7 +56,7 @@ function NewProject(props){
                 <div className="container">
                     <p>Will your project have substeps or just a single list of actions? (You can change this later)</p>
                 </div>
-                <div class="switch center-align">
+                <div className="switch center-align">
                     {
                         //Add substeps to DB and settings button to plan list to change or delete settings info
                     }

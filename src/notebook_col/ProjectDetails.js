@@ -88,64 +88,69 @@ function ProjectEditingForm (props) {
 
     return (
         <div className="container">
-        <div className="row">
-            <div className="col s12">
-                <div className="row">
-                    <div className="input-field col s12">
-                        <textarea id="goal_textarea"
-                            className="materialize-textarea"
-                            value={goalValue}
-                            onChange={handleChange}/>
-                        <label htmlFor="notes_textarea">Project Goal</label>
+            <div className="row">
+                <div className="col s12">
+                    <div className="row">
+                        <div className="input-field col s12">
+                            <textarea id="goal_textarea"
+                                className="materialize-textarea"
+                                value={goalValue}
+                                onChange={handleChange}/>
+                            <label htmlFor="notes_textarea">Project Goal</label>
+                        </div>
                     </div>
-                </div>
-                <div className="row">
-                    <div className="input-field col s12">
-                        <textarea id="notes_textarea"
-                            className="materialize-textarea"
-                            value={notesValue}
-                            onChange={handleChange}/>
-                        <label htmlFor="notes_textarea">Project Notes</label>
+                    <div className="row">
+                        <div className="input-field col s12">
+                            <textarea id="notes_textarea"
+                                className="materialize-textarea"
+                                value={notesValue}
+                                onChange={handleChange}/>
+                            <label htmlFor="notes_textarea">Project Notes</label>
+                        </div>
                     </div>
-                </div>
-                <div className="row center-align">
-                    <button className="btn waves-effect waves-light blue" type="button" onClick={saveEntirePlan}>Save</button>
-                </div>
-                <div className="divider"></div>
-                <div className="row">
-                    <SimpleCheckboxSection
-                        planDraft={props.planDraft}
-                        saveSpecificPlanChanges={saveSpecificPlanChanges}
-                        changeOrUpdatePlanDraft={props.changeOrUpdatePlanDraft}
-                        listType="tools"/>
-                    <SimpleCheckboxSection
-                        planDraft={props.planDraft}
-                        saveSpecificPlanChanges={saveSpecificPlanChanges}
-                        changeOrUpdatePlanDraft={props.changeOrUpdatePlanDraft}
-                        listType="materials"/>
-                </div>
+                    <div className="row center-align">
+                        <button className="btn waves-effect waves-light blue" type="button" onClick={saveEntirePlan}>Save</button>
+                    </div>
+                    <div className="divider"></div>
+                    <div className="row">
+                        <SimpleCheckboxSection
+                            planDraft={props.planDraft}
+                            saveSpecificPlanChanges={saveSpecificPlanChanges}
+                            changeOrUpdatePlanDraft={props.changeOrUpdatePlanDraft}
+                            listType="tools"/>
+                        <SimpleCheckboxSection
+                            planDraft={props.planDraft}
+                            saveSpecificPlanChanges={saveSpecificPlanChanges}
+                            changeOrUpdatePlanDraft={props.changeOrUpdatePlanDraft}
+                            listType="materials"/>
+                    </div>
 
-                <div className="divider"></div>
-                <div className="row">
-                    {props.planDraft.video_urls.length > 0 && videoDisplays}
-                </div>
-                <div className= "row">
-                    <button id="add-video-btn" onClick={(e)=>addNewItem(e.currentTarget.id)} className="btn-floating btn-small waves-effect waves-light blue" type="button"><i className="material-icons">add</i></button>
-                    <div className="input-field inline">
-                        <input id="new_video"
-                            type="text"
-                            className="validate"
-                            value={videoUrlValue}
-                            placeholder="Video website address (URL)"
-                            onChange={(e) => setVideoUrlValue(e.target.value)}/>
-                        <label htmlFor="new_video">Add New Video</label>
+                    <div className="divider"></div>
+                    <div className="row">
+                        {props.planDraft.video_urls.length > 0 && videoDisplays}
                     </div>
-                </div>
-                <div className="row center-align">
-                    <button className="btn waves-effect waves-light blue" type="button" name="action" onClick={()=> props.handleMainAppView('SearchResults')}>Import From Other Sites</button>
+                    <div className= "row">
+                        <button id="add-video-btn"
+                                onClick={(e)=>addNewItem(e.currentTarget.id)}
+                                className="btn-floating btn-small waves-effect waves-light blue"
+                                type="button">
+                            <i className="material-icons">add</i>
+                        </button>
+                        <div className="input-field inline">
+                            <input id="new_video"
+                                type="text"
+                                className="validate"
+                                value={videoUrlValue}
+                                placeholder="Video website address (URL)"
+                                onChange={(e) => setVideoUrlValue(e.target.value)}/>
+                            <label htmlFor="new_video">Add New Video</label>
+                        </div>
+                    </div>
+                    <div className="row center-align">
+                        <button className="btn waves-effect waves-light blue" type="button" name="action" onClick={()=> props.handleMainAppView('SearchResults')}>Import From Other Sites</button>
+                    </div>
                 </div>
             </div>
-        </div>
         </div>
     )
 }

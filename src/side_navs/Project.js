@@ -36,7 +36,7 @@ function Project(props){
                     changeView={changeView}
                     updateSearchResults={props.updateSearchResults}
                     planDraft={props.planDraft}
-                    createNewPlan={props.createNewPlan}
+                    addUserPlan={props.addUserPlan}
                     handleMainAppView={props.handleMainAppView}/>
             }
         </ul>
