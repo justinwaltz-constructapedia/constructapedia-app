@@ -31,7 +31,7 @@ function ProjectEditingForm (props) {
     const [goalValue, setGoalValue] = useState(props.planDraft.goal);
     const [videoUrlValue,setVideoUrlValue] = useState("");
     const planId = props.planDraft.id;
-    console.log(typeof props.planDraft.video_urls)
+
     const videoDisplays = props.planDraft.video_urls.map((url,i) => {
         return(
             <div key={i} className="video-container">

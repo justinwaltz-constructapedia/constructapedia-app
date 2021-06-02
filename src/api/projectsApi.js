@@ -1,7 +1,8 @@
+//Gets access_token and refreshes if needed
+const access_token = localStorage.getItem('access_token');
+//const refresh_token = localStorage.getItem('refresh_token')
 //API call to create a new plan in DB, title is required
 function postPlan(plan) {
-    const access_token = localStorage.getItem('access_token');
-    //const refresh_token = localStorage.getItem('refresh_token')
     return fetch( `https://constructapediawebapi.herokuapp.com/plan/`, {
         method:"POST",
         headers: {

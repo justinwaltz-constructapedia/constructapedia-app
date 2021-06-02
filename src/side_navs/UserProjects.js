@@ -10,7 +10,7 @@ function UserProjects(props) {
     },[]);
     const plansList = plans.map((plan) => {
             const subPlans = plan.sub_plans.map((subPlan) => {
-                return <li><a>{subPlan.title}</a></li>
+                return <li><a href="#subPlan">{subPlan.title}</a></li>
             })
             return (
                 <li key={plan.id} className="bold">
