@@ -28,12 +28,18 @@ header, main, footer {
     overflow-y: scroll;
     padding: 0px 0px 0px 10px;
 }
+
+.no-margin{
+    margin: 0px 0px 0px 0px !important;
+}
+.no-padding{
+    padding: 0px 0px 0px 0px !important;
+
 #search-modal {
     min-height: 90%;
     max-height: 90%;
 }
-.no-margin{
-    margin: 0 0 0 0;
+
 }
 #main-app-container {
     height: 95vh;

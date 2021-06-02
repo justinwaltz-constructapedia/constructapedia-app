@@ -28,16 +28,30 @@ function SimpleCheckboxSection (props) {
                     //add checked="checked" attribute to the input, make the onChange effect the db
                     if (listItem.item_type===props.listType) {
                         return (
-                            <p key={i}>
-                                <label>
-                                    <input type="checkbox"
-                                        value={listItem.text_value}
-                                        className="filled-in"
-                                        checked={listItem.is_complete}
-                                        onChange={(e)=>handleInputChange(e)}/>
-                                    <span>{listItem.text_value}</span>
-                                </label>
-                            </p>
+                            <div key={i} className="row valign-wrapper">
+                                <div className="col s5 left-align">
+                                    <label className="left-align">
+                                        <input type="checkbox"
+                                            value={listItem.text_value}
+                                            className="filled-in"
+                                            checked={listItem.is_complete}
+                                            onChange={(e)=>handleInputChange(e)}/>
+                                        <span>{listItem.text_value}</span>
+                                    </label>
+                                </div>
+                                <div className="col s3">
+                                    <div className="input-field no-margin no-padding">
+                                        <input id={"quantity"+i} type="number" className="validate no-margin no-padding"/>
+                                        <label htmlFor={"quantity"+i}>Need</label>
+                                    </div>
+                                </div>
+                                <div className="col s4">
+                                    <div className="input-field no-margin no-padding">
+                                        <input id={"unit"+i} type="text" className="validate no-margin no-padding"/>
+                                        <label htmlFor={"unit"+i}>Unit</label>
+                                    </div>
+                                </div>
+                            </div>
                         )
                     }else{
                         return null;
@@ -47,7 +61,7 @@ function SimpleCheckboxSection (props) {
             </div>
         )
     }
-    function addNewItem () {
+    function addNewChecklistItem () {
         const newPlanDraft = props.planDraft;
         if (newItemValue.trim().length > 0) {
             const newCheck = {
@@ -68,7 +82,8 @@ function SimpleCheckboxSection (props) {
                     <h5>{displayListType}</h5>
                     {checkboxElements}
                     <div>
-                        <button onClick={addNewItem} className="btn-floating btn-small waves-effect waves-light blue" type="button"><i className="material-icons">add</i></button>
+                        <button id={"add-"+props.listType+"-btn"}
+                            onClick={addNewChecklistItem} className="btn-floating btn-small waves-effect waves-light blue" type="button"><i className="material-icons">add</i></button>
                         <div className="input-field inline">
                             <input id={"new_" + props.listType} type="text" className="validate" value={newItemValue} onChange={(e) => handleInputChange(e)}/>
                             <label htmlFor={"new_" + props.listType}>Add New {displayListType}</label>
@@ -80,3 +95,7 @@ function SimpleCheckboxSection (props) {
 }
 
 export default SimpleCheckboxSection;
+
+/*
+<span className="helper-text" data-error="wrong" data-success="right">Helper text</span>
+ */

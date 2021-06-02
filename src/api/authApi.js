@@ -1,3 +1,4 @@
+
 function postAuthLogin(email, password, rememberMe) {
     let success;
     return fetch( "https://constructapediawebapi.herokuapp.com/authentication/login/", {
@@ -18,10 +19,13 @@ function postAuthLogin(email, password, rememberMe) {
     } )
     .then( (json) => {
         const result = json.result;
+        const createdDate = new Date();
+        console.log(createdDate);
         localStorage.setItem('rememberMe', rememberMe);
         localStorage.setItem('user_id', result.user_id);
         localStorage.setItem('access_token', result.access_token);
-        localStorage.setItem('refresh_token', result.refresh_token)
+        localStorage.setItem('refresh_token', result.refresh_token);
+        localStorage.setItem('tokenCreatedDate', createdDate)
         return success;
      })
     .catch(err => {

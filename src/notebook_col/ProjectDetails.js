@@ -1,6 +1,8 @@
-import React , {useState} from 'react';
+import React , {useState, useEffect} from 'react';
 import SimpleCheckboxSection from './SimpleCheckboxSection.js';
 //import ProjectStepsSection from './ProjectStepsSection.js';
+import M from "materialize-css";
+import "materialize-css/dist/css/materialize.min.css";
 
 function ProjectDetails (props) {
     return (
@@ -25,9 +27,22 @@ function ProjectDetails (props) {
 
 function ProjectEditingForm (props) {
     const initialNotesValue = (props.planDraft.notes.length > 0)? props.planDraft.notes[0].contents : ""
-    const [notesValue, setNotesValue] = useState(props.planDraft.notes.contents);
+    const [notesValue, setNotesValue] = useState(initialNotesValue);
     const [goalValue, setGoalValue] = useState(props.planDraft.goal);
+    const [videoUrlValue,setVideoUrlValue] = useState("");
     const planId = props.planDraft.id;
+
+    const videoDisplays = props.planDraft.video_urls.map((url,i) => {
+        return(
+            <div key={i} className="video-container">
+                <iframe title="video1" src={url} frameBorder="0" allowFullScreen></iframe>
+            </div>
+        )
+    })
+    useEffect(() => {
+        M.updateTextFields();
+    })
+//does this need to be a separate function?
     function handleChange(event) {
         switch (event.target.id) {
             case "notes_textarea":
@@ -39,6 +54,23 @@ function ProjectEditingForm (props) {
             default:
         }
 
+    }
+    function addNewItem (itemBtnID) {
+        console.log(itemBtnID)
+        const newPlanDraft = props.planDraft;
+        switch (itemBtnID) {
+            case "add-video-btn":
+            console.log(videoUrlValue)
+                if (videoUrlValue.trim().length > 0) {
+                    newPlanDraft.video_urls.push(videoUrlValue);
+                    saveSpecificPlanChanges({video_urls:newPlanDraft.video_urls})
+                }
+                break;
+            default:
+        }
+        console.log(newPlanDraft)
+        props.changeOrUpdatePlanDraft(newPlanDraft);
+        setVideoUrlValue("");
     }
     function saveSpecificPlanChanges(changeFieldsObject) {
         console.log(changeFieldsObject);
@@ -60,13 +92,19 @@ function ProjectEditingForm (props) {
             <div className="col s12">
                 <div className="row">
                     <div className="input-field col s12">
-                        <textarea id="goal_textarea" className="materialize-textarea"  value={goalValue} onChange={handleChange}/>
+                        <textarea id="goal_textarea"
+                            className="materialize-textarea"
+                            value={goalValue}
+                            onChange={handleChange}/>
                         <label htmlFor="notes_textarea">Project Goal</label>
                     </div>
                 </div>
                 <div className="row">
                     <div className="input-field col s12">
-                        <textarea id="notes_textarea" className="materialize-textarea"  value={notesValue} onChange={handleChange}/>
+                        <textarea id="notes_textarea"
+                            className="materialize-textarea"
+                            value={notesValue}
+                            onChange={handleChange}/>
                         <label htmlFor="notes_textarea">Project Notes</label>
                     </div>
                 </div>
@@ -89,15 +127,22 @@ function ProjectEditingForm (props) {
 
                 <div className="divider"></div>
                 <div className="row">
-                {props.planDraft.video_urls.length > 0
-                    &&
-                    <div className="video-container">
-                        <iframe title="video1" src={props.planDraft.video_urls[0]} frameBorder="0" allowFullScreen></iframe>
+                    {props.planDraft.video_urls.length > 0 && videoDisplays}
+                </div>
+                <div className= "row">
+                    <button id="add-video-btn" onClick={(e)=>addNewItem(e.currentTarget.id)} className="btn-floating btn-small waves-effect waves-light blue" type="button"><i className="material-icons">add</i></button>
+                    <div className="input-field inline">
+                        <input id="new_video"
+                            type="text"
+                            className="validate"
+                            value={videoUrlValue}
+                            placeholder="Video website address (URL)"
+                            onChange={(e) => setVideoUrlValue(e.target.value)}/>
+                        <label htmlFor="new_video">Add New Video</label>
                     </div>
-                }
                 </div>
                 <div className="row center-align">
-                    <button className="btn waves-effect waves-light blue" type="button" name="action" onClick={()=> props.handleMainAppView('SearchResults')}>Add From Other Sites</button>
+                    <button className="btn waves-effect waves-light blue" type="button" name="action" onClick={()=> props.handleMainAppView('SearchResults')}>Import From Other Sites</button>
                 </div>
             </div>
         </div>
