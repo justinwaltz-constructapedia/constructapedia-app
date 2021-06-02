@@ -70,30 +70,30 @@ function Authorization(props) {
     }
 
     return (
-        <ul ref={sidenav} id="slide-out" className={`sidenav ${props.colorTheme.primary}`}>
+        <ul ref={sidenav} id="slide-out" className={`sidenav ${props.colorTheme.secondary}`}>
             <li>
                 <div className="user-view center-align">
                   <a href="index.html"><img src="http://via.placeholder.com/120x120" alt="Logo" /></a>
-                  <h4 className="center-align">Sign Up/Login</h4>
+                  <h4 className="center- white-text" >Sign Up/Login</h4>
                 </div>
             </li>
             <li><div className="divider"></div></li>
             <li>
                 <ul ref={authDropdown} className="collapsible collapsible-accordion">
-                    <li className="active white">
-                        <div className="collapsible-header waves-effect waves-light blue">Existing Users<i className="material-icons">arrow_drop_down</i></div>
-                        <div className="collapsible-body container white">
+                    <li className="active grey darken-4">
+                        <div className="collapsible-header waves-effect waves-light black grey-text text-lighten-4">Existing Users<i className="material-icons">arrow_drop_down</i></div>
+                        <div className="collapsible-body container grey darken-4 grey-text text-lighten-4">
                             <form id="signInForm" onSubmit={(e)=> {
                                 //add validation
                                 e.preventDefault();
                                 handleSignIn();
                             }}>
                                 <div className="input-field">
-                                    <input id="email" type="email" className="validate" onChange={(e)=> setEmail(e.target.value)} />
+                                    <input id="email" type="email" className="validate grey-text text-lighten-5" onChange={(e)=> setEmail(e.target.value)} />
                                     <label htmlFor="email">Email</label>
                                 </div>
                                 <div className="input-field">
-                                    <input id="password" type="password" className="validate" onChange={(e)=> setPassword(e.target.value)} />
+                                    <input id="password" type="password" className="validate grey-text text-lighten-5" onChange={(e)=> setPassword(e.target.value)} />
                                     <label htmlFor="password">Password</label>
                                 </div>
                                 <p>
@@ -107,9 +107,9 @@ function Authorization(props) {
                             {sidenavIsLoading && <Preloader/>}
                         </div>
                     </li>
-                    <li className="white">
-                        <div className="collapsible-header waves-effect waves-light blue">Create New Account<i className="material-icons">arrow_drop_down</i></div>
-                        <div className="collapsible-body container white">
+                    <li className="grey darken-4">
+                        <div className="collapsible-header waves-effect waves-light black grey-text text-lighten-4">Create New Account<i className="material-icons">arrow_drop_down</i></div>
+                        <div className="collapsible-body container grey darken-4 grey-text text-lighten-4">
                             <form id="signUpForm" onSubmit={(e)=> {
                                     console.log(e)
                                     e.preventDefault();
@@ -121,19 +121,19 @@ function Authorization(props) {
                                 }
                             }}>
                                 <div className="input-field">
-                                    <input id="name" type="text" className="validate" onChange={(e)=> setName(e.target.value)} />
+                                    <input id="name" type="text" className="validate grey-text text-lighten-5" onChange={(e)=> setName(e.target.value)} />
                                     <label htmlFor="name">Name</label>
                                 </div>
                                 <div className="input-field">
-                                    <input id="signUpEmail" type="email" className="validate" onChange={(e)=> setEmail(e.target.value)} />
+                                    <input id="signUpEmail" type="email" className="validate grey-text text-lighten-5" onChange={(e)=> setEmail(e.target.value)} />
                                     <label htmlFor="signUpEmail">Email</label>
                                 </div>
                                 <div className="input-field">
-                                    <input id="signUpPassword" type="password" className="validate" onChange={(e)=> setPassword(e.target.value)} />
+                                    <input id="signUpPassword" type="password" className="validate grey-text text-lighten-5" onChange={(e)=> setPassword(e.target.value)} />
                                     <label htmlFor="signUpPassword">Password</label>
                                 </div>
                                 <div className="input-field">
-                                    <input id="confirmPassword" type="password" className="validate" onChange={(e)=> setConfirmPassword(e.target.value)} />
+                                    <input id="confirmPassword" type="password" className="validate grey-text text-lighten-5" onChange={(e)=> setConfirmPassword(e.target.value)} />
                                     <label htmlFor="confirmPassword">Confirm Password</label>
                                 </div>
                                 <p>
