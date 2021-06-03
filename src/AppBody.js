@@ -65,7 +65,7 @@ function AppBody (props) {
                 changeOrUpdatePlanDraft={changeOrUpdatePlanDraft}
                 addUserPlan={addUserPlan}
                 handleMainAppView={handleMainAppView}
-                deleteSelectedPlan={deleteSelectedPlan}
+                removeUserPlan={removeUserPlan}
             />
             {mainAppView === 'ProjectDetails' &&
                 <ProjectDetails
