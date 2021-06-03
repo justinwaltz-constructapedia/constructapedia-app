@@ -10,13 +10,14 @@ function ProjectDetails (props) {
             <div className="nav-wrapper">
                 <div className="row blue">
                     <div className="col s12">
-                        <h5 className="center-align white-text header">{props.planDraft.title}</h5>
+                        <h5 className="center-align white-text header">{props.userPlans[props.selectedPlanIndex].title}</h5>
                     </div>
                 </div>
             </div>
             <div className="row">
                 <ProjectEditingForm
-                    planDraft={props.planDraft}
+                    userPlans={props.userPlans}
+                    selectedPlanIndex={props.selectedPlanIndex}
                     changeOrUpdatePlanDraft={props.changeOrUpdatePlanDraft}
                     savePlanChanges={props.savePlanChanges}
                     handleMainAppView={props.handleMainAppView}/>
@@ -26,19 +27,23 @@ function ProjectDetails (props) {
 }
 
 function ProjectEditingForm (props) {
-    const initialNotesValue = (props.planDraft.notes.length > 0)? props.planDraft.notes[0].contents : ""
-    const [notesValue, setNotesValue] = useState(initialNotesValue);
-    const [goalValue, setGoalValue] = useState(props.planDraft.goal);
+    const [notesValue, setNotesValue] = useState("");
+    //const [goalValue, setGoalValue] = useState(props.planDraft.goal);
     const [videoUrlValue,setVideoUrlValue] = useState("");
-    const planId = props.planDraft.id;
+    //const planId = props.userPlans[props.selectedPlanIndex];
 
-    const videoDisplays = props.planDraft.video_urls.map((url,i) => {
+    const videoDisplays = props.userPlans[props.selectedPlanIndex].video_urls.map((url,i) => {
         return(
             <div key={i} className="video-container">
                 <iframe title="video1" src={url} frameBorder="0" allowFullScreen></iframe>
             </div>
         )
     })
+    useEffect(() => {
+        if (props.userPlans[props.selectedPlanIndex].notes.length > 0){
+            setNotesValue(props.userPlans[props.selectedPlanIndex].notes[0].contents)
+        }
+    },[props.userPlans, props.selectedPlanIndex])
     useEffect(() => {
         M.updateTextFields();
     })
@@ -48,57 +53,47 @@ function ProjectEditingForm (props) {
             case "notes_textarea":
                 setNotesValue(event.target.value);
                 break;
+            /*
             case "goal_textarea":
                 setGoalValue(event.target.value)
                 break;
+            */
             default:
+
         }
 
     }
     function addNewItem (itemBtnID) {
         console.log(itemBtnID)
-        const newPlanDraft = props.planDraft;
         switch (itemBtnID) {
             case "add-video-btn":
             console.log(videoUrlValue)
                 if (videoUrlValue.trim().length > 0) {
-                    newPlanDraft.video_urls.push(videoUrlValue);
-                    saveSpecificPlanChanges({video_urls:newPlanDraft.video_urls})
+                    //Should I be mutating props like this?
+                    const planId = props.userPlans[props.selectedPlanIndex].id;
+                    const updatedPlanVideoUrls = props.userPlans[props.selectedPlanIndex].video_urls.push(videoUrlValue);
+                    console.log(updatedPlanVideoUrls);
+                    props.savePlanChanges(planId, {video_urls:updatedPlanVideoUrls})
                 }
                 break;
             default:
         }
-        console.log(newPlanDraft)
-        props.changeOrUpdatePlanDraft(newPlanDraft);
         setVideoUrlValue("");
     }
-    function saveSpecificPlanChanges(changeFieldsObject) {
-        console.log(changeFieldsObject);
-        //may cause problem with differences in planDraft and DB plan?
-        props.savePlanChanges(planId, changeFieldsObject, false);
-        //props.changeOrUpdatePlanDraft();
-    }
+
     function saveEntirePlan(){
+        const planId = props.userPlans[props.selectedPlanIndex].id;
         const changesObj = {
-            goal:goalValue,
+            //goal:goalValue,
             notes: [{contents:notesValue}]
         }
-        props.savePlanChanges(planId, changesObj, true);
+        props.savePlanChanges(planId, changesObj);
     }
 
     return (
         <div className="container">
             <div className="row">
                 <div className="col s12">
-                    <div className="row">
-                        <div className="input-field col s12">
-                            <textarea id="goal_textarea"
-                                className="materialize-textarea"
-                                value={goalValue}
-                                onChange={handleChange}/>
-                            <label htmlFor="notes_textarea">Project Goal</label>
-                        </div>
-                    </div>
                     <div className="row">
                         <div className="input-field col s12">
                             <textarea id="notes_textarea"
@@ -114,20 +109,20 @@ function ProjectEditingForm (props) {
                     <div className="divider"></div>
                     <div className="row">
                         <SimpleCheckboxSection
-                            planDraft={props.planDraft}
-                            saveSpecificPlanChanges={saveSpecificPlanChanges}
-                            changeOrUpdatePlanDraft={props.changeOrUpdatePlanDraft}
+                            userPlans={props.userPlans}
+                            selectedPlanIndex={props.selectedPlanIndex}
+                            savePlanChanges={props.savePlanChanges}
                             listType="tools"/>
                         <SimpleCheckboxSection
-                            planDraft={props.planDraft}
-                            saveSpecificPlanChanges={saveSpecificPlanChanges}
-                            changeOrUpdatePlanDraft={props.changeOrUpdatePlanDraft}
+                            userPlans={props.userPlans}
+                            selectedPlanIndex={props.selectedPlanIndex}
+                            savePlanChanges={props.savePlanChanges}
                             listType="materials"/>
                     </div>
 
                     <div className="divider"></div>
                     <div className="row">
-                        {props.planDraft.video_urls.length > 0 && videoDisplays}
+                        {props.userPlans[props.selectedPlanIndex].video_urls.length > 0 && videoDisplays}
                     </div>
                     <div className= "row">
                         <button id="add-video-btn"
@@ -169,4 +164,14 @@ projectToChange.title = titleValue;
     </div>
 </div>
 <div className="divider"></div>
+
+<div className="row">
+    <div className="input-field col s12">
+        <textarea id="goal_textarea"
+            className="materialize-textarea"
+            value={goalValue}
+            onChange={handleChange}/>
+        <label htmlFor="notes_textarea">Project Goal</label>
+    </div>
+</div>
  */

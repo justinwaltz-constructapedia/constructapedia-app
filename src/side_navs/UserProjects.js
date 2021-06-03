@@ -1,7 +1,7 @@
 import React, {useEffect, useRef} from 'react';
 import M from "materialize-css";
 import "materialize-css/dist/css/materialize.min.css";
-import {deletePlan} from "../api/projectsApi.js";
+//import {getUserPlans} from "../api/projectsApi.js";
 
 function UserProjects(props) {
     const projectsDropdown = useRef(null);
@@ -10,19 +10,6 @@ function UserProjects(props) {
         M.Collapsible.init(projectsDropdown.current);
     },[]);
 
-    function selectPlan(id){
-        const selectedPlan = props.userPlans.find(plan => plan.id === id);
-        console.log(selectedPlan)
-        props.changeOrUpdatePlanDraft(selectedPlan);
-        props.handleMainAppView('ProjectDetails');
-    }
-    function deleteSelectedPlan(planId){
-        deletePlan(planId).then((res) => {
-            //Update the list of projects
-            //if plan Id is same as current plan then clear the main view
-            console.log(res);
-        })
-    }
     return (
         <div className="row">
             <div className="col s12">
@@ -39,13 +26,13 @@ function UserProjects(props) {
                                 return (
                                     <li key={plan.id} className="bold">
                                         <div className="collapsible-header">
-                                            <h6 className="valign-wrapper" onClick={()=>selectPlan(plan.id)}>{plan.title}<i className="material-icons">chevron_right</i></h6>
+                                            <h6 className="valign-wrapper" onClick={()=>props.updateSelectedPlan(plan.id)}>{plan.title}<i className="material-icons">chevron_right</i></h6>
                                         </div>
                                         <div className="collapsible-body">
                                             <ul>
                                                 {subPlans}
                                                 <li>
-                                                    <button className="btn waves-effect waves-light blue" onClick={()=>{props.deleteSelectedPlan(plan.id)}}>
+                                                    <button className="btn waves-effect waves-light blue" onClick={()=>{props.removeUserPlan(plan.id)}}>
                                                             <i className="material-icons left">delete_forever</i>Delete Project</button>
                                                 </li>
                                             </ul>

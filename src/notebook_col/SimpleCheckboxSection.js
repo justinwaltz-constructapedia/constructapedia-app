@@ -3,20 +3,24 @@ import React, {useState} from 'react';
 function SimpleCheckboxSection (props) {
     const [newItemValue, setNewItemValue] = useState("");
 
-    const checkboxElements = makeListOfCheckboxElements(props.planDraft.checks);
+    const checkboxElements = makeListOfCheckboxElements(props.userPlans[props.selectedPlanIndex].checks);
     const displayListType = props.listType.trim().replace(/^\w/, (c) => c.toUpperCase());
 
     function handleInputChange(event) {
         const target = event.target;
         const value = target.value;
         if (target.type === 'checkbox'){
-            const newChecks = props.userPlans.checks
+            const newChecks = [];
+            for (var i = 0; i < props.userPlans.checks.length; i++) {
+                newChecks[i] = props.userPlans.checks[i]
+            }
             const checkedAttribute = target.checked;
-            const indexOfCheckToChange = newChecks.findIndex(check => check.text_value === value)
+            const indexOfCheckToChange = props.userPlans[props.selectedPlanIndex].findIndex(check => check.text_value === value)
             console.log(newChecks,checkedAttribute,indexOfCheckToChange)
             newChecks[indexOfCheckToChange].is_complete = checkedAttribute;
             console.log(newChecks)
-            props.saveSpecificPlanChanges({checks:newChecks});
+            props.savePlanChanges(props.userPlans[props.selectedPlanIndex].id,
+                {checks:newChecks});
         } else {
             setNewItemValue(value)
         }
@@ -61,8 +65,9 @@ function SimpleCheckboxSection (props) {
             </div>
         )
     }
+    //Make the part of the props.addNewItem
     function addNewChecklistItem () {
-        const newPlanDraft = props.planDraft;
+        const newPlanDraft = props.userPlans[props.selectedPlanIndex];
         if (newItemValue.trim().length > 0) {
             const newCheck = {
                 text_value:newItemValue,
@@ -70,9 +75,9 @@ function SimpleCheckboxSection (props) {
                 item_type:props.listType
             }
             newPlanDraft.checks.push(newCheck);
-            props.saveSpecificPlanChanges({checks:newPlanDraft.checks})
             console.log(newPlanDraft)
-            props.changeOrUpdatePlanDraft(newPlanDraft);
+            props.savePlanChanges(props.userPlans[props.selectedPlanIndex].id,{checks:newPlanDraft.checks})
+            console.log(newPlanDraft)
             setNewItemValue("");
         }
     }
