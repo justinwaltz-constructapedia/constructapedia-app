@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import SearchBar from '../utility_components/SearchBar.js'
 import {getSearchResults} from '../api/searchApi.js';
-import {postPlan, getPlan} from '../api/projectsApi.js';
+//import {postPlan, getUserPlans} from '../api/projectsApi.js';
 
 function NewProject(props){
     const [planTitleValue, setPlanTitleValue] = useState('');
@@ -10,17 +10,8 @@ function NewProject(props){
 
     function createBlankPlan () {
         if (planTitleValue.trim().length > 0) {
-            //add isSubstepsOn
-
-            postPlan({title:planTitleValue, goal:planGoalValue, is_substeps_on:isSubstepsOn}).then((res) => {
-                getPlan(res.id).then((createdPlan) => {
-                    props.addUserPlan(createdPlan);
-                    props.changeView('projects');
-                })
-                .catch(err => console.log(err));
-            })
-
-            //update plan draft
+            props.addUserPlan({title:planTitleValue, goal:planGoalValue, is_substeps_on:isSubstepsOn})
+            props.changeView('projects');
         }else{
             alert("needs title value");
         }
@@ -46,12 +37,7 @@ function NewProject(props){
                     <label htmlFor="new_title_input">Project Title</label>
                 </div>
             </div>
-            <div className="row">
-                <div className="input-field col s12">
-                    <textarea placeholder="(Optional)" id="textarea1" className="materialize-textarea" onChange={(e)=> setPlanGoalValue(e.target.value)}></textarea>
-                    <label htmlFor="textarea1" className="active">Project Goal</label>
-                </div>
-            </div>
+
             <div className="row">
                 <div className="container">
                     <p>Will your project have substeps or just a single list of actions? (You can change this later)</p>
@@ -82,3 +68,11 @@ function NewProject(props){
 }
 
 export default NewProject;
+/*
+<div className="row">
+    <div className="input-field col s12">
+        <textarea placeholder="(Optional)" id="textarea1" className="materialize-textarea" onChange={(e)=> setPlanGoalValue(e.target.value)}></textarea>
+        <label htmlFor="textarea1" className="active">Project Goal</label>
+    </div>
+</div>
+ */

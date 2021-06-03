@@ -1,15 +1,16 @@
 import React, {useState, useEffect} from 'react';
-import Project from './side_navs/Project.js';
+import Projects from './side_navs/Projects.js';
 import SearchResults from './search_col/SearchResults.js';
 import ProjectDetails from './notebook_col/ProjectDetails.js';
 //import Preloader from './utility_components/Preloader.js';
 
-import {getUserPlans, putPlanUpdate, postPlan, getPlan, deletePlan} from './api/projectsApi';
+import {getUserPlans, putPlanUpdate, deletePlan, postPlan} from './api/projectsApi';
 
 function AppBody (props) {
     const [mainAppView, setMainAppView] = useState(false);
     const [userPlans, setUserPlans] = useState([]);
-    const [planDraft, setPlanDraft] = useState({id:"",title: "",tools: [],materials: [],project_steps: [],video_urls: []});
+    const [selectedPlanIndex, setSelectedPlanIndex] = useState({});
+    //id:"",title: "",tools: [],materials: [],project_steps: [],video_urls: []
     const [results, setResults] = useState([]);
 
     useEffect(() => {
@@ -24,27 +25,58 @@ function AppBody (props) {
     function updateSearchResults(resultsArr){
         setResults(resultsArr);
     }
-    function changeOrUpdatePlanDraft (newPlan) {
-        setPlanDraft(newPlan);
+    function updateSelectedPlan (selectedPlanId) {
+        console.log(selectedPlanId)
+        console.log(userPlans)
+        const selectedPlanIndex = userPlans.findIndex(plan => plan.id === selectedPlanId);
+        console.log(selectedPlanIndex);
+        setSelectedPlanIndex(selectedPlanIndex);
+        handleMainAppView('ProjectDetails');
     }
+
     function addUserPlan(plan){
-        const currentPlans = userPlans;
-        currentPlans.push(plan);
-        setUserPlans(currentPlans);
+        postPlan(plan).then((res) => {
+            const createdPlanId = res.id
+            console.log(createdPlanId)
+            getUserPlans().then((plans) => {
+                setUserPlans(plans)
+                //updateSelectedPlan(createdPlanId);
+            })
+            .catch(err => console.log(err));
+        })
     }
-    function savePlanChanges (planId, planUpdateObj, performPlanDraftUpdate) {
+
+    function removeUserPlan(planId) {
+        deletePlan(planId).then((res) => {
+            console.log(res);
+            handleMainAppView(null);
+            //Update the list of projects
+            getUserPlans().then((plans) => {
+                setUserPlans(plans);
+                //clear the main view
+            })
+
+        })
+    }
+
+    /*
+    function updateUserPlans (newUserPlans) {
+        setUserPlans(newUserPlans);
+    }
+    */
+    function savePlanChanges (planId, planUpdateObj) {
         console.log(planUpdateObj);
         putPlanUpdate(planId, planUpdateObj).then((res) => {
             if (res === 1) {
-                getPlan(planId).then((updatedPlan) => {
-                    const currentPlans = userPlans;
+                getUserPlans().then((plans) => {
+                    setUserPlans(plans);
+                    return;
+                }).then(() => {
                     const searchIndex = (item) => item.id === planId;
-                    const indexOfPlanToReplace = currentPlans.findIndex(searchIndex);
-                    console.log(indexOfPlanToReplace);
-                    currentPlans[indexOfPlanToReplace] = updatedPlan;
-                    setUserPlans(currentPlans);
-                    if (performPlanDraftUpdate){
-                        changeOrUpdatePlanDraft(updatedPlan)
+                    const indexOfPlan = userPlans.findIndex(searchIndex);
+                    console.log(indexOfPlan);
+                    if (indexOfPlan !== selectedPlanIndex){
+                        setSelectedPlanIndex(indexOfPlan);
                     }
                 })
             } else {
@@ -52,32 +84,30 @@ function AppBody (props) {
             }
         })
     }
-    function removeUserPlan (plan) {
-        //update userPlans Arr
-    }
+
     return (
         <main id="main-app-container" className="row">
-            <Project
+            <Projects
                 user={props.user}
                 userPlans={userPlans}
                 updateSearchResults={updateSearchResults}
-                planDraft={planDraft}
-                changeOrUpdatePlanDraft={changeOrUpdatePlanDraft}
+                selectedPlanIndex={selectedPlanIndex}
+                updateSelectedPlan={updateSelectedPlan}
                 addUserPlan={addUserPlan}
-                handleMainAppView={handleMainAppView}
                 removeUserPlan={removeUserPlan}
+                handleMainAppView={handleMainAppView}
             />
             {mainAppView === 'ProjectDetails' &&
                 <ProjectDetails
-                    planDraft={planDraft}
-                    changeOrUpdatePlanDraft={changeOrUpdatePlanDraft}
+                    userPlans={userPlans}
+                    selectedPlanIndex={selectedPlanIndex}
+                    updateSelectedPlan={updateSelectedPlan}
                     savePlanChanges={savePlanChanges}
                     handleMainAppView={handleMainAppView}/>
             }
             {mainAppView === 'SearchResults' &&
                 <SearchResults
                     results={results}
-                    changeOrUpdatePlanDraft={changeOrUpdatePlanDraft}
                     updateSearchResults={updateSearchResults}
                     handleMainAppView={handleMainAppView}/>
             }

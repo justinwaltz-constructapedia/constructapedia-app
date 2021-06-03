@@ -4,7 +4,7 @@ import "materialize-css/dist/css/materialize.min.css";
 import NewProject from './NewProject.js';
 import UserProjects from './UserProjects.js';
 
-function Project(props){
+function Projects(props){
     const [view, setView] = useState('projects');
     const projectNav = useRef(null);
 
@@ -30,16 +30,18 @@ function Project(props){
                     userPlans={props.userPlans}
                     changeView={changeView}
                     handleMainAppView={props.handleMainAppView}
-                    changeOrUpdatePlanDraft={props.changeOrUpdatePlanDraft}
-                    deleteSelectedPlan={props.deleteSelectedPlan}/>
+                    updateSelectedPlan={props.updateSelectedPlan}
+                    updateUserPlans={props.updateUserPlans}
+                    removeUserPlan={props.removeUserPlan}/>
                 : <NewProject
+                    addUserPlan={props.addUserPlan}
                     changeView={changeView}
                     updateSearchResults={props.updateSearchResults}
-                    planDraft={props.planDraft}
-                    addUserPlan={props.addUserPlan}
+                    updateUserPlans={props.updateUserPlans}
+                    updateSelectedPlan={props.updateSelectedPlan}
                     handleMainAppView={props.handleMainAppView}/>
             }
         </ul>
     )
 }
-export default Project;
+export default Projects;
