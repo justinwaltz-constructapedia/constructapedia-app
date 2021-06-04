@@ -5,12 +5,12 @@ import {getSearchResults} from '../api/searchApi.js';
 
 function NewProject(props){
     const [planTitleValue, setPlanTitleValue] = useState('');
-    const [planGoalValue, setPlanGoalValue] = useState('');
+    //const [planGoalValue, setPlanGoalValue] = useState('');
     const [isSubstepsOn, setIsSubStepsOn] = useState(true)
 
     function createBlankPlan () {
         if (planTitleValue.trim().length > 0) {
-            props.addUserPlan({title:planTitleValue, goal:planGoalValue, is_substeps_on:isSubstepsOn})
+            props.addUserPlan({title:planTitleValue, is_substeps_on:isSubstepsOn})
             props.changeView('projects');
         }else{
             alert("needs title value");

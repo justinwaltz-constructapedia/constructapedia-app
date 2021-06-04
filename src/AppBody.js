@@ -9,7 +9,7 @@ import {getUserPlans, putPlanUpdate, deletePlan, postPlan} from './api/projectsA
 function AppBody (props) {
     const [mainAppView, setMainAppView] = useState(false);
     const [userPlans, setUserPlans] = useState([]);
-    const [selectedPlanIndex, setSelectedPlanIndex] = useState({});
+    const [selectedPlanIndex, setSelectedPlanIndex] = useState(null);
     //id:"",title: "",tools: [],materials: [],project_steps: [],video_urls: []
     const [results, setResults] = useState([]);
 
@@ -26,24 +26,33 @@ function AppBody (props) {
         setResults(resultsArr);
     }
     function updateSelectedPlan (selectedPlanId) {
-        console.log(selectedPlanId)
-        console.log(userPlans)
+
         const selectedPlanIndex = userPlans.findIndex(plan => plan.id === selectedPlanId);
-        console.log(selectedPlanIndex);
-        setSelectedPlanIndex(selectedPlanIndex);
-        handleMainAppView('ProjectDetails');
+        if (selectedPlanIndex >= 0){
+            setSelectedPlanIndex(selectedPlanIndex);
+            handleMainAppView('ProjectDetails');
+        }
     }
 
     function addUserPlan(plan){
         postPlan(plan).then((res) => {
-            const createdPlanId = res.id
-            console.log(createdPlanId)
+            console.log(res.id)
+            return res.id;
+        }).then((createdPlanId) => {
             getUserPlans().then((plans) => {
                 setUserPlans(plans)
-                //updateSelectedPlan(createdPlanId);
-            })
-            .catch(err => console.log(err));
-        })
+                //Maybe find and select the plan here? with a return statement and another .then
+                return plans;
+            }).then((plans) => {
+                const selectedPlanIndex = plans.findIndex(plan => plan.id === createdPlanId);
+                setSelectedPlanIndex(selectedPlanIndex);
+                return selectedPlanIndex;
+            }).then((findResult) => {
+                if (findResult > 0){
+                    handleMainAppView('ProjectDetails');
+                }
+            }).catch(err => console.log(err));
+        }).catch(err => console.log(err));
     }
 
     function removeUserPlan(planId) {
@@ -59,11 +68,6 @@ function AppBody (props) {
         })
     }
 
-    /*
-    function updateUserPlans (newUserPlans) {
-        setUserPlans(newUserPlans);
-    }
-    */
     function savePlanChanges (planId, planUpdateObj) {
         console.log(planUpdateObj);
         putPlanUpdate(planId, planUpdateObj).then((res) => {

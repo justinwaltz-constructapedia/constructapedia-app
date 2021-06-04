@@ -1,4 +1,4 @@
-import React , {useState, useEffect} from 'react';
+import React , {useState, useEffect, useRef} from 'react';
 import SimpleCheckboxSection from './SimpleCheckboxSection.js';
 //import ProjectStepsSection from './ProjectStepsSection.js';
 import M from "materialize-css";
@@ -30,7 +30,7 @@ function ProjectEditingForm (props) {
     const [notesValue, setNotesValue] = useState("");
     //const [goalValue, setGoalValue] = useState(props.planDraft.goal);
     const [videoUrlValue,setVideoUrlValue] = useState("");
-    //const planId = props.userPlans[props.selectedPlanIndex];
+    const addMenuDropdown = useRef(null);
 
     const videoDisplays = props.userPlans[props.selectedPlanIndex].video_urls.map((url,i) => {
         return(
@@ -44,9 +44,11 @@ function ProjectEditingForm (props) {
             setNotesValue(props.userPlans[props.selectedPlanIndex].notes[0].contents)
         }
     },[props.userPlans, props.selectedPlanIndex])
+
     useEffect(() => {
         M.updateTextFields();
-    })
+        M.Collapsible.init(addMenuDropdown.current);
+    }, [])
 //does this need to be a separate function?
     function handleChange(event) {
         switch (event.target.id) {
@@ -89,11 +91,12 @@ function ProjectEditingForm (props) {
         }
         props.savePlanChanges(planId, changesObj);
     }
-
+    function addSubstep(){
+        console.log("substep")
+    }
     return (
-        <div className="container">
-            <div className="row">
-                <div className="col s12">
+        <div className="row">
+                <div className="col s9 offset-s1">
                     <div className="row">
                         <div className="input-field col s12">
                             <textarea id="notes_textarea"
@@ -119,7 +122,6 @@ function ProjectEditingForm (props) {
                             savePlanChanges={props.savePlanChanges}
                             listType="materials"/>
                     </div>
-
                     <div className="divider"></div>
                     <div className="row">
                         {props.userPlans[props.selectedPlanIndex].video_urls.length > 0 && videoDisplays}
@@ -142,10 +144,21 @@ function ProjectEditingForm (props) {
                         </div>
                     </div>
                     <div className="row center-align">
-                        <button className="btn waves-effect waves-light blue" type="button" name="action" onClick={()=> props.handleMainAppView('SearchResults')}>Import From Other Sites</button>
+                        <button className="btn waves-effect waves-light blue" type="button" name="action"
+                                onClick={()=> props.handleMainAppView('SearchResults')}>
+                                Import From Other Sites
+                        </button>
                     </div>
                 </div>
-            </div>
+                <div className="col s2 center-align">
+                    <h5 className="center-align">Add Menu</h5>
+                    <div className="divider"></div>
+                    <div className="row">
+                        <a className="waves-effect waves-blue btn-flat valign-wrapper">
+                            Substep<i className="material-icons right">add</i>
+                        </a>
+                    </div>
+                </div>
         </div>
     )
 }
@@ -174,4 +187,28 @@ projectToChange.title = titleValue;
         <label htmlFor="notes_textarea">Project Goal</label>
     </div>
 </div>
- */
+
+<div className="col s11">
+    <ul ref={addMenuDropdown} className="collapsible">
+        <li>
+            <div className="collapsible-header">Substep<i className="material-icons">arrow_drop_down</i></div>
+            <div className="collapsible-body">
+                <span>Lorem ipsum dolor sit amet.</span>
+                <button className="btn-floating waves-effect waves-light blue" type="button" name="action"
+                        onClick={addSubstep}><i className="material-icons">add</i></button>
+            </div>
+        </li>
+        <li>
+            <div className="collapsible-header">Tools List<i className="material-icons">arrow_drop_down</i></div>
+            <div className="collapsible-body"><span>Lorem ipsum dolor sit amet.</span>
+                <i className="material-icons">add_circle</i>
+            </div>
+        </li>
+        <li>
+            <div className="collapsible-header">Materials List<i className="material-icons">arrow_drop_down</i></div>
+            <div className="collapsible-body"><span>Lorem ipsum dolor sit amet.</span></div>
+        </li>
+    </ul>
+</div>
+
+*/
