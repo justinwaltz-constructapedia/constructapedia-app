@@ -31,6 +31,7 @@ function ProjectEditingForm (props) {
     //const [goalValue, setGoalValue] = useState(props.planDraft.goal);
     const [videoUrlValue,setVideoUrlValue] = useState("");
     const addMenuDropdown = useRef(null);
+    const addModal = useRef(null);
 
     const videoDisplays = props.userPlans[props.selectedPlanIndex].video_urls.map((url,i) => {
         return(
@@ -46,8 +47,14 @@ function ProjectEditingForm (props) {
     },[props.userPlans, props.selectedPlanIndex])
 
     useEffect(() => {
+        const addModalOptions = {
+            opacity: 0,
+            preventScrolling: false,
+            dismissable: false
+        }
         M.updateTextFields();
-        M.Collapsible.init(addMenuDropdown.current);
+        M.Collapsible.init(addMenuDropdown.current, addModalOptions);
+        M.Modal.init(addModal.current);
     }, [])
 //does this need to be a separate function?
     function handleChange(event) {
@@ -154,9 +161,18 @@ function ProjectEditingForm (props) {
                     <h5 className="center-align">Add Menu</h5>
                     <div className="divider"></div>
                     <div className="row">
-                        <a className="waves-effect waves-blue btn-flat valign-wrapper">
+                        <a href="add-modal" className="waves-effect waves-blue btn-flat modal-trigger valign-wrapper">
                             Substep<i className="material-icons right">add</i>
                         </a>
+                    </div>
+                </div>
+                <div ref={addModal} id="add-modal" className="modal">
+                    <div className="modal-content">
+                        <h4>Modal Header</h4>
+                        <p>A bunch of text</p>
+                    </div>
+                    <div className="modal-footer">
+                        <a href="#!" class="modal-close waves-effect waves-blue btn-flat">Add</a>
                     </div>
                 </div>
         </div>

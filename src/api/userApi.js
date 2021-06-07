@@ -10,7 +10,9 @@ function checkAccessToken () {
             if (currentDate - tokenCreatedDate > 345600000) {
                 const refresh_token = localStorage.getItem('refresh_token');
 
-                fetch( `https://constructapediawebapi.herokuapp.com/authorization/refresh`, {
+                fetch( `https://constructapediawebapi.herokuapp.com/authentication/refresh`, {
+                    //mode:mode: 'no-cors',
+                    method: "POST",
                     headers: {
                       "Content-Type": "application/json",
                       "Authorization": `Bearer ${refresh_token}`
@@ -18,26 +20,24 @@ function checkAccessToken () {
                 } )
                 .then( (httpResponse) => {
                   if (httpResponse.ok) {
+                    console.log(httpResponse)
                     return httpResponse.json();
                   } else {
                     response = Promise.reject("Fetch did not succeed");
                   }
                 } )
                 .then( (json) => {
-                    const newAccessToken = json.result;
-                    console.log(newAccessToken)
+                    const newAccessToken = json.access_token;
                     localStorage.setItem('access_token',newAccessToken);
                     console.log(newAccessToken)
+                    access_token = newAccessToken;
                     response = true;
+                    resolve(response);
                   })
                 .catch(err => console.log(err));
+                //reject(response)
             } else {
                 response = true;
-            }
-            if (response === true) {
-                resolve(response);
-            } else {
-                reject(response);
             }
         })
 }
@@ -47,6 +47,7 @@ function getUserData () {
     console.log(checkAccessToken)
     if (access_token) {
         return checkAccessToken().then( (res) => {
+            console.log(res)
             if (res === true) {
                 return fetch( `https://constructapediawebapi.herokuapp.com/user/${user_id}`, {
                     headers: {
