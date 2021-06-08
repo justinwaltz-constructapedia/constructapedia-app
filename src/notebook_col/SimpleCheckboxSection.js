@@ -87,8 +87,10 @@ function SimpleCheckboxSection (props) {
                     <h5>{displayListType}</h5>
                     {checkboxElements}
                     <div>
-                        <button id={"add-"+props.listType+"-btn"}
-                            onClick={addNewChecklistItem} className="btn-floating btn-small waves-effect waves-light blue" type="button"><i className="material-icons">add</i></button>
+                        <button id={"add-"+props.listType+"-btn"} className="btn-floating btn-small waves-effect waves-light blue" type="button"
+                                onClick={addNewChecklistItem}>
+                                <i className="material-icons">add</i>
+                        </button>
                         <div className="input-field inline">
                             <input id={"new_" + props.listType} type="text" className="validate" value={newItemValue} onChange={(e) => handleInputChange(e)}/>
                             <label htmlFor={"new_" + props.listType}>Add New {displayListType}</label>
