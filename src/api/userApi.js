@@ -45,6 +45,7 @@ function checkAccessToken () {
 */
 function getUserData () {
     console.log(access_token)
+
     if (access_token) {
         /*
         return checkAccessToken().then( (res) => {
@@ -70,6 +71,7 @@ function getUserData () {
                     return json.result;
                   })
                 .catch(err => console.log(err));
+
     }
     /*
         })

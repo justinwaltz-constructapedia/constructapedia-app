@@ -22,6 +22,7 @@ class App extends React.Component {
         };
     }
     componentDidMount() {
+        //this.handleLogout()
         console.log(localStorage)
         const rememberMe = localStorage.getItem('rememberMe') === 'true';
         if (rememberMe){
@@ -58,7 +59,7 @@ class App extends React.Component {
         const isLoggedIn = this.state.isLoggedIn;
         const colorTheme = this.state.selectedColorTheme
 //Probably need to refactor so there is only one render method
-        //this.handleLogout()
+
         if (!isLoggedIn){
             return (
                 <div className= {colorTheme.primary}>

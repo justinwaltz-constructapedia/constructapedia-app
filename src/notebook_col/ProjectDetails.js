@@ -23,6 +23,7 @@ function ProjectDetails (props) {
         )
     })
     return (
+
         <div className="col s12">
             <div className="nav-wrapper">
                 <div className="row blue">
