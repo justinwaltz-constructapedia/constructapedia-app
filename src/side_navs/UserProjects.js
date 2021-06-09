@@ -20,8 +20,8 @@ function UserProjects(props) {
                 <ul ref={projectsDropdown} className="collapsible collapsible-accordion">
                     {props.userPlans.length > 0 &&
                         props.userPlans.map((plan) => {
-                                const subPlans = plan.sub_plans.map((subPlan) => {
-                                    return <li><a href="#subPlan" key={subPlan.title}>{subPlan.title}</a></li>
+                                const subPlans = plan.sub_plans.map((subPlan, i) => {
+                                    return <li key={subPlan.title + i}><a href="#subPlan">{subPlan.title}</a></li>
                                 })
                                 return (
                                     <li key={plan.id} className="bold">
