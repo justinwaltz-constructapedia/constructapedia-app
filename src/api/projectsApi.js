@@ -1,9 +1,10 @@
 //Gets access_token and refreshes if needed
-const access_token = localStorage.getItem('access_token');
+
 //const refresh_token = localStorage.getItem('refresh_token')
 
 //API call to create a new plan in DB, title is required
 function postPlan(plan) {
+    const access_token = localStorage.getItem('access_token');
     return fetch( `https://constructapediawebapi.herokuapp.com/plan/`, {
         method:"POST",
         headers: {
@@ -75,6 +76,7 @@ function getUserPlans() {
 //API call to update a single plan in DB, update object contains entire field(s) on the plan doc
 function putPlanUpdate(planId, planUpdateObj) {
     const access_token = localStorage.getItem('access_token');
+    console.log(access_token);
     console.log(planUpdateObj)
     return fetch( `https://constructapediawebapi.herokuapp.com/plan/${planId}`, {
         method: "PUT",
@@ -100,6 +102,7 @@ function putPlanUpdate(planId, planUpdateObj) {
 
 function deletePlan(planId) {
     const access_token = localStorage.getItem('access_token');
+    console.log(access_token)
     return fetch( `https://constructapediawebapi.herokuapp.com/plan/${planId}`, {
         method: "DELETE",
         headers: {
@@ -205,4 +208,5 @@ function putProjectUpdate(projectUpdateObj) {
     })
     .catch(err => console.log(err));
 }
+
  */

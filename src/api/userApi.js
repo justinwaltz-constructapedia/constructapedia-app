@@ -45,7 +45,14 @@ function checkAccessToken () {
 */
 function getUserData () {
     console.log(access_token)
-    return fetch( `https://constructapediawebapi.herokuapp.com/user/${user_id}`, {
+
+    if (access_token) {
+        /*
+        return checkAccessToken().then( (res) => {
+            console.log(res)
+            if (res === true) {
+        */
+                return fetch( `https://constructapediawebapi.herokuapp.com/user/${user_id}`, {
                     headers: {
                       "Content-Type": "application/json",
                       "Authorization": `Bearer ${access_token}`
@@ -64,6 +71,15 @@ function getUserData () {
                     return json.result;
                   })
                 .catch(err => console.log(err));
+
+    }
+    /*
+        })
+
+    } else {
+        return Promise.reject("no access_token");
+    }
+    */
 }
 
 function putUserUpdate (dataToUpdate) {
