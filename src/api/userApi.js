@@ -1,6 +1,7 @@
 //Gets access_token and refreshes if needed
 const user_id = localStorage.getItem('user_id');
 let access_token = localStorage.getItem('access_token');
+/*
 function checkAccessToken () {
         return new Promise((resolve,reject) => {
             const currentDate = new Date();
@@ -41,15 +42,10 @@ function checkAccessToken () {
             }
         })
 }
-
+*/
 function getUserData () {
     console.log(access_token)
-    console.log(checkAccessToken)
-    if (access_token) {
-        return checkAccessToken().then( (res) => {
-            console.log(res)
-            if (res === true) {
-                return fetch( `https://constructapediawebapi.herokuapp.com/user/${user_id}`, {
+    return fetch( `https://constructapediawebapi.herokuapp.com/user/${user_id}`, {
                     headers: {
                       "Content-Type": "application/json",
                       "Authorization": `Bearer ${access_token}`
@@ -68,11 +64,6 @@ function getUserData () {
                     return json.result;
                   })
                 .catch(err => console.log(err));
-            }
-        })
-    } else {
-        return Promise.reject("no access_token");
-    }
 }
 
 function putUserUpdate (dataToUpdate) {

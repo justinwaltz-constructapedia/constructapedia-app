@@ -114,7 +114,7 @@ function ProjectEditingForm (props) {
                         </div>
                     </div>
                     <div className="row center-align">
-                        <button className="btn waves-effect waves-light blue" type="button" onClick={saveEntirePlan}>Save</button>
+                        <button className="btn waves-effect waves-light blue" type="button" onClick={saveEntirePlan}><i className="large material-icons">insert_chart</i></button>
                     </div>
                     <div className="divider"></div>
                     <div className="row">

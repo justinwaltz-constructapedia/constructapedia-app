@@ -11,8 +11,10 @@ function SimpleCheckboxSection (props) {
         const value = target.value;
         if (target.type === 'checkbox'){
             const newChecks = [];
-            for (var i = 0; i < props.userPlans.checks.length; i++) {
-                newChecks[i] = props.userPlans.checks[i]
+            if (props.userPlans.checks && props.userPlans.checks.length) {
+              for (var i = 0; i < props.userPlans.checks.length; i++) {
+                  newChecks[i] = props.userPlans.checks[i]
+              }
             }
             const checkedAttribute = target.checked;
             const indexOfCheckToChange = props.userPlans[props.selectedPlanIndex].findIndex(check => check.text_value === value)
