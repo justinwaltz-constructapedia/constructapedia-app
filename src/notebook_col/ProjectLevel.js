@@ -110,7 +110,8 @@ function ProjectLevel (props) {
                             <textarea id="notes_textarea"
                                 className="materialize-textarea"
                                 value={notesValue}
-                                onChange={handleChange}/>
+                                onChange={handleChange}
+                                onKeyDown={(e)=>{if(e.keyCode===13){saveEntirePlan()}}}/>
                             <label htmlFor="notes_textarea">Project Notes</label>
                         </div>
                     </div>
@@ -119,16 +120,20 @@ function ProjectLevel (props) {
                     </div>
                     <div className="divider"></div>
                     <div className="row">
+                        <form>
                         <SimpleCheckboxSection
                             userPlans={props.userPlans}
                             selectedPlanIndex={props.selectedPlanIndex}
                             savePlanChanges={props.savePlanChanges}
                             listType="tools"/>
+                        </form>
+                        <form>
                         <SimpleCheckboxSection
                             userPlans={props.userPlans}
                             selectedPlanIndex={props.selectedPlanIndex}
                             savePlanChanges={props.savePlanChanges}
                             listType="materials"/>
+                        </form>
                     </div>
                     <div className="divider"></div>
                     <div className="row">
