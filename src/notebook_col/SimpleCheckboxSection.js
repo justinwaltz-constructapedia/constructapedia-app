@@ -35,6 +35,7 @@ function SimpleCheckboxSection (props) {
             const newChecks = [];
             for (var i = 0; i < currentPlanChecks.length; i++) {
                 newChecks[i] = currentPlanChecks[i]
+
             }
             const checkedAttribute = target.checked;
             const indexOfCheckToChange = currentPlanChecks.findIndex(check => check.text_value === target.name)
