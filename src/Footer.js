@@ -2,11 +2,11 @@ import React from 'react';
 
 function Footer(props) {
     return (
-        <footer className="page-footer blue">
-          <div className="container">
-            <div className="row">
-              <div className="col l6 s12">
-                <h5 className="white-text">Company Bio</h5>
+        <footer className="page-footer blue-grey darken-4 blue-grey-text text-lighten-5">
+          <div className="container blue-grey darken-4 blue-grey-text text-lighten-5">
+            <div className="row blue-grey darken-4 blue-grey-text text-lighten-5">
+              <div className="col l6 s12 blue-grey darken-4 blue-grey-text text-lighten-5">
+                <h5 className="blue-grey darken-4 blue-grey-text text-lighten-5">Company Bio</h5>
                 <p className="grey-text text-lighten-4">We are a team of college students working on this project like it's our full time job. Any amount would help support and continue development on this project and is greatly appreciated.</p>
 
 

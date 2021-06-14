@@ -22,8 +22,8 @@ function Projects(props){
     }
 
     return (
-        <ul id="project-nav" ref={projectNav} className="sidenav sidenav-fixed z-depth-0">
-            <li className="center-align blue"><span id="logo-span" className="white-text"><b>&#123;C&#125;</b></span></li>
+        <ul id="project-nav" ref={projectNav} className="sidenav sidenav-fixed z-depth-0 blue-grey darken-4 blue-grey-text text-lighten-5">
+            <li className="center-align blue-grey darken-4 blue-grey-text text-lighten-5"><b>Construct-A-Network</b></li>
             {view === 'projects'
                 ? <UserProjects
                     name={props.user.name}

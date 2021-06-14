@@ -103,10 +103,12 @@ function ProjectLevel (props) {
 
     return (
         <div>
-            <div className="row">
-                <div className="col s9 offset-s1">
+            <div className="row blue-grey darken-4 blue-grey-text text-lighten-5">
+                <div className="col s9 offset-s1 blue-grey darken-4 blue-grey-text text-lighten-5">
                     <div className="row">
-                        <div className="input-field col s12">
+
+                        <h5>Note Pad</h5>
+                        <div className="input-field col s12 ">
                             <textarea id="notes_textarea"
                                 className="materialize-textarea"
                                 value={notesValue}
@@ -158,13 +160,13 @@ function ProjectLevel (props) {
                     </div>
                 </div>
                 <div className="col s2 center-align">
-                    <h5 className="center-align">Add Menu</h5>
-                    <div className="divider"></div>
-                    <div className="row">
+                    <h5 className="center-align"><b>&#123;C&#125;</b></h5>
+
+                    <div className="row blue-grey darken-4 blue-grey-text text-lighten-5">
                         <a id="add-substep-btn" href="#add-modal"
-                            className="waves-effect waves-blue btn-flat valign-wrapper"
+                            className="waves-effect waves-blue btn valign-wrapper blue-grey darken-3 blue-grey-text text-lighten-5"
                             onClick={(e)=> openAddModal(e)}>
-                            Substep<i className="material-icons right">add</i>
+                            Work Step<i className="material-icons left">add</i>
                         </a>
                     </div>
                 </div>

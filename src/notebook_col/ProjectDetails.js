@@ -8,7 +8,7 @@ function ProjectDetails (props) {
             <div key={subStep.title + i} className="row">
                 <div className="nav-wrapper">
                     <div className="row blue lighten-3">
-                        <div className="col s12">
+                        <div className="col s12 blue-grey darken-4 blue-grey-text text-lighten-5">
                             <h6 className="center-align">{subStep.title}</h6>
                         </div>
                     </div>
@@ -24,19 +24,19 @@ function ProjectDetails (props) {
     })
     return (
 
-        <div className="col s12">
+        <div className="col s12 blue-grey darken-4 blue-grey-text text-lighten-5">
             <div className="nav-wrapper">
-                <div className="row blue">
+                <div className="row blue-grey darken-4 blue-grey-text text-lighten-5">
                     <div className="col s12">
-                        <h5 className="center-align white-text header">{props.userPlans[props.selectedPlanIndex].title}</h5>
+                        <h5 className="blue-grey darken-4 blue-grey-text text-lighten-5 header">{props.userPlans[props.selectedPlanIndex].title}</h5>
                     </div>
                 </div>
             </div>
             <div className="row">
-                <div className="col s5 offset-s6">
-                    <button className="btn waves-effect waves-light blue right" type="button" name="action"
-                            onClick={()=> props.handleMainAppView('SearchResults')}>
-                            Import From Other Sites
+                <div className="col s12">
+                    <button className="btn waves-effect waves-light blue-grey darken-3 blue-grey-text text-lighten-5" type="button" name="action"
+                            onClick={()=> props.handleMainAppView('SearchResults')}><i className="material-icons left tiny">search</i>
+                            Constructapedia
                     </button>
                 </div>
             </div>
