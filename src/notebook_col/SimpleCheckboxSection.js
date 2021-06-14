@@ -3,27 +3,36 @@ import React, {useState, useEffect} from 'react';
 function SimpleCheckboxSection (props) {
     const [newItemValue, setNewItemValue] = useState("");
     const [checkboxes, setCheckboxes] = useState([]);
+    const [checksObjs, setChecksObjs] = useState([]);
     const checkboxElements = makeListOfCheckboxElements(props.userPlans[props.selectedPlanIndex].checks);
     const displayListType = props.listType.trim().replace(/^\w/, (c) => c.toUpperCase());
 
     useEffect(() => {
-        const checkboxesToSet = props.userPlans[props.selectedPlanIndex].checks
-        setCheckboxes(checkboxesToSet.reduce(
+        const checksToSet = props.userPlans[props.selectedPlanIndex].checks
+        setCheckboxes(checksToSet.reduce(
             (options, option) => ({
                 ...options,
                 [option.text_value]:option.is_complete
             }),
             {}
         ))
+        setChecksObjs(checksToSet.reduce(
+            (options, option) => ({
+                ...options,
+                [option.text_value]:{quantity: option.quantity, unit_of_measure: option.unit_of_measure}
+            }),
+            {}
+        ))
+        console.log(checksObjs);
     }, [props.userPlans, props.selectedPlanIndex]);
-    function handleInputChange(event) {
+
+    function handleInputChange(event, index) {
         const target = event.target;
         const value = target.value;
+        const currentPlan = props.userPlans[props.selectedPlanIndex];
+        const { name } = target;
         if (target.type === 'checkbox'){
-            const { name } = target;
-            console.log(name);
             const updatedChecks = (prevCheckboxes) => {
-                console.log(prevCheckboxes)
                 const newChecks = {
                     ...prevCheckboxes,
                     [name]: !prevCheckboxes[name]
@@ -31,18 +40,38 @@ function SimpleCheckboxSection (props) {
                 return newChecks
             }
             setCheckboxes(prevCheckboxes => updatedChecks(prevCheckboxes))
-            const currentPlanChecks = props.userPlans[props.selectedPlanIndex].checks
+            const currentPlanChecks = currentPlan.checks
             const newChecks = [];
             for (var i = 0; i < currentPlanChecks.length; i++) {
                 newChecks[i] = currentPlanChecks[i]
-
             }
             const checkedAttribute = target.checked;
+            //could be simplified with index parameter now
             const indexOfCheckToChange = currentPlanChecks.findIndex(check => check.text_value === target.name)
-            console.log(newChecks,checkedAttribute,indexOfCheckToChange)
             newChecks[indexOfCheckToChange].is_complete = checkedAttribute;
-            console.log(newChecks)
-            props.savePlanChanges(props.userPlans[props.selectedPlanIndex].id, {checks:newChecks});
+            props.savePlanChanges(currentPlan.id, {checks:newChecks});
+        } else if (target.id.includes("quantity")) {
+            const itemToUpdate = currentPlan.checks[index];
+            console.log(itemToUpdate, value);
+            const updatedChecksObjs = (prevChecksObjs) => {
+                const newChecksObjs = {
+                    ...prevChecksObjs,
+                    [name]: {quantity:value, unit_of_measure:prevChecksObjs[name].unit_of_measure}
+                }
+                return newChecksObjs
+            }
+            setChecksObjs(prevCheckboxes => updatedChecksObjs(prevCheckboxes))
+        } else if (target.id.includes("unit")) {
+            const itemToUpdate = currentPlan.checks[index];
+            console.log(itemToUpdate, value);
+            const updatedChecksObjs = (prevChecksObjs) => {
+                const newChecksObjs = {
+                    ...prevChecksObjs,
+                    [name]: {quantity:prevChecksObjs[name].quantity, unit_of_measure:value}
+                }
+                return newChecksObjs
+            }
+            setChecksObjs(prevCheckboxes => updatedChecksObjs(prevCheckboxes))
         } else {
             setNewItemValue(value)
         }
@@ -73,14 +102,18 @@ function SimpleCheckboxSection (props) {
                                         <div className="input-field no-margin no-padding">
                                             <input id={"quantity"+i} type="number"
                                                 className="validate no-margin no-padding"
-                                                value={props.userPlans[props.selectedPlanIndex].checks[i]}
+                                                value={listItem.quantity}
+                                                onChange={(e)=>handleInputChange(e,i)}
                                                 />
-                                            <label htmlFor={"quantity"+i}>Need</label>
+                                            <label htmlFor={"quantity"+i}>Quan.</label>
                                         </div>
                                     </div>
                                     <div className="col s4">
                                         <div className="input-field no-margin no-padding">
-                                            <input id={"unit"+i} type="text" className="validate no-margin no-padding"/>
+                                            <input id={"unit"+i} type="text"
+                                                className="validate no-margin no-padding"
+                                                value={listItem.unit_of_measure}
+                                                onChange={(e)=>handleInputChange(e,i)}/>
                                             <label htmlFor={"unit"+i}>Unit</label>
                                         </div>
                                     </div>
