@@ -14,12 +14,12 @@ function WebpageViewer (props) {
         </div>
         <div className="divider"></div>
         <div id="notes_section" className="row">
-            <form className="col s12" onSubmit={(e)=> {
+            <form className="col s12 blue-grey darken-4 blue-grey-text text-lighten-5" onSubmit={(e)=> {
                     e.preventDefault();
                     saveNotes(notesValue);
                 }}>
                 <div className="row section">
-                    <div className="input-field col s12">
+                    <div className="input-field col s12 blue-grey darken-4 blue-grey-text text-lighten-5">
                         <i className="material-icons prefix">mode_edit</i>
                         <textarea id="display_notes" className="materialize-textarea" value={notesValue} onChange={(e)=> setNotesValue(e.target.value)}></textarea>
                         <label htmlFor="display_notes">Notes</label>

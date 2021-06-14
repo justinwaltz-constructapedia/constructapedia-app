@@ -4,7 +4,7 @@ function Header (props) {
     return (
         <header>
             <nav className="top-nav black z-depth-0">
-                <div className="nav-wrapper">
+                <div className="nav-wrapper blue-grey darken-4 blue-grey-text text-lighten-5">
                     <a href="index.html" className="brand-logo center">Contruct-A-Project</a>
                     <ul className="right">
                         <li><a href="#slide-out" data-target="slide-out" className="sidenav-trigger white-text show-on-large"><i className="large material-icons">account_circle</i></a></li>

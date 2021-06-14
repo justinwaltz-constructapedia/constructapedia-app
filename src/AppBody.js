@@ -90,7 +90,7 @@ function AppBody (props) {
     }
 
     return (
-        <main id="main-app-container" className="row">
+        <main id="main-app-container" className="row blue-grey darken-4 blue-grey-text text-lighten-5">
             <Projects
                 user={props.user}
                 userPlans={userPlans}
