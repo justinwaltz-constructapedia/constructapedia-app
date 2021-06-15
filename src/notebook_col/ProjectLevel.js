@@ -106,19 +106,20 @@ function ProjectLevel (props) {
         <div>
             <div className="row blue-grey darken-4 blue-grey-text text-lighten-5">
                 <div className="col s9 offset-s1 blue-grey darken-4 blue-grey-text text-lighten-5">
+                    <div className="divider"></div>
                     <div className="row">
                         <h5>Note Pad</h5>
                         <div className="input-field col s12 ">
                             <textarea id="notes_textarea"
-                                className="materialize-textarea"
+                                className="materialize-textarea blue-grey darken-4 blue-grey-text text-lighten-5"
                                 value={notesValue}
                                 onChange={handleChange}
                                 onKeyDown={(e)=>{if(e.keyCode===13){saveEntirePlan()}}}/>
+                            <label htmlFor="notes_textarea">Note Pad</label>
+                            <button className="btn-floating waves-effect waves-light blue-grey darken-3 blue-grey-text text-lighten-5 left" type="button" onClick={saveEntirePlan}><i className="material-icons">save</i></button>
                         </div>
                     </div>
-                    <div className="row center-align">
-                        <button className="btn waves-effect waves-light blue" type="button" onClick={saveEntirePlan}>Save</button>
-                    </div>
+
                     <div className="divider"></div>
                     <div className="row">
                         <form>
