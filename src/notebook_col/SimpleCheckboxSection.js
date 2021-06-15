@@ -1,8 +1,15 @@
 import React, {useState, useEffect} from 'react';
 
 function SimpleCheckboxSection (props) {
+    const initialCheckboxes = props.userPlans[props.selectedPlanIndex].checks.reduce(
+        (options, option) => ({
+            ...options,
+            [option.text_value]:option.is_complete
+        }),
+        {}
+    )
     const [newItemValue, setNewItemValue] = useState("");
-    const [checkboxes, setCheckboxes] = useState([]);
+    const [checkboxes, setCheckboxes] = useState(initialCheckboxes);
     const [checksObjs, setChecksObjs] = useState([]);
     const checkboxElements = makeListOfCheckboxElements(props.userPlans[props.selectedPlanIndex].checks);
     const displayListType = props.listType.trim().replace(/^\w/, (c) => c.toUpperCase());
@@ -23,8 +30,7 @@ function SimpleCheckboxSection (props) {
             }),
             {}
         ))
-        console.log(checksObjs);
-    }, [props.userPlans, props.selectedPlanIndex, checksObjs]);
+    }, [props.userPlans, props.selectedPlanIndex]);
 
     function handleInputChange(event, index) {
         const target = event.target;
@@ -103,18 +109,18 @@ function SimpleCheckboxSection (props) {
                                             <input id={"quantity"+i} type="number"
                                                 className="validate no-margin no-padding"
                                                 value={listItem.quantity}
+                                                placeholder="Need"
                                                 onChange={(e)=>handleInputChange(e,i)}
                                                 />
-                                            <label className="active" htmlFor={"quantity"+i}>Quan.</label>
                                         </div>
                                     </div>
                                     <div className="col s4">
                                         <div className="input-field no-margin no-padding">
                                             <input id={"unit"+i} type="text"
                                                 className="validate no-margin no-padding"
+                                                placeholder="Unit"
                                                 value={listItem.unit_of_measure}
                                                 onChange={(e)=>handleInputChange(e,i)}/>
-                                            <label className="active" htmlFor={"unit"+i}>Unit</label>
                                         </div>
                                     </div>
                                 </div>
@@ -176,16 +182,17 @@ function SimpleCheckboxSection (props) {
                     <h5>{displayListType}</h5>
                     {checkboxElements}
                     <div>
-                        <button id={"add-"+props.listType+"-btn"} className="btn-floating btn-small waves-effect waves-light blue" type="button"
+                        <button id={"add-"+props.listType+"-btn-" + props.userPlans[props.selectedPlanIndex].title}
+                                className="btn-floating btn-small waves-effect waves-light blue" type="button"
                                 onClick={addNewChecklistItem}>
                                 <i className="material-icons">add</i>
                         </button>
                         <div className="input-field inline">
-                            <input id={"new_" + props.listType} type="text" className="validate"
+                            <input id={"new_" + props.listType  + "_" + props.userPlans[props.selectedPlanIndex].title} type="text" className="validate"
                                 value={newItemValue}
                                 onChange={(e) => handleInputChange(e)}
-                                onKeyDown={(e)=>{if(e.keyCode===13){addNewChecklistItem()}}}/>
-                            <label htmlFor={"new_" + props.listType}>Add New {displayListType}</label>
+                                onKeyDown={(e)=>{if(e.keyCode===13){addNewChecklistItem()}}}
+                                placeholder={"Add New " + displayListType}/>
                         </div>
                     </div>
                 </div>
@@ -197,4 +204,7 @@ export default SimpleCheckboxSection;
 
 /*
 <span className="helper-text" data-error="wrong" data-success="right">Helper text</span>
- */
+<label className="active" htmlFor={"quantity"+i}>Quan.</label>
+<label className="active" htmlFor={"unit"+i}>Unit</label>
+<label htmlFor={"new_" + props.listType}></label>
+*/
