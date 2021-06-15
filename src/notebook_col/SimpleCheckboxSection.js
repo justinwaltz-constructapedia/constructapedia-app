@@ -24,7 +24,7 @@ function SimpleCheckboxSection (props) {
             {}
         ))
         console.log(checksObjs);
-    }, [props.userPlans, props.selectedPlanIndex]);
+    }, [props.userPlans, props.selectedPlanIndex, checksObjs]);
 
     function handleInputChange(event, index) {
         const target = event.target;
@@ -105,7 +105,7 @@ function SimpleCheckboxSection (props) {
                                                 value={listItem.quantity}
                                                 onChange={(e)=>handleInputChange(e,i)}
                                                 />
-                                            <label htmlFor={"quantity"+i}>Quan.</label>
+                                            <label className="active" htmlFor={"quantity"+i}>Quan.</label>
                                         </div>
                                     </div>
                                     <div className="col s4">
@@ -114,7 +114,7 @@ function SimpleCheckboxSection (props) {
                                                 className="validate no-margin no-padding"
                                                 value={listItem.unit_of_measure}
                                                 onChange={(e)=>handleInputChange(e,i)}/>
-                                            <label htmlFor={"unit"+i}>Unit</label>
+                                            <label className="active" htmlFor={"unit"+i}>Unit</label>
                                         </div>
                                     </div>
                                 </div>
@@ -134,7 +134,7 @@ function SimpleCheckboxSection (props) {
                             return (
                                 <div key={props.listType + i} className="row valign-wrapper">
                                     <div className="col s12 left-align">
-                                        <label className="left-align">
+                                        <label className="left-align active">
                                             <input type="checkbox"
                                                 className="filled-in"
                                                 name={listItem.text_value}
