@@ -13,8 +13,12 @@ function SearchBar (props) {
             <div className="row">
                 <div className="col s12 center-align">
                     <div className="input-field inline">
-                        <input id="search_input" type="text" value={searchValue} className="validate" onChange={(e)=> setSearchValue(e.target.value)} />
-                        <label className="active" htmlFor="search_input">Search for a Project</label>
+                        <input id="search_input" type="text"
+                                className="validate"
+                                placeholder="Search for a Project"
+                                value={searchValue}
+                                onChange={(e)=> setSearchValue(e.target.value)} />
+
                     </div>
                     <button className="btn-small waves-effect waves-light blue" type="submit" name="action"><i className="material-icons">arrow_forward</i></button>
                 </div>
@@ -23,3 +27,6 @@ function SearchBar (props) {
 }
 
 export default SearchBar;
+/*
+<label className="active" htmlFor="search_input"></label>
+ */
