@@ -136,20 +136,20 @@ function ProjectLevel (props) {
                         </form>
                     </div>
                     <div className="divider"></div>
-                    <div className="row">
+                    <div className="row blue-grey darken-4 blue-grey-text text-lighten-5">
                         {props.userPlans[props.selectedPlanIndex].video_urls.length > 0 && videoDisplays}
                     </div>
-                    <div className= "row">
+                    <div className= "row blue-grey darken-4 blue-grey-text text-lighten-5">
                         <button id="add-video-btn"
                                 onClick={(e)=>addNewItem(e.currentTarget.id)}
-                                className="btn-floating btn-small waves-effect waves-light blue"
+                                className="btn-floating btn-small waves-effect waves-light blue-grey darken-3 blue-grey-text text-lighten-5"
                                 type="button">
                             <i className="material-icons">add</i>
                         </button>
-                        <div className="input-field inline">
+                        <div className="input-field inline blue-grey darken-4 blue-grey-text text-lighten-5">
                             <input id="new_video"
                                 type="text"
-                                className="validate"
+                                className="validate blue-grey darken-4 blue-grey-text text-lighten-5"
                                 value={videoUrlValue}
                                 placeholder="Video website address (URL)"
                                 onChange={(e) => setVideoUrlValue(e.target.value)}/>

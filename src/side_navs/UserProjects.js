@@ -15,8 +15,10 @@ function UserProjects(props) {
             <div className="col s12">
                 <div className="row center-align">
                     <h5>{props.name}'s Projects</h5>
-                    <button className="btn waves-effect waves-light blue" onClick={()=>{props.changeView('search')}}><i className="material-icons left">add</i>New Project</button>
+                    <button className="btn waves-effect waves-light blue-grey darken-3 blue-grey-text text-lighten-5" onClick={()=>{props.changeView('search')}}><i className="material-icons left">add</i>Create-A-Project</button>
                 </div>
+                <div className="divider"></div>
+                <h5>Working Project</h5>
                 <ul ref={projectsDropdown} className="collapsible collapsible-accordion">
                     {props.userPlans.length > 0 &&
                         props.userPlans.map((plan) => {

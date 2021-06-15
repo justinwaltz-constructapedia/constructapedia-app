@@ -40,7 +40,7 @@ function SearchResults(props) {
         <div className="col s12">
             <div className="app-column">
                 <div className = "row">
-                    <button type="button" className="waves-effect waves-blue btn-flat" onClick={()=>{props.handleMainAppView('ProjectDetails')}}><i className="material-icons left">arrow_back</i>Back to Project</button>
+                    <button type="button" className="waves-effect waves-blue btn-flat blue-grey darken-4 blue-grey-text text-lighten-5 " onClick={()=>{props.handleMainAppView('ProjectDetails')}}><i className="material-icons left blue-grey-text text-lighten-5">arrow_back</i>Back to Project</button>
                 </div>
                 <div className="row">
                     <div className="col s12">
