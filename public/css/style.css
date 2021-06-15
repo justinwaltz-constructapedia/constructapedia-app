@@ -34,7 +34,7 @@ header, main, footer {
 }
 .no-padding{
     padding: 0px 0px 0px 0px !important;
-
+}
 #search-modal {
     min-height: 90%;
     max-height: 90%;
