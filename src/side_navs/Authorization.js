@@ -90,11 +90,11 @@ function Authorization(props) {
                             }}>
                                 <div className="input-field">
                                     <input id="email" type="email" className="blue-grey darken-4 blue-grey-text text-lighten-5" onChange={(e)=> setEmail(e.target.value)} />
-                                    <label htmlFor="email">Email</label>
+                                    <label className="active" htmlFor="email">Email</label>
                                 </div>
                                 <div className="input-field">
                                     <input id="password" type="password" className="blue-grey darken-4 blue-grey-text text-lighten-5" onChange={(e)=> setPassword(e.target.value)} />
-                                    <label htmlFor="password">Password</label>
+                                    <label className="active" htmlFor="password">Password</label>
                                 </div>
                                 <p>
                                     <label>
@@ -122,19 +122,19 @@ function Authorization(props) {
                             }}>
                                 <div className="input-field">
                                     <input id="name" type="text" className="blue-grey darken-4 blue-grey-text text-lighten-5" onChange={(e)=> setName(e.target.value)} />
-                                    <label htmlFor="name">Name</label>
+                                    <label className="active" htmlFor="name">Name</label>
                                 </div>
                                 <div className="input-field">
                                     <input id="signUpEmail" type="email" className="blue-grey darken-4 blue-grey-text text-lighten-5" onChange={(e)=> setEmail(e.target.value)} />
-                                    <label htmlFor="signUpEmail">Email</label>
+                                    <label className="active" htmlFor="signUpEmail">Email</label>
                                 </div>
                                 <div className="input-field">
                                     <input id="signUpPassword" type="password" className="blue-grey darken-4 blue-grey-text text-lighten-5" onChange={(e)=> setPassword(e.target.value)} />
-                                    <label htmlFor="signUpPassword">Password</label>
+                                    <label className="active" htmlFor="signUpPassword">Password</label>
                                 </div>
                                 <div className="input-field">
                                     <input id="confirmPassword" type="password" className="blue-grey darken-4 blue-grey-text text-lighten-5" onChange={(e)=> setConfirmPassword(e.target.value)} />
-                                    <label htmlFor="confirmPassword">Confirm Password</label>
+                                    <label className="active" htmlFor="confirmPassword">Confirm Password</label>
                                 </div>
                                 <p>
                                     <label>
