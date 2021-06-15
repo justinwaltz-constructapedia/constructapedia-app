@@ -106,7 +106,6 @@ function ProjectLevel (props) {
             <div className="row blue-grey darken-4 blue-grey-text text-lighten-5">
                 <div className="col s9 offset-s1 blue-grey darken-4 blue-grey-text text-lighten-5">
                     <div className="row">
-
                         <h5>Note Pad</h5>
                         <div className="input-field col s12 ">
                             <textarea id="notes_textarea"
@@ -114,7 +113,7 @@ function ProjectLevel (props) {
                                 value={notesValue}
                                 onChange={handleChange}
                                 onKeyDown={(e)=>{if(e.keyCode===13){saveEntirePlan()}}}/>
-                            <label htmlFor="notes_textarea">Project Notes</label>
+                            <label htmlFor="notes_textarea active">Project Notes</label>
                         </div>
                     </div>
                     <div className="row center-align">
