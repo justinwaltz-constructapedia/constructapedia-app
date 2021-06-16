@@ -38,7 +38,8 @@ function ProjectLevel (props) {
     }, [])
 //does this need to be a separate function?
     function handleChange(event) {
-        switch (event.target.id) {
+        const eventId = event.target.id
+        switch (eventId) {
             case "notes_textarea":
                 setNotesValue(event.target.value);
                 break;
@@ -108,12 +109,12 @@ function ProjectLevel (props) {
                     <div className="divider"></div>
                     <div className="row">
                         <div className="input-field col s12 ">
+                            <h5>Note Pad</h5>
                             <textarea id="notes_textarea"
                                 className="materialize-textarea blue-grey darken-4 blue-grey-text text-lighten-5"
                                 value={notesValue}
-                                 onChange={handleChange}
+                                onChange={handleChange}
                                 onKeyDown={(e)=>{if(e.keyCode===13){saveEntirePlan()}}}/>
-                            <label htmlFor="notes_textarea">Note Pad</label>
                             <button className="btn-floating waves-effect waves-light blue-grey darken-3 blue-grey-text text-lighten-5 left" type="button" onClick={saveEntirePlan}><i className="material-icons">save</i></button>
                         </div>
                     </div>
@@ -173,8 +174,11 @@ function ProjectLevel (props) {
                 <div className="modal-content">
                     <h4>{addModalTitle}</h4>
                     <div className="input-field">
-                        <input id={"new_"+props.userPlans[props.selectedPlanIndex].title+addModalType} type="text" className="validate" value={addModalValue} onChange={(e) => handleChange(e)}/>
-                        <label htmlFor={"new_" + addModalType}>Name</label>
+                        <input type="text" placeholder="Title"
+                                id={"new_"+addModalType}
+                                className="validate"
+                                value={addModalValue}
+                                onChange={(e) => handleChange(e)}/>
                     </div>
                 </div>
                 <div className="modal-footer">

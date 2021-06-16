@@ -9,7 +9,19 @@ function UserProjects(props) {
     useEffect(() => {
         M.Collapsible.init(projectsDropdown.current);
     },[]);
-
+    function deleteSubPlan (subPlanTitle) {
+        const currentPlan = props.userPlans[props.selectedPlanIndex]
+        const currentSubPlans = currentPlan.sub_plans
+        const newSubPlans = [];
+        for (var i = 0; i < currentSubPlans.length; i++) {
+            newSubPlans[i] = currentSubPlans[i]
+        }
+        //could be simplified with index parameter now
+        const indexOfSubPlanToDelete = currentSubPlans.findIndex(subPlan => subPlan.title === subPlanTitle)
+        console.log(indexOfSubPlanToDelete);
+        newSubPlans.splice(indexOfSubPlanToDelete, 1);
+        props.savePlanChanges(currentPlan.id, {sub_plans:newSubPlans});
+    }
     return (
         <div className="row">
             <div className="col s12">
@@ -23,7 +35,13 @@ function UserProjects(props) {
                     {props.userPlans.length > 0 &&
                         props.userPlans.map((plan) => {
                                 const subPlans = plan.sub_plans.map((subPlan, i) => {
-                                    return <li key={subPlan.title + i}><a href="#subPlan">{subPlan.title}</a></li>
+                                    return (<li key={subPlan.title + i}>
+                                                <a href="#subPlan">
+                                                    {subPlan.title}
+                                                    <i className="material-icons right"
+                                                        onClick={()=>deleteSubPlan(subPlan.title)}>delete_forever</i>
+                                                </a>
+                                            </li>)
                                 })
                                 return (
                                     <li key={plan.id} className="bold">
