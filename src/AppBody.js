@@ -99,6 +99,7 @@ function AppBody (props) {
                 updateSelectedPlan={updateSelectedPlan}
                 addUserPlan={addUserPlan}
                 removeUserPlan={removeUserPlan}
+                savePlanChanges={savePlanChanges}
                 handleMainAppView={handleMainAppView}
             />
             {mainAppView === 'ProjectDetails' &&

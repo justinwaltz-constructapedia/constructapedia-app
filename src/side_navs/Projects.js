@@ -28,11 +28,13 @@ function Projects(props){
                 ? <UserProjects
                     name={props.user.name}
                     userPlans={props.userPlans}
+                    selectedPlanIndex={props.selectedPlanIndex}
                     changeView={changeView}
                     handleMainAppView={props.handleMainAppView}
                     updateSelectedPlan={props.updateSelectedPlan}
                     updateUserPlans={props.updateUserPlans}
-                    removeUserPlan={props.removeUserPlan}/>
+                    removeUserPlan={props.removeUserPlan}
+                    savePlanChanges={props.savePlanChanges}/>
                 : <NewProject
                     addUserPlan={props.addUserPlan}
                     changeView={changeView}
