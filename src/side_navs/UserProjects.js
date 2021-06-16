@@ -15,8 +15,10 @@ function UserProjects(props) {
             <div className="col s12">
                 <div className="row center-align">
                     <h5>{props.name}'s Projects</h5>
-                    <button className="btn waves-effect waves-light blue" onClick={()=>{props.changeView('search')}}><i className="material-icons left">add</i>New Project</button>
+                    <button className="btn waves-effect waves-light blue-grey darken-3 blue-grey-text text-lighten-5" onClick={()=>{props.changeView('search')}}><i className="material-icons left">add</i>Create-A-Project</button>
                 </div>
+                <div className="divider"></div>
+                <h5>Working Project</h5>
                 <ul ref={projectsDropdown} className="collapsible collapsible-accordion">
                     {props.userPlans.length > 0 &&
                         props.userPlans.map((plan) => {
@@ -28,12 +30,12 @@ function UserProjects(props) {
                                         <div className="collapsible-header">
                                             <h6 className="valign-wrapper" onClick={()=>props.updateSelectedPlan(plan.id)}>{plan.title}<i className="material-icons">chevron_right</i></h6>
                                         </div>
-                                        <div className="collapsible-body">
+                                        <div className="collapsible-body blue-grey darken-4 blue-grey-text text-lighten-5">
                                             <ul>
                                                 {subPlans}
                                                 <li>
-                                                    <button className="btn waves-effect waves-light blue" onClick={()=>{props.removeUserPlan(plan.id)}}>
-                                                            <i className="material-icons left">delete_forever</i>Delete Project</button>
+                                                    <button className="btn-flat waves-effect waves-light blue-grey darken-4 blue-grey-text text-lighten-5" onClick={()=>{props.removeUserPlan(plan.id)}}>
+                                                            <i className="material-icons left blue-grey darken-4 blue-grey-text text-darken-2">delete_forever</i></button>
                                                 </li>
                                             </ul>
                                         </div>

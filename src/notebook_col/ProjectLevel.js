@@ -11,7 +11,7 @@ function ProjectLevel (props) {
     const addModal = useRef(null);
     const [addModalTitle, setAddModalTitle] = useState("");
     const [addModalType, setAddModalType] = useState("");
-    const [addModalValue, setAddModalValue] = useState("");
+    const[addModalValue, setAddModalValue] = useState("");
 
     const videoDisplays = props.userPlans[props.selectedPlanIndex].video_urls.map((url,i) => {
         return(
@@ -35,7 +35,6 @@ function ProjectLevel (props) {
         }
         M.Collapsible.init(addMenuDropdown.current);
         M.Modal.init(addModal.current, addModalOptions);
-        M.updateTextFields();
     }, [])
 //does this need to be a separate function?
     function handleChange(event) {
@@ -108,12 +107,11 @@ function ProjectLevel (props) {
                 <div className="col s9 offset-s1 blue-grey darken-4 blue-grey-text text-lighten-5">
                     <div className="divider"></div>
                     <div className="row">
-                        <h5>Note Pad</h5>
                         <div className="input-field col s12 ">
                             <textarea id="notes_textarea"
                                 className="materialize-textarea blue-grey darken-4 blue-grey-text text-lighten-5"
                                 value={notesValue}
-                                onChange={handleChange}
+                                 onChange={handleChange}
                                 onKeyDown={(e)=>{if(e.keyCode===13){saveEntirePlan()}}}/>
                             <label htmlFor="notes_textarea">Note Pad</label>
                             <button className="btn-floating waves-effect waves-light blue-grey darken-3 blue-grey-text text-lighten-5 left" type="button" onClick={saveEntirePlan}><i className="material-icons">save</i></button>
@@ -138,24 +136,24 @@ function ProjectLevel (props) {
                         </form>
                     </div>
                     <div className="divider"></div>
-                    <div className="row">
+                    <div className="row blue-grey darken-4 blue-grey-text text-lighten-5">
                         {props.userPlans[props.selectedPlanIndex].video_urls.length > 0 && videoDisplays}
                     </div>
-                    <div className= "row">
+                    <div className= "row blue-grey darken-4 blue-grey-text text-lighten-5">
                         <button id="add-video-btn"
                                 onClick={(e)=>addNewItem(e.currentTarget.id)}
-                                className="btn-floating btn-small waves-effect waves-light blue"
+                                className="btn-floating btn-small waves-effect waves-light blue-grey darken-3 blue-grey-text text-lighten-5"
                                 type="button">
                             <i className="material-icons">add</i>
                         </button>
-                        <div className="input-field inline">
+                        <div className="input-field inline blue-grey darken-4 blue-grey-text text-lighten-5">
                             <input id="new_video"
                                 type="text"
-                                className="validate"
+                                className="validate blue-grey darken-4 blue-grey-text text-lighten-5"
                                 value={videoUrlValue}
                                 placeholder="Video website address (URL)"
-                                onChange={(e) => setVideoUrlValue(e.target.value)}
-                                onKeyDown={(e)=>{if(e.keyCode===13){addNewItem("add-video-btn")}}}/>
+                                onChange={(e) => setVideoUrlValue(e.target.value)}/>
+                            <label htmlFor="new_video">Add New Video</label>
                         </div>
                     </div>
                 </div>
@@ -175,13 +173,8 @@ function ProjectLevel (props) {
                 <div className="modal-content">
                     <h4>{addModalTitle}</h4>
                     <div className="input-field">
-                        <input id={"new_"+addModalType} type="text"
-                                className="validate"
-                                value={addModalValue}
-                                onChange={(e) => handleChange(e)}
-                                placeholder={"New " + addModalType}
-                                onKeyDown={(e)=>{if(e.keyCode===13){addNewItem("addModal-add-btn")}}}/>
-
+                        <input id={"new_"+props.userPlans[props.selectedPlanIndex].title+addModalType} type="text" className="validate" value={addModalValue} onChange={(e) => handleChange(e)}/>
+                        <label htmlFor={"new_" + addModalType}>Name</label>
                     </div>
                 </div>
                 <div className="modal-footer">
@@ -197,9 +190,3 @@ function ProjectLevel (props) {
 }
 
 export default ProjectLevel;
-/*
-<label className="active" htmlFor="notes_textarea">Project Notes</label>
-<label htmlFor="new_video">Add New Video</label>
-<label className="active" htmlFor={"new_" + addModalType}>Name</label>
-props.userPlans[props.selectedPlanIndex].title+
- */

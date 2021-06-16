@@ -178,17 +178,17 @@ function SimpleCheckboxSection (props) {
     }
     return (
             <div className="col s6">
-                <div className="section">
+                <div className="section blue-grey darken-4 blue-grey-text text-lighten-5">
                     <h5>{displayListType}</h5>
                     {checkboxElements}
                     <div>
                         <button id={"add-"+props.listType+"-btn-" + props.userPlans[props.selectedPlanIndex].title}
-                                className="btn-floating btn-small waves-effect waves-light blue" type="button"
+                                className="btn-floating btn-small waves-effect waves-light blue-grey darken-3 blue-grey-text text-lighten-5" type="button"
                                 onClick={addNewChecklistItem}>
                                 <i className="material-icons">add</i>
                         </button>
-                        <div className="input-field inline">
-                            <input id={"new_" + props.listType  + "_" + props.userPlans[props.selectedPlanIndex].title} type="text" className="validate"
+                        <div className="input-field inline blue-grey darken-4 blue-grey-text text-lighten-5">
+                            <input id={"new_" + props.listType  + "_" + props.userPlans[props.selectedPlanIndex].title} type="text" className="validate blue-grey darken-4 blue-grey-text text-lighten-5"
                                 value={newItemValue}
                                 onChange={(e) => handleInputChange(e)}
                                 onKeyDown={(e)=>{if(e.keyCode===13){addNewChecklistItem()}}}

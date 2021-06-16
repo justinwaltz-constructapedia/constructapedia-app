@@ -25,7 +25,7 @@ function WebpageViewer (props) {
                         <label htmlFor="display_notes">Notes</label>
                     </div>
                 </div>
-                <button className="btn waves-effect waves-light blue" type="submit" name="action">Save Project Notes</button>
+                <button className="btn waves-effect waves-light blue-grey darken-4 blue-grey-text text-lighten-5" type="submit" name="action">Save Project Notes</button>
             </form>
         </div>
         </>

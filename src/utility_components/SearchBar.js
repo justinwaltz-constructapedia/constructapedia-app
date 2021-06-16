@@ -14,13 +14,13 @@ function SearchBar (props) {
                 <div className="col s12 center-align">
                     <div className="input-field inline">
                         <input id="search_input" type="text"
-                                className="validate"
-                                placeholder="Search for a Project"
+                                className="validate blue-grey darken-4 blue-grey-text text-lighten-5"
+                                placeholder="Constructapedia"
                                 value={searchValue}
                                 onChange={(e)=> setSearchValue(e.target.value)} />
 
                     </div>
-                    <button className="btn-small waves-effect waves-light blue" type="submit" name="action"><i className="material-icons">arrow_forward</i></button>
+                    <button className="btn-small waves-effect waves-light blue-grey darken-3 blue-grey-text text-lighten-5" type="submit" name="action"><i className="material-icons">search</i></button>
                 </div>
             </div>
     </form>)
