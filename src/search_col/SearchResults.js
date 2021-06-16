@@ -44,7 +44,7 @@ function SearchResults(props) {
                 </div>
                 <div className="row">
                     <div className="col s12">
-                        <div ref={modal} id="search-modal" className="modal bottom-sheet">
+                        <div ref={modal} id="search-modal" className="modal bottom-sheet blue-grey darken-4 blue-grey-text text-lighten-5">
                             <BottomModalContent modalType="search" heading={urlToViewHeading} urlToView={urlToView}/>
                         </div>
                         <SearchBar handleSearch={searchForProjects}/>
@@ -69,8 +69,8 @@ function ResultListItem(props) {
         });
     }
     return(
-            <div className="col s12 m6 l4">
-                <div className="card medium hoverable">
+            <div className="col s12 m6 l4 blue-grey darken-4 blue-grey-text text-lighten-5">
+                <div className="card medium hoverable blue-grey darken-4 blue-grey-text text-lighten-5">
                     <div className="card-image">
                         <img src={props.image} alt="Result" />
                         <span className="card-title"></span>
@@ -79,8 +79,8 @@ function ResultListItem(props) {
                         <p>{props.title}</p>
                     </div>
                     <div className="card-action">
-                        <button className="waves-effect waves-light blue btn" onClick={()=>props.updateUrlToView(props.link, props.title)}>View Page</button>
-                        <button className="waves-effect waves-light blue btn" onClick={()=>scrapePage(props.link)}>Auto Import</button>
+                        <button className="waves-effect waves-light blue-grey darken-4 blue-grey-text text-lighten-5 btn" onClick={()=>props.updateUrlToView(props.link, props.title)}>View Page</button>
+                        <button className="waves-effect waves-light blue-grey darken-4 blue-grey-text text-lighten-5 btn" onClick={()=>scrapePage(props.link)}>Auto Import</button>
                     </div>
                 </div>
             </div>

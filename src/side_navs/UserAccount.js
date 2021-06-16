@@ -16,8 +16,8 @@ function UserAccount(props) {
          M.Sidenav.init(sidenav.current, sidenavOptions);
      });
     return (
-        <ul ref={sidenav} id="slide-out" className="sidenav">
-            <li className="center-align blue section">
+        <ul ref={sidenav} id="slide-out" className="sidenav blue-grey darken-4 blue-grey-text text-lighten-5">
+            <li className="center-align blue-grey darken-4 blue-grey-text text-lighten-5 section">
                 <h5 className="no-margin">User Account</h5>
             </li>
             <li>
@@ -28,9 +28,9 @@ function UserAccount(props) {
                                 <img className="circle" alt="avatar" src="./user-avatar.jpg"/>
                             </div>
                         </div>
-                        <a href="#name"><span className="name">{props.user.name}</span></a>
-                        <a href="#email"><span className="email">{props.user.email}</span></a>
-                        <button className="waves-effect waves-light btn blue" onClick={props.handleLogout}>Log Out</button>
+                        <a href="#name"><span className="name blue-grey darken-4 blue-grey-text text-lighten-5">{props.user.name}</span></a>
+                        <a href="#email"><span className="email blue-grey darken-4 blue-grey-text text-lighten-5">{props.user.email}</span></a>
+                        <button className="waves-effect waves-light btn blue-grey darken-4 blue-grey-text text-lighten-5" onClick={props.handleLogout}>Log Out</button>
                     </div>
                 </div>
             </li>

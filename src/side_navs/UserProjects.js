@@ -30,12 +30,12 @@ function UserProjects(props) {
                                         <div className="collapsible-header">
                                             <h6 className="valign-wrapper" onClick={()=>props.updateSelectedPlan(plan.id)}>{plan.title}<i className="material-icons">chevron_right</i></h6>
                                         </div>
-                                        <div className="collapsible-body">
+                                        <div className="collapsible-body blue-grey darken-4 blue-grey-text text-lighten-5">
                                             <ul>
                                                 {subPlans}
                                                 <li>
-                                                    <button className="btn waves-effect waves-light blue" onClick={()=>{props.removeUserPlan(plan.id)}}>
-                                                            <i className="material-icons left">delete_forever</i>Delete Project</button>
+                                                    <button className="btn-flat waves-effect waves-light blue-grey darken-4 blue-grey-text text-lighten-5" onClick={()=>{props.removeUserPlan(plan.id)}}>
+                                                            <i className="material-icons left blue-grey darken-4 blue-grey-text text-darken-2">delete_forever</i></button>
                                                 </li>
                                             </ul>
                                         </div>
