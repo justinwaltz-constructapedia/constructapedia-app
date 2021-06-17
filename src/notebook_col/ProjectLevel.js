@@ -171,19 +171,19 @@ function ProjectLevel (props) {
                 </div>
             </div>
             <div ref={addModal} id={"add-modal"+props.userPlans[props.selectedPlanIndex].title} className="modal">
-                <div className="modal-content">
+                <div className="modal-content blue-grey darken-4 blue-grey-text text-lighten-5">
                     <h4>{addModalTitle}</h4>
                     <div className="input-field">
                         <input type="text" placeholder="Title"
                                 id={"new_"+addModalType}
-                                className="validate"
+                                className="validate blue-grey darken-4 blue-grey-text text-lighten-5"
                                 value={addModalValue}
                                 onChange={(e) => handleChange(e)}/>
                     </div>
                 </div>
-                <div className="modal-footer">
+                <div className="modal-footer blue-grey darken-4 blue-grey-text text-lighten-5">
                     <a id="addModal-add-btn" href="#projectDetails"
-                        className="modal-close waves-effect waves-blue btn-flat"
+                        className="modal-close waves-effect waves-blue btn-flat blue-grey darken-4 blue-grey-text text-lighten-5"
                         onClick={(e) => addNewItem(e.target.id)}>
                         Add
                     </a>
