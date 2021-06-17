@@ -1,11 +1,10 @@
 import React , {useState, useEffect, useRef} from 'react';
-import SimpleCheckboxSection from './SimpleCheckboxSection.js';
 import M from "materialize-css";
 import "materialize-css/dist/css/materialize.min.css";
+import SimpleCheckboxSection from './SimpleCheckboxSection.js';
+import NotesSection from './NotesSection.js';
 
 function ProjectLevel (props) {
-    const [notesValue, setNotesValue] = useState("");
-    //const [goalValue, setGoalValue] = useState(props.planDraft.goal);
     const [videoUrlValue,setVideoUrlValue] = useState("");
     const addMenuDropdown = useRef(null);
     const addModal = useRef(null);
@@ -20,12 +19,6 @@ function ProjectLevel (props) {
             </div>
         )
     })
-    useEffect(() => {
-        if (props.userPlans[props.selectedPlanIndex].notes.length > 0){
-            setNotesValue(props.userPlans[props.selectedPlanIndex].notes[0].contents)
-        }
-        M.updateTextFields();
-    },[props.userPlans, props.selectedPlanIndex])
 
     useEffect(() => {
         const addModalOptions = {
@@ -40,19 +33,11 @@ function ProjectLevel (props) {
     function handleChange(event) {
         const eventId = event.target.id
         switch (eventId) {
-            case "notes_textarea":
-                setNotesValue(event.target.value);
-                break;
             case "new_substep":
                 setAddModalValue(event.target.value);
                 break;
-            /*
-            case "goal_textarea":
-                setGoalValue(event.target.value)
-                break;
-            */
             default:
-
+                return;
         }
 
     }
@@ -92,33 +77,17 @@ function ProjectLevel (props) {
             addModalInstance.open();
         }
     }
-
-    function saveEntirePlan(){
+    function saveNotes (noteIndex, noteValue) {
+        //Update for multiple notes in array using noteIndex if necessary
         const planId = props.userPlans[props.selectedPlanIndex].id;
-        const changesObj = {
-            //goal:goalValue,
-            notes: [{contents:notesValue}]
-        }
-        props.savePlanChanges(planId, changesObj);
+        props.savePlanChanges(planId, {notes:[{contents:noteValue}]})
     }
-
     return (
         <div>
             <div className="row blue-grey darken-4 blue-grey-text text-lighten-5">
                 <div className="col s9 offset-s1 blue-grey darken-4 blue-grey-text text-lighten-5">
                     <div className="divider"></div>
-                    <div className="row">
-                        <div className="input-field col s12 ">
-                            <h5>Note Pad</h5>
-                            <textarea id="notes_textarea"
-                                className="materialize-textarea blue-grey darken-4 blue-grey-text text-lighten-5"
-                                value={notesValue}
-                                onChange={handleChange}
-                                onKeyDown={(e)=>{if(e.keyCode===13){saveEntirePlan()}}}/>
-                            <button className="btn-floating waves-effect waves-light blue-grey darken-3 blue-grey-text text-lighten-5 left" type="button" onClick={saveEntirePlan}><i className="material-icons">save</i></button>
-                        </div>
-                    </div>
-
+                    <NotesSection saveNotes={saveNotes} notes={props.userPlans[props.selectedPlanIndex].notes}/>
                     <div className="divider"></div>
                     <div className="row">
                         <form>

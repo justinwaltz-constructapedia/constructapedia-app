@@ -1,22 +1,32 @@
 import React from 'react';
 import ProjectLevel from './ProjectLevel.js';
-
+import ProjectStepsSection from './ProjectStepsSection.js';
 
 function ProjectDetails (props) {
-    const substepSections = props.userPlans[props.selectedPlanIndex].sub_plans.map((subStep,i) => {
+
+    function updateSubPlan (index, newSubPlanObj) {
+        const updatedSubPlans = [].concat(
+            props.userPlans[props.selectedPlanIndex].sub_plans
+        );
+        updatedSubPlans[index] = newSubPlanObj;
+        props.savePlanChanges(props.userPlans[props.selectedPlanIndex].id, {sub_plans: updatedSubPlans})
+    }
+
+    const substepSections = props.userPlans[props.selectedPlanIndex].sub_plans.map((subPlan,i) => {
         return(
-            <div key={subStep.title + i} className="row">
+            <div key={subPlan.title + i} className="row">
                 <div className="nav-wrapper">
                     <div className="row blue lighten-3">
                         <div className="col s12 blue-grey darken-4 blue-grey-text text-lighten-5">
-                            <h6 className="center-align">{subStep.title}</h6>
+                            <h6 className="center-align">{subPlan.title}</h6>
                         </div>
                     </div>
                 </div>
-                <ProjectLevel
-                    userPlans={props.userPlans[props.selectedPlanIndex].sub_plans}
-                    selectedPlanIndex={i}
-                    changeOrUpdatePlanDraft={props.changeOrUpdatePlanDraft}
+                <ProjectStepsSection
+                    subPlan={subPlan}
+                    subPlanIndex = {i}
+                    updateSubPlan = {updateSubPlan}
+                    planId = {props.userPlans[props.selectedPlanIndex].id}
                     savePlanChanges={props.savePlanChanges}
                     />
             </div>
