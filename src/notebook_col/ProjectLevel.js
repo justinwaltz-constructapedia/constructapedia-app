@@ -76,6 +76,7 @@ function ProjectLevel (props) {
                         value={videoUrlValue}
                         placeholder="Video website address (URL)"
                         onChange={(e) => setVideoUrlValue(e.target.value)}/>
+
                 </div>
             </div>
         </div>
