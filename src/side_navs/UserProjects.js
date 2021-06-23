@@ -47,7 +47,11 @@ function UserProjects(props) {
                                     <li key={plan.id} className="bold">
                                         <div className="collapsible-header">
                                             <h6 className="valign-wrapper" onClick={()=>props.updateSelectedPlan(plan.id)}>{plan.title}<i className="material-icons">chevron_right</i></h6>
+<<<<<<< HEAD
+                                            <button className="btn-flat waves-effect waves-light blue-grey darken-4 blue-grey-text text-lighten-5" onClick={()=>{props.removeUserPlan(plan.id)}}>
+=======
                                             <button className="btn-flat center-alin right waves-effect waves-light blue-grey darken-4 blue-grey-text text-lighten-5" onClick={()=>{props.removeUserPlan(plan.id)}}>
+>>>>>>> 4a3ff76f06e337e93d03958c8bb902ac9ae492a6
                                                     <i className="material-icons left blue-grey darken-4 blue-grey-text text-darken-2">delete_forever</i></button>
                                         </div>
                                         <div className="collapsible-body blue-grey darken-4 blue-grey-text text-lighten-5">
