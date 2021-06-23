@@ -1,22 +1,79 @@
-import React from 'react';
+import React, {useState, useEffect, useRef} from 'react';
+import M from "materialize-css";
+import "materialize-css/dist/css/materialize.min.css";
 import ProjectLevel from './ProjectLevel.js';
-
+import ProjectStepsSection from './ProjectStepsSection.js';
 
 function ProjectDetails (props) {
-    const substepSections = props.userPlans[props.selectedPlanIndex].sub_plans.map((subStep,i) => {
+    const addMenuDropdown = useRef(null);
+    const addModal = useRef(null);
+    const [addModalTitle, setAddModalTitle] = useState("");
+    const [addModalType, setAddModalType] = useState("");
+    const[addModalValue, setAddModalValue] = useState("");
+
+    useEffect(() => {
+        const addModalOptions = {
+            opacity: 0,
+            preventScrolling: false,
+            dismissable: true
+        }
+        M.Collapsible.init(addMenuDropdown.current);
+        M.Modal.init(addModal.current, addModalOptions);
+    }, [])
+
+    function updateSubPlan (index, newSubPlanObj) {
+        const updatedSubPlans = [].concat(
+            props.userPlans[props.selectedPlanIndex].sub_plans
+        );
+        updatedSubPlans[index] = newSubPlanObj;
+        props.savePlanChanges(props.userPlans[props.selectedPlanIndex].id, {sub_plans: updatedSubPlans})
+    }
+    function handleChange(event) {
+        const eventId = event.target.id
+        switch (eventId) {
+            case "new_substep":
+                setAddModalValue(event.target.value);
+                break;
+            default:
+                return;
+        }
+    }
+    function addNewSection (itemBtnID) {
+        console.log(itemBtnID);
+        const planId = props.userPlans[props.selectedPlanIndex].id;
+        if (addModalType === "substep" && addModalValue.trim().length > 0){
+            console.log(addModalValue);
+            const updatedPlanSubsteps = [].concat(props.userPlans[props.selectedPlanIndex].sub_plans)
+            updatedPlanSubsteps.push({title:addModalValue})
+            console.log(updatedPlanSubsteps);
+            props.savePlanChanges(planId, {sub_plans:updatedPlanSubsteps})
+        }
+    }
+    function openAddModal(e){
+        console.log(e.target.id)
+        const addModalInstance = M.Modal.getInstance(addModal.current)
+        if (e.target.id === "add-substep-btn"){
+            setAddModalTitle("Add New Substep");
+            setAddModalType("substep");
+            addModalInstance.open();
+        }
+    }
+
+    const substepSections = props.userPlans[props.selectedPlanIndex].sub_plans.map((subPlan,i) => {
         return(
-            <div key={subStep.title + i} className="row">
+            <div key={subPlan.title + i} className="row">
                 <div className="nav-wrapper">
                     <div className="row blue lighten-3">
                         <div className="col s12 blue-grey darken-4 blue-grey-text text-lighten-5">
-                            <h6 className="center-align">{subStep.title}</h6>
+                            <h6 className="center-align">{subPlan.title}</h6>
                         </div>
                     </div>
                 </div>
-                <ProjectLevel
-                    userPlans={props.userPlans[props.selectedPlanIndex].sub_plans}
-                    selectedPlanIndex={i}
-                    changeOrUpdatePlanDraft={props.changeOrUpdatePlanDraft}
+                <ProjectStepsSection
+                    subPlan={subPlan}
+                    subPlanIndex = {i}
+                    updateSubPlan = {updateSubPlan}
+                    planId = {props.userPlans[props.selectedPlanIndex].id}
                     savePlanChanges={props.savePlanChanges}
                     />
             </div>
@@ -39,11 +96,43 @@ function ProjectDetails (props) {
                     </button>
                 </div>
             </div>
-            <ProjectLevel
-                userPlans={props.userPlans}
-                selectedPlanIndex={props.selectedPlanIndex}
-                changeOrUpdatePlanDraft={props.changeOrUpdatePlanDraft}
-                savePlanChanges={props.savePlanChanges}/>
+            <div className="row blue-grey darken-4 blue-grey-text text-lighten-5">
+                <ProjectLevel
+                    userPlans={props.userPlans}
+                    selectedPlanIndex={props.selectedPlanIndex}
+                    changeOrUpdatePlanDraft={props.changeOrUpdatePlanDraft}
+                    savePlanChanges={props.savePlanChanges}/>
+                <div className="col s2 center-align">
+                    <h5 className="center-align"><b>&#123;C&#125;</b></h5>
+
+                    <div className="row blue-grey darken-4 blue-grey-text text-lighten-5">
+                        <a id="add-substep-btn" href="#add-modal"
+                            className="waves-effect waves-blue btn valign-wrapper blue-grey darken-3 blue-grey-text text-lighten-5"
+                            onClick={(e)=> openAddModal(e)}>
+                            Work Step<i className="material-icons left">add</i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div ref={addModal} id={"add-modal"+props.userPlans[props.selectedPlanIndex].title} className="modal">
+                <div className="modal-content">
+                    <h4>{addModalTitle}</h4>
+                    <div className="input-field">
+                        <input type="text" placeholder="Title"
+                                id={"new_"+addModalType}
+                                className="validate"
+                                value={addModalValue}
+                                onChange={(e) => handleChange(e)}/>
+                    </div>
+                </div>
+                <div className="modal-footer">
+                    <a id="addModal-add-btn" href="#projectDetails"
+                        className="modal-close waves-effect waves-blue btn-flat"
+                        onClick={(e) => addNewSection(e.target.id)}>
+                        Add
+                    </a>
+                </div>
+            </div>
             <div className="row">
                 <div className="col s12">
                     {substepSections}
@@ -54,51 +143,3 @@ function ProjectDetails (props) {
 }
 
 export default ProjectDetails;
-/*
-<div className="divider"></div>
-<ProjectStepsSection planDraft={props.planDraft} changeOrUpdatePlanDraft={props.changeOrUpdatePlanDraft}/>
-
-const [titleValue, setTitleValue] = useState("");
-projectToChange.title = titleValue;
-<div className="row">
-    <div className="input-field col s12">
-        <input id="title_input" type="text" className="validate" value={titleValue} onChange={handleChange} placeholder=""/>
-        <label className="active" htmlFor="title_input">Project Title</label>
-    </div>
-</div>
-<div className="divider"></div>
-
-<div className="row">
-    <div className="input-field col s12">
-        <textarea id="goal_textarea"
-            className="materialize-textarea"
-            value={goalValue}
-            onChange={handleChange}/>
-        <label htmlFor="notes_textarea">Project Goal</label>
-    </div>
-</div>
-
-<div className="col s11">
-    <ul ref={addMenuDropdown} className="collapsible">
-        <li>
-            <div className="collapsible-header">Substep<i className="material-icons">arrow_drop_down</i></div>
-            <div className="collapsible-body">
-                <span>Lorem ipsum dolor sit amet.</span>
-                <button className="btn-floating waves-effect waves-light blue" type="button" name="action"
-                        onClick={addSubstep}><i className="material-icons">add</i></button>
-            </div>
-        </li>
-        <li>
-            <div className="collapsible-header">Tools List<i className="material-icons">arrow_drop_down</i></div>
-            <div className="collapsible-body"><span>Lorem ipsum dolor sit amet.</span>
-                <i className="material-icons">add_circle</i>
-            </div>
-        </li>
-        <li>
-            <div className="collapsible-header">Materials List<i className="material-icons">arrow_drop_down</i></div>
-            <div className="collapsible-body"><span>Lorem ipsum dolor sit amet.</span></div>
-        </li>
-    </ul>
-</div>
-
-*/
