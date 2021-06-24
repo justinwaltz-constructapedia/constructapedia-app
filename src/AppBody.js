@@ -103,10 +103,10 @@ function AppBody (props) {
             }
             {mainAppView === 'NewProject' &&
                 <NewProject
-                    addUserPlan={props.addUserPlan}
-                    updateSearchResults={props.updateSearchResults}
-                    updateSelectedPlan={props.updateSelectedPlan}
-                    handleMainAppView={props.handleMainAppView}
+                    addUserPlan={addUserPlan}
+                    updateSearchResults={updateSearchResults}
+                    updateSelectedPlan={updateSelectedPlan}
+                    handleMainAppView={handleMainAppView}
                     />
             }
             {mainAppView === 'ProjectDetails' &&
