@@ -2,12 +2,13 @@ import React, {useState, useEffect} from 'react';
 import Projects from './side_navs/Projects.js';
 import SearchResults from './search_col/SearchResults.js';
 import ProjectDetails from './notebook_col/ProjectDetails.js';
+
 //import Preloader from './utility_components/Preloader.js';
 
 import {getUserPlans, putPlanUpdate, deletePlan, postPlan} from './api/projectsApi';
 
 function AppBody (props) {
-    const [mainAppView, setMainAppView] = useState(false);
+    const [mainAppView, setMainAppView] = useState('HomePage');
     const [userPlans, setUserPlans] = useState([]);
     const [selectedPlanIndex, setSelectedPlanIndex] = useState(null);
     //id:"",title: "",tools: [],materials: [],project_steps: [],video_urls: []
@@ -91,23 +92,27 @@ function AppBody (props) {
 
     return (
         <main id="main-app-container" className="row blue-grey darken-4 blue-grey-text text-lighten-5">
+            {mainAppView === 'HomePage' &&
             <Projects
-                user={props.user}
                 userPlans={userPlans}
-                updateSearchResults={updateSearchResults}
                 selectedPlanIndex={selectedPlanIndex}
                 updateSelectedPlan={updateSelectedPlan}
                 addUserPlan={addUserPlan}
                 removeUserPlan={removeUserPlan}
                 savePlanChanges={savePlanChanges}
+                updateSearchResults={updateSearchResults}
                 handleMainAppView={handleMainAppView}
             />
+            }
             {mainAppView === 'ProjectDetails' &&
                 <ProjectDetails
                     userPlans={userPlans}
                     selectedPlanIndex={selectedPlanIndex}
                     updateSelectedPlan={updateSelectedPlan}
+                    addUserPlan={addUserPlan}
+                    removeUserPlan={removeUserPlan}
                     savePlanChanges={savePlanChanges}
+                    updateSearchResults={updateSearchResults}
                     handleMainAppView={handleMainAppView}/>
             }
             {mainAppView === 'SearchResults' &&

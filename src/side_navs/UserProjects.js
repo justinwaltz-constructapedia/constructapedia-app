@@ -5,7 +5,6 @@ import "materialize-css/dist/css/materialize.min.css";
 
 function UserProjects(props) {
     const projectsDropdown = useRef(null);
-
     useEffect(() => {
         M.Collapsible.init(projectsDropdown.current);
     },[]);
@@ -26,7 +25,6 @@ function UserProjects(props) {
         <div className="row">
             <div className="col s12">
                 <div className="row center-align">
-                    <h5>{props.name}'s Projects</h5>
                     <button className="btn waves-effect waves-light blue-grey darken-3 blue-grey-text text-lighten-5" onClick={()=>{props.changeView('search')}}><i className="material-icons left">add</i>Create-A-Project</button>
                 </div>
                 <div className="divider"></div>
@@ -35,7 +33,7 @@ function UserProjects(props) {
                     {props.userPlans.length > 0 &&
                         props.userPlans.map((plan) => {
                                 const subPlans = plan.sub_plans.map((subPlan, i) => {
-                                    return (<li key={subPlan.title + i}>
+                                    return (<li key={subPlan.title + i} className="blue-grey darken-4 blue-grey-text text-lighten-5">
                                                 <a href="#subPlan" className="blue-grey darken-4 blue-grey-text text-lighten-4">
                                                     {subPlan.title}
                                                     <i className="material-icons right blue-grey darken-4 blue-grey-text text-darken-3"
@@ -45,7 +43,7 @@ function UserProjects(props) {
                                 })
                                 return (
                                     <li key={plan.id} className="bold">
-                                        <div className="collapsible-header">
+                                        <div className="collapsible-header blue-grey darken-4 blue-grey-text text-lighten-5">
                                             <h6 className="valign-wrapper" onClick={()=>props.updateSelectedPlan(plan.id)}>{plan.title}<i className="material-icons">chevron_right</i></h6>
 <<<<<<< HEAD
                                             <button className="btn-flat waves-effect waves-light blue-grey darken-4 blue-grey-text text-lighten-5" onClick={()=>{props.removeUserPlan(plan.id)}}>

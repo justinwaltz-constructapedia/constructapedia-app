@@ -8,15 +8,6 @@
 main {
     height: 100%;
 }
-header, main, footer {
-  padding-left: 300px;
-}
-
-@media only screen and (max-width : 992px) {
-  header, main, footer {
-    padding-left: 0;
-  }
-}
 .icon-block {
   padding: 0 15px;
 }
@@ -28,7 +19,6 @@ header, main, footer {
     overflow-y: scroll;
     padding: 0px 0px 0px 10px;
 }
-
 .no-margin{
     margin: 0px 0px 0px 0px !important;
 }
@@ -39,16 +29,12 @@ header, main, footer {
     min-height: 90%;
     max-height: 90%;
 }
-
-}
 #main-app-container {
-    height: 95vh;
-
+    height: 100vh;
 }
 #app-body-container {
     height: 95vh;
     /* margin: 0 10px 0 10px;*/
-
 }
 #webpage_viewer{
     height: 50%;
@@ -68,4 +54,14 @@ header, main, footer {
 }
 #logo-span {
     font-size: 40pt;
+}
+
+#sticky-add-menu {
+    position: sticky;
+    top: 20px;
+}
+@media only screen and (max-width : 992px) {
+  header, main, footer {
+    padding-left: 0;
+  }
 }
