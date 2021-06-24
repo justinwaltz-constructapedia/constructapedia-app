@@ -1,6 +1,7 @@
 import React, {useState, useEffect, useRef} from 'react';
 import M from "materialize-css";
 import "materialize-css/dist/css/materialize.min.css";
+import Projects from '../side_navs/Projects.js';
 import ProjectLevel from './ProjectLevel.js';
 import ProjectStepsSection from './ProjectStepsSection.js';
 
@@ -38,25 +39,43 @@ function ProjectDetails (props) {
                 return;
         }
     }
-    function addNewSection (itemBtnID) {
-        console.log(itemBtnID);
+    function addNewSection () {
         const planId = props.userPlans[props.selectedPlanIndex].id;
-        if (addModalType === "substep" && addModalValue.trim().length > 0){
-            console.log(addModalValue);
-            const updatedPlanSubsteps = [].concat(props.userPlans[props.selectedPlanIndex].sub_plans)
-            updatedPlanSubsteps.push({title:addModalValue})
-            console.log(updatedPlanSubsteps);
-            props.savePlanChanges(planId, {sub_plans:updatedPlanSubsteps})
+        console.log(addModalValue);
+        if (addModalValue.trim().length > 0){
+            switch (addModalType) {
+                case "substep":
+                    const updatedPlanSubsteps = [].concat(props.userPlans[props.selectedPlanIndex].sub_plans)
+                    updatedPlanSubsteps.push({title:addModalValue})
+                    console.log(updatedPlanSubsteps);
+                    props.savePlanChanges(planId, {sub_plans:updatedPlanSubsteps})
+                    break;
+                case "checklist":
+
+                    break;
+                default:
+
+            }
+
+
         }
     }
     function openAddModal(e){
-        console.log(e.target.id)
+        console.log(e.target.id);
         const addModalInstance = M.Modal.getInstance(addModal.current)
-        if (e.target.id === "add-substep-btn"){
-            setAddModalTitle("Add New Substep");
-            setAddModalType("substep");
-            addModalInstance.open();
+        switch (e.target.id) {
+            case "add-substep-btn":
+                setAddModalTitle("Add New Substep");
+                setAddModalType("substep");
+                break;
+            case "add-checklist-btn":
+                setAddModalTitle("Add New Checklist");
+                setAddModalType("checklist");
+                break;
+            default:
+                return;
         }
+        addModalInstance.open();
     }
 
     const substepSections = props.userPlans[props.selectedPlanIndex].sub_plans.map((subPlan,i) => {
@@ -80,12 +99,11 @@ function ProjectDetails (props) {
         )
     })
     return (
+
         <div className="col s12 blue-grey darken-4 blue-grey-text text-lighten-5">
-            <div className="nav-wrapper">
-                <div className="row blue-grey darken-4 blue-grey-text text-lighten-5">
-                    <div className="col s12">
-                        <h5 className="blue-grey darken-4 blue-grey-text text-lighten-5 header">{props.userPlans[props.selectedPlanIndex].title}</h5>
-                    </div>
+            <div className="nav-wrapper row blue-grey darken-4 blue-grey-text text-lighten-5">
+                <div className="col s12">
+                    <h5 className="blue-grey darken-4 blue-grey-text text-lighten-5 header">{props.userPlans[props.selectedPlanIndex].title}</h5>
                 </div>
             </div>
             <div className="row">
@@ -97,19 +115,49 @@ function ProjectDetails (props) {
                 </div>
             </div>
             <div className="row blue-grey darken-4 blue-grey-text text-lighten-5">
-                <ProjectLevel
-                    userPlans={props.userPlans}
-                    selectedPlanIndex={props.selectedPlanIndex}
-                    changeOrUpdatePlanDraft={props.changeOrUpdatePlanDraft}
-                    savePlanChanges={props.savePlanChanges}/>
-                <div className="col s2 center-align">
+                <div className="col s8 offset-s1">
+                    <div className="row">
+                        <ProjectLevel
+                            userPlans={props.userPlans}
+                            selectedPlanIndex={props.selectedPlanIndex}
+                            changeOrUpdatePlanDraft={props.changeOrUpdatePlanDraft}
+                            savePlanChanges={props.savePlanChanges}/>
+                    </div>
+                    <div className="row">
+                        {substepSections}
+                    </div>
+                </div>
+                <div id="sticky-add-menu" className="col s3 push-s9 center-align">
                     <h5 className="center-align"><b>&#123;C&#125;</b></h5>
-
+                    <Projects
+                        userPlans={props.userPlans}
+                        selectedPlanIndex={props.selectedPlanIndex}
+                        updateSelectedPlan={props.updateSelectedPlan}
+                        addUserPlan={props.addUserPlan}
+                        removeUserPlan={props.removeUserPlan}
+                        savePlanChanges={props.savePlanChanges}
+                        updateSearchResults={props.updateSearchResults}
+                        handleMainAppView={props.handleMainAppView}
+                    />
                     <div className="row blue-grey darken-4 blue-grey-text text-lighten-5">
                         <a id="add-substep-btn" href="#add-modal"
                             className="waves-effect waves-blue btn valign-wrapper blue-grey darken-3 blue-grey-text text-lighten-5"
                             onClick={(e)=> openAddModal(e)}>
                             Work Step<i className="material-icons left">add</i>
+                        </a>
+                    </div>
+                    <div className="row blue-grey darken-4 blue-grey-text text-lighten-5">
+                        <a id="add-checklist-btn" href="#add-modal"
+                            className="waves-effect waves-blue btn valign-wrapper blue-grey darken-3 blue-grey-text text-lighten-5"
+                            onClick={(e)=> openAddModal(e)}>
+                            Checklist<i className="material-icons left">add</i>
+                        </a>
+                    </div>
+                    <div className="row blue-grey darken-4 blue-grey-text text-lighten-5">
+                        <a id="add-folder-btn" href="#add-modal"
+                            className="waves-effect waves-blue btn valign-wrapper blue-grey darken-3 blue-grey-text text-lighten-5"
+                            onClick={(e)=> alert("Not ready yet Zach!")}>
+                            Folder<i className="material-icons left">add</i>
                         </a>
                     </div>
                 </div>
@@ -126,16 +174,12 @@ function ProjectDetails (props) {
                     </div>
                 </div>
                 <div className="modal-footer">
-                    <a id="addModal-add-btn" href="#projectDetails"
+                    <a id="addModal-add-btn"
+                        href="#projectDetails"
                         className="modal-close waves-effect waves-blue btn-flat"
-                        onClick={(e) => addNewSection(e.target.id)}>
+                        onClick={addNewSection}>
                         Add
                     </a>
-                </div>
-            </div>
-            <div className="row">
-                <div className="col s12">
-                    {substepSections}
                 </div>
             </div>
         </div>
