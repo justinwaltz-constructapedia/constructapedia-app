@@ -1,12 +1,11 @@
 import React, {useState, useEffect, useRef} from 'react';
 import M from "materialize-css";
 import "materialize-css/dist/css/materialize.min.css";
-import Projects from '../side_navs/Projects.js';
-import ProjectLevel from './ProjectLevel.js';
-import ProjectStepsSection from './ProjectStepsSection.js';
+import Projects from './notebook/Projects.js';
+import ProjectLevel from './notebook/ProjectLevel.js';
+import ProjectStepsSection from './notebook/ProjectStepsSection.js';
 
 function ProjectDetails (props) {
-    const addMenuDropdown = useRef(null);
     const addModal = useRef(null);
     const [addModalTitle, setAddModalTitle] = useState("");
     const [addModalType, setAddModalType] = useState("");
@@ -18,7 +17,6 @@ function ProjectDetails (props) {
             preventScrolling: false,
             dismissable: true
         }
-        M.Collapsible.init(addMenuDropdown.current);
         M.Modal.init(addModal.current, addModalOptions);
     }, [])
 
@@ -51,7 +49,7 @@ function ProjectDetails (props) {
                     props.savePlanChanges(planId, {sub_plans:updatedPlanSubsteps})
                     break;
                 case "checklist":
-
+                    console.log("chcks")
                     break;
                 default:
 
@@ -98,11 +96,12 @@ function ProjectDetails (props) {
             </div>
         )
     })
-    return (
 
+    return (
         <div className="col s12 blue-grey darken-4 blue-grey-text text-lighten-5">
             <div className="nav-wrapper row blue-grey darken-4 blue-grey-text text-lighten-5">
                 <div className="col s12">
+                    <button type="button" className="waves-effect waves-blue btn-flat blue-grey darken-4 blue-grey-text text-lighten-5 " onClick={()=>{props.handleMainAppView('HomePage')}}><i className="material-icons left">arrow_back</i></button>
                     <h5 className="blue-grey darken-4 blue-grey-text text-lighten-5 header">{props.userPlans[props.selectedPlanIndex].title}</h5>
                 </div>
             </div>
@@ -127,40 +126,17 @@ function ProjectDetails (props) {
                         {substepSections}
                     </div>
                 </div>
-                <div id="sticky-add-menu" className="col s3 push-s9 center-align">
-                    <h5 className="center-align"><b>&#123;C&#125;</b></h5>
-                    <Projects
-                        userPlans={props.userPlans}
-                        selectedPlanIndex={props.selectedPlanIndex}
-                        updateSelectedPlan={props.updateSelectedPlan}
-                        addUserPlan={props.addUserPlan}
-                        removeUserPlan={props.removeUserPlan}
-                        savePlanChanges={props.savePlanChanges}
-                        updateSearchResults={props.updateSearchResults}
-                        handleMainAppView={props.handleMainAppView}
-                    />
-                    <div className="row blue-grey darken-4 blue-grey-text text-lighten-5">
-                        <a id="add-substep-btn" href="#add-modal"
-                            className="waves-effect waves-blue btn valign-wrapper blue-grey darken-3 blue-grey-text text-lighten-5"
-                            onClick={(e)=> openAddModal(e)}>
-                            Work Step<i className="material-icons left">add</i>
-                        </a>
-                    </div>
-                    <div className="row blue-grey darken-4 blue-grey-text text-lighten-5">
-                        <a id="add-checklist-btn" href="#add-modal"
-                            className="waves-effect waves-blue btn valign-wrapper blue-grey darken-3 blue-grey-text text-lighten-5"
-                            onClick={(e)=> openAddModal(e)}>
-                            Checklist<i className="material-icons left">add</i>
-                        </a>
-                    </div>
-                    <div className="row blue-grey darken-4 blue-grey-text text-lighten-5">
-                        <a id="add-folder-btn" href="#add-modal"
-                            className="waves-effect waves-blue btn valign-wrapper blue-grey darken-3 blue-grey-text text-lighten-5"
-                            onClick={(e)=> alert("Not ready yet Zach!")}>
-                            Folder<i className="material-icons left">add</i>
-                        </a>
-                    </div>
-                </div>
+                <Projects
+                    userPlans={props.userPlans}
+                    selectedPlanIndex={props.selectedPlanIndex}
+                    updateSelectedPlan={props.updateSelectedPlan}
+                    addUserPlan={props.addUserPlan}
+                    removeUserPlan={props.removeUserPlan}
+                    savePlanChanges={props.savePlanChanges}
+                    updateSearchResults={props.updateSearchResults}
+                    handleMainAppView={props.handleMainAppView}
+                    openAddModal={openAddModal}
+                />
             </div>
             <div ref={addModal} id={"add-modal"+props.userPlans[props.selectedPlanIndex].title} className="modal">
                 <div className="modal-content">

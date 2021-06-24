@@ -1,7 +1,8 @@
 import React, {useState, useEffect} from 'react';
-import Projects from './side_navs/Projects.js';
-import SearchResults from './search_col/SearchResults.js';
-import ProjectDetails from './notebook_col/ProjectDetails.js';
+import HomePage from './main_views/HomePage.js';
+import SearchResults from './main_views/SearchResults.js';
+import ProjectDetails from './main_views/ProjectDetails.js';
+import NewProject from './main_views/NewProject.js';
 
 //import Preloader from './utility_components/Preloader.js';
 
@@ -19,7 +20,7 @@ function AppBody (props) {
             setUserPlans(plans);
         })
     },[])
-
+//Functions for props to lift state
     function handleMainAppView (view) {
         setMainAppView(view);
     }
@@ -27,14 +28,12 @@ function AppBody (props) {
         setResults(resultsArr);
     }
     function updateSelectedPlan (selectedPlanId) {
-
         const selectedPlanIndex = userPlans.findIndex(plan => plan.id === selectedPlanId);
         if (selectedPlanIndex >= 0){
             setSelectedPlanIndex(selectedPlanIndex);
             handleMainAppView('ProjectDetails');
         }
     }
-
     function addUserPlan(plan){
         postPlan(plan).then((res) => {
             console.log(res.id)
@@ -55,7 +54,6 @@ function AppBody (props) {
             }).catch(err => console.log(err));
         }).catch(err => console.log(err));
     }
-
     function removeUserPlan(planId) {
         deletePlan(planId).then((res) => {
             console.log(res);
@@ -68,7 +66,6 @@ function AppBody (props) {
 
         })
     }
-
     function savePlanChanges (planId, planUpdateObj) {
         console.log(planUpdateObj);
         putPlanUpdate(planId, planUpdateObj).then((res) => {
@@ -93,16 +90,24 @@ function AppBody (props) {
     return (
         <main id="main-app-container" className="row blue-grey darken-4 blue-grey-text text-lighten-5">
             {mainAppView === 'HomePage' &&
-            <Projects
-                userPlans={userPlans}
-                selectedPlanIndex={selectedPlanIndex}
-                updateSelectedPlan={updateSelectedPlan}
-                addUserPlan={addUserPlan}
-                removeUserPlan={removeUserPlan}
-                savePlanChanges={savePlanChanges}
-                updateSearchResults={updateSearchResults}
-                handleMainAppView={handleMainAppView}
-            />
+                <HomePage
+                    userPlans={userPlans}
+                    selectedPlanIndex={selectedPlanIndex}
+                    updateSelectedPlan={updateSelectedPlan}
+                    addUserPlan={addUserPlan}
+                    removeUserPlan={removeUserPlan}
+                    savePlanChanges={savePlanChanges}
+                    updateSearchResults={updateSearchResults}
+                    handleMainAppView={handleMainAppView}
+                    />
+            }
+            {mainAppView === 'NewProject' &&
+                <NewProject
+                    addUserPlan={props.addUserPlan}
+                    updateSearchResults={props.updateSearchResults}
+                    updateSelectedPlan={props.updateSelectedPlan}
+                    handleMainAppView={props.handleMainAppView}
+                    />
             }
             {mainAppView === 'ProjectDetails' &&
                 <ProjectDetails
@@ -113,60 +118,18 @@ function AppBody (props) {
                     removeUserPlan={removeUserPlan}
                     savePlanChanges={savePlanChanges}
                     updateSearchResults={updateSearchResults}
-                    handleMainAppView={handleMainAppView}/>
+                    handleMainAppView={handleMainAppView}
+                    />
             }
             {mainAppView === 'SearchResults' &&
                 <SearchResults
                     results={results}
                     updateSearchResults={updateSearchResults}
-                    handleMainAppView={handleMainAppView}/>
+                    handleMainAppView={handleMainAppView}
+                    />
             }
         </main>
     );
 }
 
 export default AppBody;
-
-
-/*
-function updateProjectDraft(project){
-    const projectDraftCopy = projectDraft;
-    for (let i = 0; i < project.tools.length; i++) {
-        if (projectDraftCopy.tools.includes(project.tools[i])){
-            continue;
-        } else {
-            projectDraftCopy.tools.push(project.tools[i]);
-        }
-    }
-    for (let i = 0; i < project.materials.length; i++) {
-        if (projectDraftCopy.materials.includes(project.materials[i])){
-            continue;
-        } else {
-            projectDraftCopy.materials.push(project.materials[i]);
-        }
-    }
-    for (let i = 0; i < project.video_urls.length; i++) {
-        if (projectDraftCopy.video_urls.includes(project.video_urls[i])){
-            continue;
-        } else {
-            projectDraftCopy.video_urls.push(project.video_urls[i]);
-        }
-    }
-    for (let i = 0; i < project.project_steps.length; i++) {
-        projectDraftCopy.project_steps.splice(i, 0, project.project_steps[i])
-    }
-    console.log(projectDraftCopy);
-    setProjectDraft(projectDraftCopy);
-    console.log(projectDraft);
-    return;
-}
-function importUserProjects() {
-    getUserProjects()
-    .then( (projectsArr) => {
-        console.log(typeof projectsArr, projectsArr)
-        setUserProjects(projectsArr);
-        console.log(projectDraft);
-    })
-    .catch(err => console.log(err));
-}
-*/

@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useRef} from 'react';
 import M from "materialize-css";
 import "materialize-css/dist/css/materialize.min.css";
-import BottomModalContent from '../bottom_modals/BottomModalContent.js'
+import BottomModalContent from '../modals/BottomModalContent.js'
 import SearchBar from '../utility_components/SearchBar.js';
 import {getSearchResults, postSelectionToScrape} from '../api/searchApi.js';
 

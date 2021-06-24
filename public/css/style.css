@@ -46,8 +46,10 @@ main {
     overflow-y: scroll !important;
     height: 20vh !important;
 }
-#project-nav{
+#sticky-project-nav{
     height: 100%;
+    position: sticky;
+    top: 20px;
     border-right-style: solid;
     border-right-width: 1px;
     border-color: #e0e0e0;
@@ -56,10 +58,6 @@ main {
     font-size: 40pt;
 }
 
-#sticky-add-menu {
-    position: sticky;
-    top: 20px;
-}
 @media only screen and (max-width : 992px) {
   header, main, footer {
     padding-left: 0;
