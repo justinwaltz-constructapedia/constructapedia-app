@@ -1,4 +1,5 @@
 import React from 'react';
+import "./HomePage.css"
 
 function HomePage(props){
 
@@ -6,15 +7,18 @@ function HomePage(props){
         <div className="row">
             <div className="col s12">
                 <ul id="home-page-nav" className="col s9 offset-s1 blue-grey darken-4 blue-grey-text text-lighten-5">
-                    <li className="center-align blue-grey darken-4 blue-grey-text text-lighten-5">
-                        <b>Construct-A-Network</b>
-                    </li>
-                    <li className="center-align blue-grey darken-4 blue-grey-text text-lighten-5">
-                        <button className="btn waves-effect waves-light blue-grey darken-3 blue-grey-text text-lighten-5"
-                                onClick={()=>{props.handleMainAppView('NewProject')}}>
-                            <i className="material-icons left">add</i>
-                            Create-A-Project
-                        </button>
+                    <div>
+                      <li className="blue-grey darken-4 blue-grey-text text-lighten-5">
+                          <button className="btn waves-effect waves-light blue-grey darken-3 blue-grey-text text-lighten-5"
+                                  onClick={()=>{props.handleMainAppView('NewProject')}}>
+                              <i className="material-icons left">add</i>
+                              Create-A-Project
+                          </button>
+                      </li>
+                    </div>
+                    <div className="divider"></div>
+                    <li className="blue-grey darken-4 blue-grey-text text-lighten-5">
+                        <b>Working Projects</b>
                     </li>
                     {props.userPlans.length > 0 &&
                         props.userPlans.map((plan) => {
