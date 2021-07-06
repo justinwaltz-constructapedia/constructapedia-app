@@ -3,7 +3,7 @@ import M from "materialize-css";
 import "materialize-css/dist/css/materialize.min.css";
 import BottomModalContent from '../modals/BottomModalContent.js'
 import SearchBar from '../utility_components/SearchBar.js';
-import {getSearchResults, postSelectionToScrape} from '../api/searchApi.js';
+import {getSearchResults, postSelectionToScrape, googleSearch} from '../api/searchApi.js';
 
 function SearchResults(props) {
     const results = props.results;
@@ -12,7 +12,7 @@ function SearchResults(props) {
     const [urlToViewHeading, setUrlToViewHeading] = useState("");
 
     const resultsList = results.map((result, index) => {
-        return <ResultListItem key={index} title={result.title} image={result.image} link={result.link} updateUrlToView={updateUrlToView} updateProjectDraft={props.updateProjectDraft}/>
+        return <ResultListItem key={index} title={result.title} image={result.pagemap.cse_image[0].src} link={result.link} updateUrlToView={updateUrlToView} updateProjectDraft={props.updateProjectDraft}/>
     })
 
     useEffect(()=>{
@@ -31,8 +31,14 @@ function SearchResults(props) {
         instance.open()
     }
     function searchForProjects(userInput) {
+        /*
         getSearchResults(userInput).then((res) => {
             props.updateSearchResults(res);
+        })
+        */
+        googleSearch(userInput).then((res) => {
+            console.log(res);
+            props.updateSearchResults(res.items);
         })
     }
 
