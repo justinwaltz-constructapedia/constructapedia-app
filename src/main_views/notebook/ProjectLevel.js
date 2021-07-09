@@ -43,13 +43,14 @@ function ProjectLevel (props) {
             <NotesSection saveNotes={saveNotes} notes={props.userPlans[props.selectedPlanIndex].notes}/>
             <div className="divider"></div>
             <div className="row">
-                <form>
+                {
+                    <form>
                 <SimpleCheckboxSection
                     userPlans={props.userPlans}
                     selectedPlanIndex={props.selectedPlanIndex}
                     savePlanChanges={props.savePlanChanges}
                     listType="tools"/>
-                </form>
+                </form>}
                 <form>
                 <SimpleCheckboxSection
                     userPlans={props.userPlans}
