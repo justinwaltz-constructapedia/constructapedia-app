@@ -58,6 +58,15 @@ function SearchResults(props) {
                             <div className="row">
                                 {resultsList}
                             </div>
+                            <ul className="pagination">
+                                <li className="disabled"><a href="#prevpage"><i class="material-icons">chevron_left</i></a></li>
+                                <li className="active"><a href="#1">1</a></li>
+                                <li className="waves-effect"><a href="#2">2</a></li>
+                                <li className="waves-effect"><a href="#3">3</a></li>
+                                <li className="waves-effect"><a href="#4">4</a></li>
+                                <li className="waves-effect"><a href="#5">5</a></li>
+                                <li className="waves-effect"><a href="#nextpage"><i class="material-icons">chevron_right</i></a></li>
+                            </ul>
                         </div>
                     </div>
                 </div>

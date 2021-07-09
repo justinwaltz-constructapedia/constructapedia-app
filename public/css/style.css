@@ -25,6 +25,9 @@ main {
 .no-padding{
     padding: 0px 0px 0px 0px !important;
 }
+.page-footer {
+    height: 20vh;
+}
 #search-modal {
     min-height: 90%;
     max-height: 90%;

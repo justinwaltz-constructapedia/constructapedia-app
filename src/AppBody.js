@@ -57,7 +57,6 @@ function AppBody (props) {
     function removeUserPlan(planId) {
         deletePlan(planId).then((res) => {
             console.log(res);
-            handleMainAppView(null);
             //Update the list of projects
             getUserPlans().then((plans) => {
                 setUserPlans(plans);

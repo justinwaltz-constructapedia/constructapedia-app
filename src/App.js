@@ -96,6 +96,14 @@ class App extends React.Component {
                         user={this.state.user}
                         updateUser={this.updateUser}
                         isLoading={this.state.isLoading}/>
+                    <footer className="page-footer blue-grey darken-4 blue-grey-text text-lighten-5">
+                        <div className="footer-copyright">
+                            <div className="container">
+                                © 2021 Copyright Text
+                            </div>
+                        </div>
+                        <div className="container"></div>
+                    </footer>
                 </div>
             );
         }
