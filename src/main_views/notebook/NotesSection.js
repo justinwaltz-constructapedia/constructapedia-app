@@ -5,8 +5,8 @@ function NotesSection (props) {
     const [notesValue, setNotesValue] = useState(initialNotesValues[0].contents);
 
     return (
-        <div className="row">
-            <div className="input-field col s12 ">
+        <div className="row blue-grey darken-4 blue-grey-text text-lighten-5">
+            <div className="input-field col s12 blue-grey darken-4 blue-grey-text text-lighten-5">
                 <h5>Note Pad</h5>
                 <textarea id="notes_textarea"
                     className="materialize-textarea blue-grey darken-4 blue-grey-text text-lighten-5"

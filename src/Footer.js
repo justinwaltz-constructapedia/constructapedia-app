@@ -11,8 +11,8 @@ function Footer(props) {
 
 
               </div>
-              <div className="col l3 s12">
-                <h5 className="white-text">Settings</h5>
+              <div className="col l3 s12 blue-grey darken-4 blue-grey-text text-lighten-5">
+                <h5 className="blue-grey darken-4 blue-grey-text text-lighten-5">Settings</h5>
                 <ul>
                   <li><a className="white-text" href="#!">Link 1</a></li>
                   <li><a className="white-text" href="#!">Link 2</a></li>

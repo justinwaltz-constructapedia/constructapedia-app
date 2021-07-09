@@ -8,15 +8,6 @@
 main {
     height: 100%;
 }
-header, main, footer {
-  padding-left: 300px;
-}
-
-@media only screen and (max-width : 992px) {
-  header, main, footer {
-    padding-left: 0;
-  }
-}
 .icon-block {
   padding: 0 15px;
 }
@@ -28,27 +19,25 @@ header, main, footer {
     overflow-y: scroll;
     padding: 0px 0px 0px 10px;
 }
-
 .no-margin{
     margin: 0px 0px 0px 0px !important;
 }
 .no-padding{
     padding: 0px 0px 0px 0px !important;
 }
+.page-footer {
+    height: 20vh;
+}
 #search-modal {
     min-height: 90%;
     max-height: 90%;
 }
-
-}
 #main-app-container {
-    height: 95vh;
-
+    height: 100vh;
 }
 #app-body-container {
     height: 95vh;
     /* margin: 0 10px 0 10px;*/
-
 }
 #webpage_viewer{
     height: 50%;
@@ -60,12 +49,20 @@ header, main, footer {
     overflow-y: scroll !important;
     height: 20vh !important;
 }
-#project-nav{
+#sticky-project-nav{
     height: 100%;
+    position: sticky;
+    top: 20px;
     border-right-style: solid;
     border-right-width: 1px;
     border-color: #e0e0e0;
 }
 #logo-span {
     font-size: 40pt;
+}
+
+@media only screen and (max-width : 992px) {
+  header, main, footer {
+    padding-left: 0;
+  }
 }

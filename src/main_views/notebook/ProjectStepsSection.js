@@ -2,12 +2,12 @@ import React from 'react';
 import NotesSection from './NotesSection.js';
 
 function ProjectStepsSection (props) {
-
+/*
     function handleChange(event) {
         const eventId = event.target.id
 
     }
-
+*/
     function saveNotes(noteIndex, noteValue){
         //use spread notation
         const changesObj = props.subPlan

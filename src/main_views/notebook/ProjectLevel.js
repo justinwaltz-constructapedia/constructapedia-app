@@ -38,7 +38,7 @@ function ProjectLevel (props) {
         props.savePlanChanges(planId, {notes:[{contents:noteValue}]})
     }
     return (
-        <div className="col s9 offset-s1 blue-grey darken-4 blue-grey-text text-lighten-5">
+        <div className="col s12 blue-grey darken-4 blue-grey-text text-lighten-5">
             <div className="divider"></div>
             <NotesSection saveNotes={saveNotes} notes={props.userPlans[props.selectedPlanIndex].notes}/>
             <div className="divider"></div>

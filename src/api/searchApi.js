@@ -40,4 +40,28 @@ function postSelectionToScrape (url) {
       })
     .catch(err => console.log(err));
 }
-export {getSearchResults, postSelectionToScrape};
+
+function googleSearch(userInput) {
+    userInput = userInput.trim();
+    //userInput = userInput.replace(/ /g, "+");
+    console.log(userInput)
+    return fetch(`https://customsearch.googleapis.com/customsearch/v1?key=AIzaSyBKTWe4wGg1njqacyy3w3zAwT7Az3171sM&cx=f0e7e5d84502655e2&q=${userInput}`)
+    .then(
+        res => {
+            //console.log(res.json())
+            return res.json()
+        }
+    )
+    .then(
+        res => {
+            console.log(res);
+            return res
+        },
+    error => {
+        // error handling
+        console.log(error);
+        return error;
+        }
+    );
+}
+export {getSearchResults, postSelectionToScrape, googleSearch};
