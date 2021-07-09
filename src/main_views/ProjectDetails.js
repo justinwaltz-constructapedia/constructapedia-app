@@ -9,7 +9,11 @@ function ProjectDetails (props) {
     const addModal = useRef(null);
     const [addModalTitle, setAddModalTitle] = useState("");
     const [addModalType, setAddModalType] = useState("");
-    const[addModalValue, setAddModalValue] = useState("");
+    const [addModalValue, setAddModalValue] = useState("");
+    const [addModalSelectValue, setAddModalSelectValue] = useState("")
+    //const [selectedLevel, setSelectedLevel] = useState("");
+    const scrollspyElems = useRef(null);
+    const addModalSelect = useRef(null);
 
     useEffect(() => {
         const addModalOptions = {
@@ -18,8 +22,15 @@ function ProjectDetails (props) {
             dismissable: true
         }
         M.Modal.init(addModal.current, addModalOptions);
+
+        M.FormSelect.init(addModalSelect.current);
     }, [])
 
+    useEffect(() => {
+        scrollspyElems.current = document.querySelectorAll('.scrollspy')
+        console.log(scrollspyElems)
+        M.ScrollSpy.init(scrollspyElems.current);
+    }, [])
     function updateSubPlan (index, newSubPlanObj) {
         const updatedSubPlans = [].concat(
             props.userPlans[props.selectedPlanIndex].sub_plans
@@ -33,10 +44,13 @@ function ProjectDetails (props) {
             case "new_substep":
                 setAddModalValue(event.target.value);
                 break;
+            case "add-modal-select":
+                setAddModalSelectValue(event.target.value);
             default:
                 return;
         }
     }
+
     function addNewSection () {
         const planId = props.userPlans[props.selectedPlanIndex].id;
         console.log(addModalValue);
@@ -52,14 +66,21 @@ function ProjectDetails (props) {
                     console.log("chcks")
                     break;
                 default:
-
             }
-
-
         }
     }
     function openAddModal(e){
         console.log(e.target.id);
+
+        let activeSectionId;
+        M.ScrollSpy.init(scrollspyElems.current, {
+            getActiveElement: function (id) {
+                activeSectionId = id;
+            }
+        });
+        console.log(activeSectionId);
+        setAddModalSelectValue(activeSectionId);
+
         const addModalInstance = M.Modal.getInstance(addModal.current)
         switch (e.target.id) {
             case "add-substep-btn":
@@ -73,12 +94,13 @@ function ProjectDetails (props) {
             default:
                 return;
         }
+
         addModalInstance.open();
     }
 
     const substepSections = props.userPlans[props.selectedPlanIndex].sub_plans.map((subPlan,i) => {
         return(
-            <div key={subPlan.title + i} className="row">
+            <div key={subPlan.title + i} id={"subPlan"+i} className="row scrollspy">
                 <div className="nav-wrapper">
                     <div className="row blue lighten-3">
                         <div className="col s12 blue-grey darken-4 blue-grey-text text-lighten-5">
@@ -115,7 +137,7 @@ function ProjectDetails (props) {
             </div>
             <div className="row blue-grey darken-4 blue-grey-text text-lighten-5">
                 <div className="col s8 offset-s1">
-                    <div className="row">
+                    <div id="main" className="row scrollspy">
                         <ProjectLevel
                             userPlans={props.userPlans}
                             selectedPlanIndex={props.selectedPlanIndex}
@@ -147,6 +169,19 @@ function ProjectDetails (props) {
                                 className="validate"
                                 value={addModalValue}
                                 onChange={(e) => handleChange(e)}/>
+                    </div>
+                    <div className="input-field col s12">
+                        <select id="add-modal-select" ref={addModalSelect} value={addModalSelectValue} onChange={handleChange}>
+                            <option value="1">Plan Overview</option>
+                            {
+                                props.userPlans[props.selectedPlanIndex].sub_plans.map((subPlan, i) => {
+                                    return <option key={subPlan.title + i} value={i+2}>{subPlan.title}</option>
+                                })
+                            }
+
+
+                        </select>
+                        <label>Add to...</label>
                     </div>
                 </div>
                 <div className="modal-footer">

@@ -5,6 +5,7 @@ import "materialize-css/dist/css/materialize.min.css";
 
 function UserProjects(props) {
     const projectsDropdown = useRef(null);
+    //const scrollspyDivs = useRef(null);
     useEffect(() => {
         M.Collapsible.init(projectsDropdown.current);
     },[]);
@@ -28,10 +29,10 @@ function UserProjects(props) {
                     <h5>Working Project</h5>
                     <ul ref={projectsDropdown} className="collapsible collapsible-accordion">
                         {props.userPlans.length > 0 &&
-                            props.userPlans.map((plan) => {
+                            props.userPlans.map((plan,i) => {
                                     const subPlans = plan.sub_plans.map((subPlan, i) => {
                                         return (<li key={subPlan.title + i} className="blue-grey darken-4 blue-grey-text text-lighten-5">
-                                                    <a href="#subPlan" className="blue-grey darken-4 blue-grey-text text-lighten-4">
+                                                    <a href={"#subPlan"+i} className="blue-grey darken-4 blue-grey-text text-lighten-4">
                                                         {subPlan.title}
                                                         <i className="material-icons right blue-grey darken-4 blue-grey-text text-darken-3"
                                                             onClick={()=>deleteSubPlan(subPlan.title)}>delete_forever</i>
@@ -39,7 +40,7 @@ function UserProjects(props) {
                                                 </li>)
                                     })
                                     return (
-                                        <li key={plan.id} className="bold">
+                                        <li key={plan.id} className={`bold${(i === props.selectedPlanIndex) ? " active":""}`}>
                                             <div className="collapsible-header blue-grey darken-4 blue-grey-text text-lighten-5">
                                                 <h6 className="valign-wrapper" onClick={()=>props.updateSelectedPlan(plan.id)}>{plan.title}<i className="material-icons">chevron_right</i></h6>
                                                 <button className="btn-flat center-align right waves-effect waves-light blue-grey darken-4 blue-grey-text text-lighten-5"
@@ -48,9 +49,14 @@ function UserProjects(props) {
                                                 </button>
                                             </div>
                                             <div className="collapsible-body blue-grey darken-4 blue-grey-text text-lighten-5">
-                                                <ul>
-                                                    {subPlans}
-                                                </ul>
+                                                <div className="row">
+                                                    <div className="col hide-on-small-only m12 l12">
+                                                        <ul className="table-of-contents">
+                                                            <li><a href={"#main"} className="blue-grey darken-4 blue-grey-text text-lighten-4">Top Level</a></li>
+                                                            {subPlans}
+                                                        </ul>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </li>
                                     )
@@ -62,7 +68,6 @@ function UserProjects(props) {
         </div>
     )
 }
-
 export default UserProjects;
 
 /*
