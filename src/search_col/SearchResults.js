@@ -63,7 +63,7 @@ function SearchResults(props) {
 
 function ResultListItem(props) {
     function scrapePage (url){
-        const selectionEndpoint = url.replace('https://jayscustomcreations.com/',"");
+        const selectionEndpoint = url.replace('https://google.com/',"");
         postSelectionToScrape(selectionEndpoint).then((res) => {
             props.updateProjectDraft(res);
         });
