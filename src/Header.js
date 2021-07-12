@@ -14,7 +14,7 @@ function Header (props) {
             {/* <div className="container">
                 <a href="#projects" data-target="project-nav" className="top-nav sidenav-trigger full hide-on-large-only"><i className="medium material-icons">view_list</i></a>
             </div> */}
-            
+
         </header>
     )
 }
