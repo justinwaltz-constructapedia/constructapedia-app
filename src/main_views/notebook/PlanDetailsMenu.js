@@ -1,9 +1,9 @@
 import React, {useEffect, useRef} from 'react';
 import M from "materialize-css";
 import "materialize-css/dist/css/materialize.min.css";
-import UserProjects from './UserProjects.js';
+import SelectedPlanMenu from './SelectedPlanMenu.js';
 
-function Projects(props){
+function PlanDetailsMenu(props){
     const addMenuDropdown = useRef(null);
 
     useEffect(() => {
@@ -14,17 +14,15 @@ function Projects(props){
 
           <ul id="sticky-project-nav" className="col s3 push-s9 center-align blue-grey darken-4 blue-grey-text text-lighten-5">
               <h5 className="center-align"><b>&#123;C&#125;</b></h5>
-              {/*}<UserProjects
-                  userPlans={props.userPlans}
-                  selectedPlanIndex={props.selectedPlanIndex}
+              <SelectedPlanMenu
+                  selectedPlan={props.userPlans[props.selectedPlanIndex]}
                   handleMainAppView={props.handleMainAppView}
                   updateSelectedPlan={props.updateSelectedPlan}
                   removeUserPlan={props.removeUserPlan}
                   savePlanChanges={props.savePlanChanges}
-                  />*/}
+                  />
               {/*<div className="divider"></div>*/}
               <div className="row blue-grey darken-4 blue-grey-text text-lighten-5">
-                  {/*<h5 className="center-align">Add to Project</h5>*/}
                   <a id="add-substep-btn" href="#add-modal"
                       className="waves-effect waves-blue btn valign-wrapper blue blue-grey-text text-lighten-5"
                       onClick={(e)=> props.openAddModal(e)}>Work Steps<i className="material-icons left">add</i>
@@ -43,10 +41,10 @@ function Projects(props){
                   </a>
               </div>
           </ul>
-        
+
     )
 }
-export default Projects;
+export default PlanDetailsMenu;
 
 
 /*

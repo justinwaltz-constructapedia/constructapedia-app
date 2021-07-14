@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useRef} from 'react';
 import M from "materialize-css";
 import "materialize-css/dist/css/materialize.min.css";
-import Projects from './notebook/Projects.js';
+import PlanDetailsMenu from './notebook/PlanDetailsMenu.js';
 import ProjectLevel from './notebook/ProjectLevel.js';
 import ProjectStepsSection from './notebook/ProjectStepsSection.js';
 
@@ -46,19 +46,20 @@ function ProjectDetails (props) {
                 break;
             case "add-modal-select":
                 setAddModalSelectValue(event.target.value);
+                break;
             default:
                 return;
         }
     }
 
-    function addNewSection () {
+    function addNewSection (parentId) {
         const planId = props.userPlans[props.selectedPlanIndex].id;
         console.log(addModalValue);
         if (addModalValue.trim().length > 0){
             switch (addModalType) {
                 case "substep":
                     const updatedPlanSubsteps = [].concat(props.userPlans[props.selectedPlanIndex].sub_plans)
-                    updatedPlanSubsteps.push({title:addModalValue})
+                    updatedPlanSubsteps.push({title:addModalValue, parent:parentId})
                     console.log(updatedPlanSubsteps);
                     props.savePlanChanges(planId, {sub_plans:updatedPlanSubsteps})
                     break;
@@ -100,7 +101,7 @@ function ProjectDetails (props) {
 
     const substepSections = props.userPlans[props.selectedPlanIndex].sub_plans.map((subPlan,i) => {
         return(
-            <div key={subPlan.title + i} id={"subPlan"+i} className="row scrollspy">
+            <div key={subPlan.title + i} id={subPlan.id} className="row scrollspy">
                 <div className="nav-wrapper">
                     <div className="row blue lighten-3">
                         <div className="col s12 blue-grey darken-4 blue-grey-text text-lighten-5">
@@ -137,7 +138,7 @@ function ProjectDetails (props) {
             </div>
             <div className="row blue-grey darken-4 blue-grey-text text-lighten-5">
                 <div className="col s8 offset-s1">
-                    <div id="main" className="row scrollspy">
+                    <div id={props.userPlans[props.selectedPlanIndex].id} className="row scrollspy">
                         <ProjectLevel
                             userPlans={props.userPlans}
                             selectedPlanIndex={props.selectedPlanIndex}
@@ -148,7 +149,7 @@ function ProjectDetails (props) {
                         {substepSections}
                     </div>
                 </div>
-                <Projects
+                <PlanDetailsMenu
                     userPlans={props.userPlans}
                     selectedPlanIndex={props.selectedPlanIndex}
                     updateSelectedPlan={props.updateSelectedPlan}
@@ -172,10 +173,10 @@ function ProjectDetails (props) {
                     </div>
                     <div className="input-field col s12">
                         <select id="add-modal-select" ref={addModalSelect} value={addModalSelectValue} onChange={handleChange}>
-                            <option value="1">Plan Overview</option>
+                            <option value={props.userPlans[props.selectedPlanIndex].id}>Plan Overview</option>
                             {
                                 props.userPlans[props.selectedPlanIndex].sub_plans.map((subPlan, i) => {
-                                    return <option key={subPlan.title + i} value={i+2}>{subPlan.title}</option>
+                                    return <option key={subPlan.title + i} value={subPlan.id}>{subPlan.title}</option>
                                 })
                             }
 
@@ -188,7 +189,7 @@ function ProjectDetails (props) {
                     <a id="addModal-add-btn"
                         href="#projectDetails"
                         className="modal-close waves-effect waves-blue btn-flat"
-                        onClick={addNewSection}>
+                        onClick={() => addNewSection(addModalSelectValue)}>
                         Add
                     </a>
                 </div>
