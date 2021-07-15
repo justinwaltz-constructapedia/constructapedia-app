@@ -173,7 +173,7 @@ function SimpleCheckboxSection (props) {
     return (
             <div className="col s6">
                 <div className="section blue-grey darken-4 blue-grey-text text-lighten-5">
-                    <h5>{displayListType}</h5>
+                    <h5>{props.listTitle}</h5>
                     {checkboxElements}
                     <div>
                         <button id={"add-"+props.listType+"-btn-" + props.selectedPlanId}

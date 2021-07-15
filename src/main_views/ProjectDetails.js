@@ -11,12 +11,17 @@ function ProjectDetails (props) {
     const [addModalType, setAddModalType] = useState("");
     const [addModalValue, setAddModalValue] = useState("");
     const [addModalSelectValue, setAddModalSelectValue] = useState("");
-    const [addModalCheckTypeValue, setAddModalCheckTypeValue] = useState("");
-    //const [selectedLevel, setSelectedLevel] = useState("");
-    const scrollspyElems = useRef(null);
+    const [addModalCheckTypeValue, setAddModalCheckTypeValue] = useState("tools");
+    const [selectedLevel, setSelectedLevel] = useState("");
+    //const scrollspyElems = useRef(null);
     const addModalSelect = useRef(null);
     const addModalChecksSelect = useRef(null);
 
+    useEffect(() => {
+        console.log(addModalChecksSelect.current, addModalSelect.current);
+        M.FormSelect.init(addModalSelect.current);
+        M.FormSelect.init(addModalChecksSelect.current);
+    })
     useEffect(() => {
         const addModalOptions = {
             opacity: 0,
@@ -24,15 +29,11 @@ function ProjectDetails (props) {
             dismissable: true
         }
         M.Modal.init(addModal.current, addModalOptions);
-        M.FormSelect.init(addModalChecksSelect.current);
-        M.FormSelect.init(addModalSelect.current);
     }, [])
-
     useEffect(() => {
-        scrollspyElems.current = document.querySelectorAll('.scrollspy')
-        console.log(scrollspyElems)
-        M.ScrollSpy.init(scrollspyElems.current);
-    }, [])
+        setSelectedLevel(props.userPlans[props.selectedPlanIndex].id);
+    },[props.userPlans, props.selectedPlanIndex])
+
     function updateSubPlan (index, newSubPlanObj) {
         const updatedSubPlans = [].concat(
             props.userPlans[props.selectedPlanIndex].sub_plans
@@ -43,7 +44,7 @@ function ProjectDetails (props) {
     function handleChange(event) {
         const eventId = event.target.id
         switch (eventId) {
-            case "new_substep":
+            case "add-modal-title-input":
                 setAddModalValue(event.target.value);
                 break;
             case "add-modal-select":
@@ -57,11 +58,14 @@ function ProjectDetails (props) {
         }
     }
 
-    function addNewSection (parentId) {
+    function addNewSection () {
         const planId = props.userPlans[props.selectedPlanIndex].id;
+        const parentId = addModalSelectValue;
         console.log(addModalValue);
+        console.log(addModalSelectValue);
         const newArr = [];
         let updatedFieldObj;
+        //Needs to account for being under different levels
         if (addModalValue.trim().length > 0){
             switch (addModalType) {
                 case "substep":
@@ -71,28 +75,21 @@ function ProjectDetails (props) {
                     updatedFieldObj = {sub_plans:newArr}
                     break;
                 case "checklist":
-                    newArr.concat(props.userPlans[props.selectedPlanIndex].sub_plans)
-                    newArr.push({title:addModalValue, parent:parentId})
+                    newArr.concat(props.userPlans[props.selectedPlanIndex].checks)
+                    newArr.push({title:addModalValue, parent:parentId, list_type:addModalCheckTypeValue})
                     updatedFieldObj = {checks:newArr};
                     break;
                 default:
             }
+        console.log(planId, updatedFieldObj);
         props.savePlanChanges(planId, updatedFieldObj)
         }
     }
     function openAddModal(e){
         console.log(e.target.id);
-
-        let activeSectionId;
-        M.ScrollSpy.init(scrollspyElems.current, {
-            getActiveElement: function (id) {
-                activeSectionId = id;
-            }
-        });
-        console.log(activeSectionId);
-        setAddModalSelectValue(activeSectionId);
-
+        setAddModalSelectValue(selectedLevel);
         const addModalInstance = M.Modal.getInstance(addModal.current)
+        console.log(addModalInstance);
         switch (e.target.id) {
             case "add-substep-btn":
                 setAddModalTitle("Add New Substep");
@@ -105,13 +102,12 @@ function ProjectDetails (props) {
             default:
                 return;
         }
-
         addModalInstance.open();
     }
 
     const substepSections = props.userPlans[props.selectedPlanIndex].sub_plans.map((subPlan,i) => {
         return(
-            <div key={subPlan.title + i} id={subPlan.id} className="row scrollspy">
+            <div key={subPlan.title + i} id={subPlan.id} className="row">
                 <div className="nav-wrapper">
                     <div className="row blue lighten-3">
                         <div className="col s12 blue-grey darken-4 blue-grey-text text-lighten-5">
@@ -135,7 +131,7 @@ function ProjectDetails (props) {
             <div className="nav-wrapper row blue-grey darken-4 blue-grey-text text-lighten-5">
                 <div className="col s12">
                     <button type="button" className="waves-effect waves-blue btn-flat blue-grey darken-4 blue-grey-text text-lighten-5 " onClick={()=>{props.handleMainAppView('HomePage')}}><i className="material-icons left">arrow_back</i></button>
-                    <h5 id={props.userPlans[props.selectedPlanIndex].id} className="scrollspy blue-grey darken-4 blue-grey-text text-lighten-5 header">
+                    <h5 id={props.userPlans[props.selectedPlanIndex].id} className="blue-grey darken-4 blue-grey-text text-lighten-5 header">
                         {props.userPlans[props.selectedPlanIndex].title}
                     </h5>
                 </div>
@@ -176,22 +172,18 @@ function ProjectDetails (props) {
             <div ref={addModal} id={"add-modal"+props.userPlans[props.selectedPlanIndex].title} className="modal">
                 <div className="modal-content">
                     <h4>{addModalTitle}</h4>
-                    {
-                        addModalType === "substep" &&
-                        <div className="input-field">
-                            <input type="text" placeholder="Title"
-                                    id={"new_"+addModalType}
-                                    className="validate"
-                                    value={addModalValue}
-                                    onChange={(e) => handleChange(e)}/>
-                        </div>
-                    }
+                    <div className="input-field">
+                        <input type="text" placeholder="Title"
+                                id={"add-modal-title-input"}
+                                className="validate"
+                                value={addModalValue}
+                                onChange={(e) => handleChange(e)}/>
+                    </div>
                     <div className="row">
                         {
                             addModalType === "checklist" &&
                             <div className="input-field col s6">
-                                <select ref={addModalChecksSelect} id="add-modal-checks-select" value={addModalCheckTypeValue} onChange={handleChange}>
-                                    <option value="">Select One</option>
+                                <select id="add-modal-checks-select" ref={addModalChecksSelect} value={addModalCheckTypeValue} onChange={handleChange}>
                                     <option value="tools">Tools</option>
                                     <option value="materials">Materials</option>
                                 </select>
@@ -215,7 +207,7 @@ function ProjectDetails (props) {
                     <a id="addModal-add-btn"
                         href="#projectDetails"
                         className="modal-close waves-effect waves-blue btn-flat"
-                        onClick={() => addNewSection(addModalSelectValue)}>
+                        onClick={addNewSection}>
                         Add
                     </a>
                 </div>
@@ -225,3 +217,13 @@ function ProjectDetails (props) {
 }
 
 export default ProjectDetails;
+
+/*
+console.log(scrollspyElems.current);
+let activeSectionId;
+M.ScrollSpy.init(scrollspyElems.current, {
+    getActiveElement: function (id) {
+        activeSectionId = id;
+    }
+});
+*/
