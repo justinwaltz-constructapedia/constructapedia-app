@@ -21,7 +21,7 @@ function ProjectLevel (props) {
             case "add-video-btn":
                 console.log(videoUrlValue)
                 if (videoUrlValue.trim().length > 0) {
-                    //Should I be mutating props like this?
+                    //Should props be mutated like this?
                     const updatedPlanVideoUrls = props.userPlans[props.selectedPlanIndex].video_urls.push(videoUrlValue);
                     console.log(updatedPlanVideoUrls);
                     props.savePlanChanges(planId, {video_urls:updatedPlanVideoUrls})
@@ -38,15 +38,17 @@ function ProjectLevel (props) {
         props.savePlanChanges(planId, {notes:[{contents:noteValue}]})
     }
 
-    const checksSections = props.userPlans[props.selectedPlanIndex].checks.map((checksArr) => {
+    const checksSections = props.userPlans[props.selectedPlanIndex].checks.map((checkObj,i) => {
         return (
-            <form>
+            <form key={checkObj.title+i} >
                 <SimpleCheckboxSection
-                    checks={checksArr}
+                    checks={checkObj.list}
                     selectedPlanId={props.userPlans[props.selectedPlanIndex].id}
+                    listType={checkObj.list_type}
+                    listTitle={checkObj.title}
                     selectedPlanIndex={props.selectedPlanIndex}
                     savePlanChanges={props.savePlanChanges}
-                    listType={checksArr[0].item_type}/>
+                    />
             </form>
         )
     })

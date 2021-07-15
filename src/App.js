@@ -65,7 +65,7 @@ class App extends React.Component {
                 <div className= {colorTheme.primary}>
                     <nav className={`top-nav ${colorTheme.primary} z-depth-0`}>
                         <div className="nav-wrapper">
-                            <a href="index.html" className="brand-logo center">Contruct-A-Project</a>
+                            <a href="index.html" className="brand-logo center">Contructapedia</a>
                             <ul className="right">
                                 <li><a href="#slide-out" data-target="slide-out" className="sidenav-trigger white-text show-on-large"><i className="large material-icons">account_circle</i></a></li>
                             </ul>

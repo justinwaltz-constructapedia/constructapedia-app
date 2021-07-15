@@ -20,31 +20,3 @@ function Header (props) {
 }
 
 export default Header;
-
-/*
-function handleLoginClick(e){
-    e.preventDefault();
-    props.handleLoginClick(true);
-}
-function handleLogoutClick(e){
-    props.handleLogoutClick(false);
-}
-const isLoggedIn = props.isLoggedIn;
-let button;
-if (isLoggedIn){
-    button = <LogoutButton onClick={handleLogoutClick} />
-} else {
-    button = <LoginButton onClick={handleLoginClick} />
-}
-
-function LoginButton(props) {
-    return (
-        <a href="#" id="download-button" className="btn waves-effect waves-light blue" onClick={props.onClick}>Get Started</a>
-    )
-}
-function LogoutButton(props) {
-    return (
-        <a href="#" id="download-button" className="btn waves-effect waves-light blue" onClick={props.onClick}>Log Out</a>
-    )
-}
- */
