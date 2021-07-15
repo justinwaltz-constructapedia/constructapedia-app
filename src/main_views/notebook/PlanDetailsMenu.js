@@ -1,7 +1,7 @@
 import React, {useEffect, useRef} from 'react';
 import M from "materialize-css";
 import "materialize-css/dist/css/materialize.min.css";
-import SelectedPlanMenu from './SelectedPlanMenu.js';
+import SelectedPlanNav from './SelectedPlanNav.js';
 
 function PlanDetailsMenu(props){
     const addMenuDropdown = useRef(null);
@@ -14,7 +14,7 @@ function PlanDetailsMenu(props){
 
           <ul id="sticky-project-nav" className="col s3 push-s9 center-align blue-grey darken-4 blue-grey-text text-lighten-5">
               <h5 className="center-align"><b>&#123;C&#125;</b></h5>
-              <SelectedPlanMenu
+              <SelectedPlanNav
                   selectedPlan={props.userPlans[props.selectedPlanIndex]}
                   handleMainAppView={props.handleMainAppView}
                   updateSelectedPlan={props.updateSelectedPlan}
