@@ -37,27 +37,26 @@ function ProjectLevel (props) {
         const planId = props.userPlans[props.selectedPlanIndex].id;
         props.savePlanChanges(planId, {notes:[{contents:noteValue}]})
     }
+
+    const checksSections = props.userPlans[props.selectedPlanIndex].checks.map((checksArr) => {
+        return (
+            <form>
+                <SimpleCheckboxSection
+                    checks={checksArr}
+                    selectedPlanId={props.userPlans[props.selectedPlanIndex].id}
+                    selectedPlanIndex={props.selectedPlanIndex}
+                    savePlanChanges={props.savePlanChanges}
+                    listType={checksArr[0].item_type}/>
+            </form>
+        )
+    })
     return (
         <div className="col s12 blue-grey darken-4 blue-grey-text text-lighten-5">
             <div className="divider"></div>
             <NotesSection saveNotes={saveNotes} notes={props.userPlans[props.selectedPlanIndex].notes}/>
             <div className="divider"></div>
             <div className="row">
-                {
-                    <form>
-                <SimpleCheckboxSection
-                    userPlans={props.userPlans}
-                    selectedPlanIndex={props.selectedPlanIndex}
-                    savePlanChanges={props.savePlanChanges}
-                    listType="tools"/>
-                </form>}
-                <form>
-                <SimpleCheckboxSection
-                    userPlans={props.userPlans}
-                    selectedPlanIndex={props.selectedPlanIndex}
-                    savePlanChanges={props.savePlanChanges}
-                    listType="materials"/>
-                </form>
+                { props.userPlans[props.selectedPlanIndex].checks.length > 0 && checksSections }
             </div>
             <div className="divider"></div>
             <div className="row blue-grey darken-4 blue-grey-text text-lighten-5">

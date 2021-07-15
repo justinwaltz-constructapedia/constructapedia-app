@@ -10,10 +10,12 @@ function ProjectDetails (props) {
     const [addModalTitle, setAddModalTitle] = useState("");
     const [addModalType, setAddModalType] = useState("");
     const [addModalValue, setAddModalValue] = useState("");
-    const [addModalSelectValue, setAddModalSelectValue] = useState("")
+    const [addModalSelectValue, setAddModalSelectValue] = useState("");
+    const [addModalCheckTypeValue, setAddModalCheckTypeValue] = useState("");
     //const [selectedLevel, setSelectedLevel] = useState("");
     const scrollspyElems = useRef(null);
     const addModalSelect = useRef(null);
+    const addModalChecksSelect = useRef(null);
 
     useEffect(() => {
         const addModalOptions = {
@@ -22,7 +24,7 @@ function ProjectDetails (props) {
             dismissable: true
         }
         M.Modal.init(addModal.current, addModalOptions);
-
+        M.FormSelect.init(addModalChecksSelect.current);
         M.FormSelect.init(addModalSelect.current);
     }, [])
 
@@ -47,6 +49,9 @@ function ProjectDetails (props) {
             case "add-modal-select":
                 setAddModalSelectValue(event.target.value);
                 break;
+            case "add-modal-checks-select":
+                setAddModalCheckTypeValue(event.target.value)
+                break;
             default:
                 return;
         }
@@ -55,19 +60,24 @@ function ProjectDetails (props) {
     function addNewSection (parentId) {
         const planId = props.userPlans[props.selectedPlanIndex].id;
         console.log(addModalValue);
+        const newArr = [];
+        let updatedFieldObj;
         if (addModalValue.trim().length > 0){
             switch (addModalType) {
                 case "substep":
-                    const updatedPlanSubsteps = [].concat(props.userPlans[props.selectedPlanIndex].sub_plans)
-                    updatedPlanSubsteps.push({title:addModalValue, parent:parentId})
-                    console.log(updatedPlanSubsteps);
-                    props.savePlanChanges(planId, {sub_plans:updatedPlanSubsteps})
+                    newArr.concat(props.userPlans[props.selectedPlanIndex].sub_plans)
+                    newArr.push({title:addModalValue, parent:parentId})
+                    console.log(newArr);
+                    updatedFieldObj = {sub_plans:newArr}
                     break;
                 case "checklist":
-                    console.log("chcks")
+                    newArr.concat(props.userPlans[props.selectedPlanIndex].sub_plans)
+                    newArr.push({title:addModalValue, parent:parentId})
+                    updatedFieldObj = {checks:newArr};
                     break;
                 default:
             }
+        props.savePlanChanges(planId, updatedFieldObj)
         }
     }
     function openAddModal(e){
@@ -125,7 +135,9 @@ function ProjectDetails (props) {
             <div className="nav-wrapper row blue-grey darken-4 blue-grey-text text-lighten-5">
                 <div className="col s12">
                     <button type="button" className="waves-effect waves-blue btn-flat blue-grey darken-4 blue-grey-text text-lighten-5 " onClick={()=>{props.handleMainAppView('HomePage')}}><i className="material-icons left">arrow_back</i></button>
-                    <h5 className="blue-grey darken-4 blue-grey-text text-lighten-5 header">{props.userPlans[props.selectedPlanIndex].title}</h5>
+                    <h5 id={props.userPlans[props.selectedPlanIndex].id} className="scrollspy blue-grey darken-4 blue-grey-text text-lighten-5 header">
+                        {props.userPlans[props.selectedPlanIndex].title}
+                    </h5>
                 </div>
             </div>
             <div className="row">
@@ -138,7 +150,7 @@ function ProjectDetails (props) {
             </div>
             <div className="row blue-grey darken-4 blue-grey-text text-lighten-5">
                 <div className="col s8 offset-s1">
-                    <div id={props.userPlans[props.selectedPlanIndex].id} className="row scrollspy">
+                    <div className="row">
                         <ProjectLevel
                             userPlans={props.userPlans}
                             selectedPlanIndex={props.selectedPlanIndex}
@@ -164,25 +176,39 @@ function ProjectDetails (props) {
             <div ref={addModal} id={"add-modal"+props.userPlans[props.selectedPlanIndex].title} className="modal">
                 <div className="modal-content">
                     <h4>{addModalTitle}</h4>
-                    <div className="input-field">
-                        <input type="text" placeholder="Title"
-                                id={"new_"+addModalType}
-                                className="validate"
-                                value={addModalValue}
-                                onChange={(e) => handleChange(e)}/>
-                    </div>
-                    <div className="input-field col s12">
-                        <select id="add-modal-select" ref={addModalSelect} value={addModalSelectValue} onChange={handleChange}>
-                            <option value={props.userPlans[props.selectedPlanIndex].id}>Plan Overview</option>
-                            {
-                                props.userPlans[props.selectedPlanIndex].sub_plans.map((subPlan, i) => {
-                                    return <option key={subPlan.title + i} value={subPlan.id}>{subPlan.title}</option>
-                                })
-                            }
-
-
-                        </select>
-                        <label>Add to...</label>
+                    {
+                        addModalType === "substep" &&
+                        <div className="input-field">
+                            <input type="text" placeholder="Title"
+                                    id={"new_"+addModalType}
+                                    className="validate"
+                                    value={addModalValue}
+                                    onChange={(e) => handleChange(e)}/>
+                        </div>
+                    }
+                    <div className="row">
+                        {
+                            addModalType === "checklist" &&
+                            <div className="input-field col s6">
+                                <select ref={addModalChecksSelect} id="add-modal-checks-select" value={addModalCheckTypeValue} onChange={handleChange}>
+                                    <option value="">Select One</option>
+                                    <option value="tools">Tools</option>
+                                    <option value="materials">Materials</option>
+                                </select>
+                                <label>Checklist Type</label>
+                            </div>
+                        }
+                        <div className="input-field col s6">
+                            <select id="add-modal-select" ref={addModalSelect} value={addModalSelectValue} onChange={handleChange}>
+                                <option value={props.userPlans[props.selectedPlanIndex].id}>Plan Overview</option>
+                                {
+                                    props.userPlans[props.selectedPlanIndex].sub_plans.map((subPlan, i) => {
+                                        return <option key={subPlan.title + i} value={subPlan.id}>{subPlan.title}</option>
+                                    })
+                                }
+                            </select>
+                            <label>Add to...</label>
+                        </div>
                     </div>
                 </div>
                 <div className="modal-footer">
