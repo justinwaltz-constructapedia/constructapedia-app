@@ -32,22 +32,40 @@ function ProjectLevel (props) {
         }
     }
 
-    function saveNotes (noteIndex, noteValue) {
+    function saveNotes (noteValue, noteIndex) {
         //Update for multiple notes in array using noteIndex if necessary
         const planId = props.userPlans[props.selectedPlanIndex].id;
-        props.savePlanChanges(planId, {notes:[{contents:noteValue}]})
+        const currentNotes = props.userPlans[props.selectedPlanIndex].notes
+        let updatedNotes;
+        if (!noteIndex) {
+            updatedNotes = currentNotes.concat([{contents:noteValue}])
+        }
+        props.savePlanChanges(planId, {notes:updatedNotes})
+    }
+    function updateChecklist (checklistIndex, action, itemArr, itemIndex) {
+        const currentChecks = [].concat(props.userPlans[props.selectedPlanIndex].checks)
+        console.log(checklistIndex, action, itemArr, itemIndex);
+        switch (action) {
+            case "addItem":
+                currentChecks[checklistIndex].list.push(itemArr[0]);
+                console.log(currentChecks);
+                props.savePlanChanges(props.userPlans[props.selectedPlanIndex].id, {checks:currentChecks})
+                break;
+            default:
+
+        }
     }
 
     const checksSections = props.userPlans[props.selectedPlanIndex].checks.map((checkObj,i) => {
         return (
             <form key={checkObj.title+i} >
                 <SimpleCheckboxSection
-                    checks={checkObj.list}
+                    checklist={checkObj.list}
                     selectedPlanId={props.userPlans[props.selectedPlanIndex].id}
                     listType={checkObj.list_type}
                     listTitle={checkObj.title}
-                    selectedPlanIndex={props.selectedPlanIndex}
-                    savePlanChanges={props.savePlanChanges}
+                    checklistIndex={i}
+                    updateChecklist={updateChecklist}
                     />
             </form>
         )
@@ -55,7 +73,10 @@ function ProjectLevel (props) {
     return (
         <div className="col s12 blue-grey darken-4 blue-grey-text text-lighten-5">
             <div className="divider"></div>
-            <NotesSection saveNotes={saveNotes} notes={props.userPlans[props.selectedPlanIndex].notes}/>
+            <NotesSection saveNotes={saveNotes}
+                        notes={props.userPlans[props.selectedPlanIndex].notes}
+                        selectedPlanId={props.userPlans[props.selectedPlanIndex].id}
+                        />
             <div className="divider"></div>
             <div className="row">
                 { props.userPlans[props.selectedPlanIndex].checks.length > 0 && checksSections }

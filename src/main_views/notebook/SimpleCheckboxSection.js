@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 
 function SimpleCheckboxSection (props) {
-    const initialCheckboxes = props.checks.reduce(
+    const initialCheckboxes = props.checklist.reduce(
         (options, option) => ({
             ...options,
             [option.text_value]:option.is_complete
@@ -11,11 +11,11 @@ function SimpleCheckboxSection (props) {
     const [newItemValue, setNewItemValue] = useState("");
     const [checkboxes, setCheckboxes] = useState(initialCheckboxes);
     const [checksObjs, setChecksObjs] = useState([]);
-    const checkboxElements = makeListOfCheckboxElements(props.checks);
+    const checkboxElements = makeListOfCheckboxElements(props.checklist);
     const displayListType = props.listType.trim().replace(/^\w/, (c) => c.toUpperCase());
 
     useEffect(() => {
-        const checksToSet = props.checks
+        const checksToSet = props.checklist
         setCheckboxes(checksToSet.reduce(
             (options, option) => ({
                 ...options,
@@ -30,7 +30,7 @@ function SimpleCheckboxSection (props) {
             }),
             {}
         ))
-    }, [props.checks]);
+    }, [props.checklist]);
 
     function handleInputChange(event, index) {
         const target = event.target;
@@ -81,76 +81,63 @@ function SimpleCheckboxSection (props) {
     function makeListOfCheckboxElements (arr) {
         if (props.listType === 'materials') {
             return (
-                <div>
-                    {arr.map((listItem, i)=>{
-                        //add checked="checked" attribute to the input, make the onChange effect the db
-                        if (listItem.item_type===props.listType) {
-                            return (
-                                <div key={props.listType + i} className="row valign-wrapper">
-                                    <div className="col s5 left-align">
-                                        <label className="left-align">
-                                            <input
-                                                type="checkbox"
-                                                name={listItem.text_value}
-                                                checked={checkboxes[listItem.text_value]}
-                                                onChange={(e)=>handleInputChange(e)}
-                                                className="filled-in"
-                                            />
-                                            <span>{listItem.text_value}</span>
-                                        </label>
-                                    </div>
-                                    <div className="col s3">
-                                        <div className="input-field no-margin no-padding">
-                                            <input id={"quantity"+i} type="number"
-                                                className="validate no-margin no-padding"
-                                                value={listItem.quantity}
-                                                placeholder="Need"
-                                                onChange={(e)=>handleInputChange(e,i)}
-                                                />
-                                        </div>
-                                    </div>
-                                    <div className="col s4">
-                                        <div className="input-field no-margin no-padding">
-                                            <input id={"unit"+i} type="text"
-                                                className="validate no-margin no-padding"
-                                                placeholder="Unit"
-                                                value={listItem.unit_of_measure}
-                                                onChange={(e)=>handleInputChange(e,i)}/>
-                                        </div>
-                                    </div>
+                arr.map((listItem, i)=>{
+                    //add checked="checked" attribute to the input, make the onChange effect the db
+                    return (
+                        <div key={props.listType + i} className="row valign-wrapper">
+                            <div className="col s5 left-align">
+                                <label className="left-align">
+                                    <input
+                                        type="checkbox"
+                                        name={listItem.text_value}
+                                        checked={checkboxes[listItem.text_value]}
+                                        onChange={(e)=>handleInputChange(e)}
+                                        className="filled-in"
+                                    />
+                                    <span>{listItem.text_value}</span>
+                                </label>
+                            </div>
+                            <div className="col s3">
+                                <div className="input-field no-margin no-padding">
+                                    <input id={"quantity"+i} type="number"
+                                        className="validate no-margin no-padding"
+                                        value={listItem.quantity}
+                                        placeholder="Need"
+                                        onChange={(e)=>handleInputChange(e,i)}
+                                        />
                                 </div>
-                            )
-                        }else{
-                            return null;
-                        }
-
-                    })}
-                </div>
+                            </div>
+                            <div className="col s4">
+                                <div className="input-field no-margin no-padding">
+                                    <input id={"unit"+i} type="text"
+                                        className="validate no-margin no-padding"
+                                        placeholder="Unit"
+                                        value={listItem.unit_of_measure}
+                                        onChange={(e)=>handleInputChange(e,i)}/>
+                                </div>
+                            </div>
+                        </div>
+                    )
+                })
             )
         } else if (props.listType === "tools") {
             return(
-                <div>
-                    {arr.map((listItem,i) => {
-                        if (listItem.item_type===props.listType) {
-                            return (
-                                <div key={props.listType + i} className="row valign-wrapper">
-                                    <div className="col s12 left-align">
-                                        <label className="left-align active">
-                                            <input type="checkbox"
-                                                className="filled-in"
-                                                name={listItem.text_value}
-                                                checked={checkboxes[listItem.text_value]}
-                                                onChange={(e)=>handleInputChange(e)}/>
-                                            <span>{listItem.text_value}</span>
-                                        </label>
-                                    </div>
-                                </div>
-                            )
-                        } else {
-                            return null;
-                        }
-                    })}
-                </div>
+                arr.map((listItem,i) => {
+                    return (
+                        <div key={props.listType + i} className="row valign-wrapper">
+                            <div className="col s12 left-align">
+                                <label className="left-align active">
+                                    <input type="checkbox"
+                                        className="filled-in"
+                                        name={listItem.text_value}
+                                        checked={checkboxes[listItem.text_value]}
+                                        onChange={(e)=>handleInputChange(e)}/>
+                                    <span>{listItem.text_value}</span>
+                                </label>
+                            </div>
+                        </div>
+                    )
+                })
             )
         }
     }
@@ -162,11 +149,10 @@ function SimpleCheckboxSection (props) {
             const newCheck = {
                 text_value:newItemValue,
                 //is_complete:
-                item_type:props.listType
             }
             newChecks.push(newCheck);
             console.log(newChecks)
-            props.savePlanChanges(props.selectedPlanId,{checks:newChecks})
+            props.updateChecklist(props.checklistIndex, "addItem", [newCheck])
             setNewItemValue("");
         }
     }
@@ -176,13 +162,13 @@ function SimpleCheckboxSection (props) {
                     <h5>{props.listTitle}</h5>
                     {checkboxElements}
                     <div>
-                        <button id={"add-"+props.listType+"-btn-" + props.selectedPlanId}
+                        <button id={"add-"+props.listType+"-btn-" + props.checklistIndex}
                                 className="btn-floating btn-small waves-effect waves-light blue-grey darken-3 blue-grey-text text-lighten-5" type="button"
                                 onClick={addNewChecklistItem}>
                                 <i className="material-icons">add</i>
                         </button>
                         <div className="input-field inline blue-grey darken-4 blue-grey-text text-lighten-5">
-                            <input id={"new_" + props.listType  + "_" + props.selectedPlanId} type="text" className="validate blue-grey darken-4 blue-grey-text text-lighten-5"
+                            <input id={"new-" + props.listType  + "-" + props.checklistIndex} type="text" className="validate blue-grey darken-4 blue-grey-text text-lighten-5"
                                 value={newItemValue}
                                 onChange={(e) => handleInputChange(e)}
                                 onKeyDown={(e)=>{if(e.keyCode===13){addNewChecklistItem()}}}
