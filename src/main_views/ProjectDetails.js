@@ -61,8 +61,7 @@ function ProjectDetails (props) {
     function addNewSection () {
         const planId = props.userPlans[props.selectedPlanIndex].id;
         const parentId = addModalSelectValue;
-        console.log(addModalValue);
-        console.log(addModalSelectValue);
+        const currentChecks = props.userPlans[props.selectedPlanIndex].checks;
         const newArr = [];
         let updatedFieldObj;
         //Needs to account for being under different levels
@@ -71,13 +70,15 @@ function ProjectDetails (props) {
                 case "substep":
                     newArr.concat(props.userPlans[props.selectedPlanIndex].sub_plans)
                     newArr.push({title:addModalValue, parent:parentId})
-                    console.log(newArr);
                     updatedFieldObj = {sub_plans:newArr}
                     break;
                 case "checklist":
-                    newArr.concat(props.userPlans[props.selectedPlanIndex].checks)
-                    newArr.push({title:addModalValue, parent:parentId, list_type:addModalCheckTypeValue})
-                    updatedFieldObj = {checks:newArr};
+                    console.log(currentChecks);
+                    console.log(newArr);
+                    const newChecks = newArr.concat(currentChecks)
+                    newChecks.push({title:addModalValue, parent:parentId, list_type:addModalCheckTypeValue})
+                    console.log(newChecks);
+                    updatedFieldObj = {checks:newChecks};
                     break;
                 default:
             }
