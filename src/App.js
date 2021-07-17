@@ -151,11 +151,8 @@ class App extends React.Component {
             updateUser={this.updateUser}
             isLoading={this.state.isLoading}
           />
-          <footer className='page-footer blue-grey darken-4 blue-grey-text text-lighten-5'>
-            <div className='footer-copyright'>
-              <div className='container'>© 2021 Copyright Text</div>
-            </div>
-            <div className='container'></div>
+          <footer class='section footer-tm right'>
+            <p>Contructapedia &copy; &trade; 2021</p>
           </footer>
         </div>
       );
