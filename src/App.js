@@ -63,13 +63,13 @@ class App extends React.Component {
       return (
         <div>
           <div className='navbar-fixed nav-bar-override'>
-            <nav className='z-depth-1 white nav-bar-override'>
+            <nav className='z-depth-1 indigo lighten-5 nav-bar-override'>
               <div>
-                <div className='nav-wrapper white'>
+                <div className='nav-wrapper'>
                   <div className='container'>
                     <a
                       href='index.html'
-                      className='brand-logo left indigo-text text-darken-3 white header-name'
+                      className='brand-logo left indigo-text text-darken-3 header-name'
                     >
                       <b>Constructapedia</b>
                     </a>

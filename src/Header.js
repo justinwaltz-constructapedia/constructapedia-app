@@ -5,12 +5,12 @@ function Header(props) {
   return (
     <header>
       <div className='navbar-fixed'>
-        <nav className='z-depth-1 white nav-bar-override'>
+        <nav className='z-depth-1 indigo lighten-5 nav-bar-override'>
           <div className='header-width'>
             <div className='nav-wrapper white'>
               <a
                 href='index.html'
-                className='brand-logo left indigo-text text-darken-3 white header-name'
+                className='brand-logo left indigo-text text-darken-3 header-name'
               >
                 <b>Constructapedia</b>
               </a>

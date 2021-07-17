@@ -7,7 +7,7 @@ function HomePage(props) {
       <div className='col s12'>
         <div className='container create-prj-override'>
           <button
-            className='btn waves-effect waves-light indigo darken-4 white-text'
+            className='btn waves-effect waves-light indigo white-text'
             onClick={() => {
               props.handleMainAppView('NewProject');
             }}
@@ -22,40 +22,41 @@ function HomePage(props) {
             </li>
           </div>
           <div className='divider'></div>
-          <li className='collection-header indigo-text text-darken-3'>
+          <li className='collection-header indigo-text text-darken-3 indigo lighten-5'>
             <b>In Progress</b>
-          </li>
-          {props.userPlans.length > 0 &&
-            props.userPlans.map((plan) => {
-              return (
-                <li key={plan.id} className='collection-item'>
-                  <div className='indigo-text text-darken-3'>
-                    <a
-                      href='#notebook'
-                      className='waves-effect waves-light btn-flat indigo-text text-darken-3'
-                      onClick={() => props.updateSelectedPlan(plan.id)}
-                    >
-                      <h6 className='valign-wrapper'>
-                        {plan.title}
-                        <i className='material-icons'>chevron_right</i>
-                      </h6>
-                    </a>
 
-                    <button
-                      className='btn-flat center-align right waves-effect waves-light  hide-on-small-and-down '
-                      onClick={() => {
-                        props.removeUserPlan(plan.id);
-                      }}
-                    >
-                      <i className='material-icons grey-text text-lighten-4'>
-                        delete_forever
-                      </i>
-                    </button>
-                  </div>
-                </li>
-              );
-            })}
-          <li className='collection-header indigo-text text-darken-3'>
+            {props.userPlans.length > 0 &&
+              props.userPlans.map((plan) => {
+                return (
+                  <li key={plan.id} className='collection-item'>
+                    <div className='indigo-text text-darken-3'>
+                      <a
+                        href='#notebook'
+                        className='waves-effect waves-light btn-flat indigo-text text-darken-3'
+                        onClick={() => props.updateSelectedPlan(plan.id)}
+                      >
+                        <h6 className='valign-wrapper'>
+                          {plan.title}
+                          <i className='material-icons'>chevron_right</i>
+                        </h6>
+                      </a>
+
+                      <button
+                        className='btn-flat center-align right waves-effect waves-light  hide-on-small-and-down '
+                        onClick={() => {
+                          props.removeUserPlan(plan.id);
+                        }}
+                      >
+                        <i className='material-icons grey-text text-lighten-4'>
+                          delete_forever
+                        </i>
+                      </button>
+                    </div>
+                  </li>
+                );
+              })}
+          </li>
+          <li className='collection-header indigo-text text-darken-3 indigo lighten-5'>
             <b>Finished</b>
             <li className='collection-item'>
               Coming Soon <i className='material-icons'>share</i>
@@ -68,8 +69,8 @@ function HomePage(props) {
               <b>Construct-A-Network</b>
             </li>
           </div>
-          <div className='divider'></div>
-          <li className='collection-header indigo-text text-darken-3'>
+
+          <li className='collection-header indigo-text text-darken-3 indigo lighten-5'>
             <b>
               Coming Soon <i className='material-icons'>share</i>
             </b>
