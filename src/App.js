@@ -62,28 +62,30 @@ class App extends React.Component {
     if (!isLoggedIn) {
       return (
         <div>
-          <nav className={`navbar-fixed blue-grey darken-4 z-depth-1`}>
-            <div>
-              <div className='nav-wrapper'>
-                <div className='container'>
-                  <a href='index.html' className='brand-logo left'>
-                    Constructapedia
-                  </a>
-                  <ul className='right'>
-                    <li>
-                      <a
-                        href='#slide-out'
-                        data-target='slide-out'
-                        className='sidenav-trigger show-on-large'
-                      >
-                        <i className='large material-icons'>more_horiz</i>
-                      </a>
-                    </li>
-                  </ul>
+          <div className='navbar-fixed'>
+            <nav className='blue-grey darken-4 z-depth-1'>
+              <div>
+                <div className='nav-wrapper'>
+                  <div className='container'>
+                    <a href='index.html' className='brand-logo left'>
+                      <b>Constructapedia</b>
+                    </a>
+                    <ul className='right'>
+                      <li>
+                        <a
+                          href='#slide-out'
+                          data-target='slide-out'
+                          className='sidenav-trigger show-on-large'
+                        >
+                          <i className='large material-icons'>more_horiz</i>
+                        </a>
+                      </li>
+                    </ul>
+                  </div>
                 </div>
               </div>
-            </div>
-          </nav>
+            </nav>
+          </div>
           <Sidenav
             isLoggedIn={isLoggedIn}
             handleLogin={this.handleLogin}
@@ -104,16 +106,13 @@ class App extends React.Component {
                         data-target='slide-out'
                         className='sidenav-trigger show-on-large'
                       >
-                        <h3 className='indigo-text text-darken-3'>
-                          Construct Your Project
-                        </h3>
                         <i class='material-icons large indigo-text text-darken-3'>
                           settings_power
                         </i>
                         <h5 className='indigo-text text-darken-3'>
-                          Log In / Sign Up
+                          <b>Log In / Sign Up</b>
                         </h5>
-                        <p className='indigo-text text-darken-3'>
+                        <p className='blue-grey-text text-lighten-5'>
                           (Hold My Beer!)
                         </p>
                       </a>
