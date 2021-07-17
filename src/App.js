@@ -69,7 +69,7 @@ class App extends React.Component {
                   <div className='container'>
                     <a
                       href='index.html'
-                      className='brand-logo left indigo-text text-darken-3 white'
+                      className='brand-logo left indigo-text text-darken-3 white header-name'
                     >
                       <b>Constructapedia</b>
                     </a>
@@ -127,7 +127,7 @@ class App extends React.Component {
           </section>
 
           <footer class='section footer-tm right'>
-            <p>Contructapedia &copy; &trade; 2021</p>
+            <p>Constructapedia &copy; &trade; 2020</p>
           </footer>
         </div>
       );
@@ -152,7 +152,7 @@ class App extends React.Component {
             isLoading={this.state.isLoading}
           />
           <footer class='section footer-tm right'>
-            <p>Contructapedia &copy; &trade; 2021</p>
+            <p>Constructapedia &copy; &trade; 2020</p>
           </footer>
         </div>
       );

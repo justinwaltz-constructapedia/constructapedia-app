@@ -1,29 +1,33 @@
 import React from 'react';
+import './Custom.css';
+
 function Header(props) {
   return (
     <header>
-      <div>
+      <div className='navbar-fixed'>
         <nav className='z-depth-1 white'>
-          <div className='nav-wrapper white'>
-            <div className='container'>
+          <div className='header-width'>
+            <div className='nav-wrapper white'>
               <a
                 href='index.html'
-                className='brand-logo left indigo-text text-darken-3 white'
+                className='brand-logo left indigo-text text-darken-3 white header-name'
               >
-                <b>Contructapedia</b>
+                <b>Constructapedia</b>
               </a>
             </div>
-            <ul className='right'>
-              <li>
-                <a
-                  href='#slide-out'
-                  data-target='slide-out'
-                  className='sidenav-trigger white-text show-on-large indigo-text text-darken-3'
-                >
-                  <i className='large material-icons'>more_horiz</i>
-                </a>
-              </li>
-            </ul>
+            <div class='nav-wrapper'>
+              <ul className='right'>
+                <li>
+                  <a
+                    href='#slide-out'
+                    data-target='slide-out'
+                    className='sidenav-trigger white-text show-on-large indigo-text text-darken-3'
+                  >
+                    <i className='material-icons'>more_horiz</i>
+                  </a>
+                </li>
+              </ul>
+            </div>
           </div>
         </nav>
       </div>
