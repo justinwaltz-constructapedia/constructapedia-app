@@ -72,17 +72,17 @@ function Authorization(props) {
     <ul ref={sidenav} id='slide-out' className='sidenav'>
       <li>
         <div className='user-view'>
-          <h1 className='indigo-text text-darken-3 center-align'>
+          <h1 className='indigo-text text-darken-3 center-align sidenav-login-logo'>
             <b>&#123;C&#125;</b>
           </h1>
         </div>
       </li>
-
+      <div className='divider'></div>
       <li>
         <ul ref={authDropdown} className='collapsible collapsible-accordion'>
           <li className='active'>
-            <div className='collapsible-header waves-effect waves-light blue-grey darken-4 white-text'>
-              Existing Users<i className='material-icons'>arrow_drop_down</i>
+            <div className='collapsible-header waves-effect waves-light indigo-text text-darken-3'>
+              Login In<i className='material-icons'>arrow_drop_down</i>
             </div>
             <div className='collapsible-body'>
               <form
@@ -123,7 +123,7 @@ function Authorization(props) {
                   </label>
                 </p>
                 <button
-                  className='btn waves-effect waves-light indigo accent-1 container'
+                  className='btn waves-effect waves-light indigo darken-3 container'
                   type='submit'
                   name='action'
                 >
@@ -139,8 +139,8 @@ function Authorization(props) {
 
           {/*Create New Account */}
           <li>
-            <div className='collapsible-header waves-effect waves-light blue-grey darken-4 white-text'>
-              Create New Account
+            <div className='collapsible-header waves-effect waves-light indigo-text text-darken-3'>
+              Create An Account
               <i className='material-icons'>arrow_drop_down</i>
             </div>
             <div className='collapsible-body'>
@@ -201,7 +201,7 @@ function Authorization(props) {
                   </label>
                 </p>
                 <button
-                  className='btn waves-effect waves-light indigo accent-1 container'
+                  className='btn waves-effect waves-light indigo darken-3 container'
                   type='submit'
                   name='action'
                 >

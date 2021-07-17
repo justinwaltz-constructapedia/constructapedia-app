@@ -63,11 +63,14 @@ class App extends React.Component {
       return (
         <div>
           <div className='navbar-fixed'>
-            <nav className='blue-grey darken-4 z-depth-1'>
+            <nav className='z-depth-1 white'>
               <div>
-                <div className='nav-wrapper'>
+                <div className='nav-wrapper white'>
                   <div className='container'>
-                    <a href='index.html' className='brand-logo left'>
+                    <a
+                      href='index.html'
+                      className='brand-logo left indigo-text text-darken-3 white'
+                    >
                       <b>Constructapedia</b>
                     </a>
                     <ul className='right'>
@@ -75,7 +78,7 @@ class App extends React.Component {
                         <a
                           href='#slide-out'
                           data-target='slide-out'
-                          className='sidenav-trigger show-on-large'
+                          className='sidenav-trigger show-on-large indigo-text text-darken-3'
                         >
                           <i className='large material-icons'>more_horiz</i>
                         </a>
@@ -110,7 +113,7 @@ class App extends React.Component {
                           settings_power
                         </i>
                         <h5 className='indigo-text text-darken-3'>
-                          <b>Log In / Sign Up</b>
+                          <b>Plan Your Project</b>
                         </h5>
                         <p className='blue-grey-text text-lighten-5'>
                           (Hold My Beer!)
