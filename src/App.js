@@ -62,8 +62,8 @@ class App extends React.Component {
     if (!isLoggedIn) {
       return (
         <div>
-          <div className='navbar-fixed'>
-            <nav className='z-depth-1 white'>
+          <div className='navbar-fixed nav-bar-override'>
+            <nav className='z-depth-1 white nav-bar-override'>
               <div>
                 <div className='nav-wrapper white'>
                   <div className='container'>
@@ -73,17 +73,17 @@ class App extends React.Component {
                     >
                       <b>Constructapedia</b>
                     </a>
-                    <ul className='right'>
-                      <li>
-                        <a
-                          href='#slide-out'
-                          data-target='slide-out'
-                          className='sidenav-trigger show-on-large indigo-text text-darken-3'
-                        >
-                          <i className='large material-icons'>more_horiz</i>
-                        </a>
-                      </li>
-                    </ul>
+                    <div className='nav-wrapper right'>
+                      <a
+                        href='#slide-out'
+                        data-target='slide-out'
+                        className='sidenav-trigger show-on-large indigo-text text-darken-3'
+                      >
+                        <i className='large material-icons header-icon'>
+                          more_horiz
+                        </i>
+                      </a>
+                    </div>
                   </div>
                 </div>
               </div>
