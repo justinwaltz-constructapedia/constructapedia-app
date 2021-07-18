@@ -17,11 +17,11 @@ function HomePage(props) {
         </div>
         <ul id='home-page-nav' className='collection with-header'>
           <div>
-            <li className='collection-header center indigo-text text-darken-3'>
+            <li className='collection-header center grey lighten-5 indigo-text text-darken-3'>
               <b>Projects</b>
             </li>
           </div>
-          <div className='divider'></div>
+
           <li className='collection-header indigo-text text-darken-3 indigo lighten-5'>
             <b>In Progress</b>
 
@@ -65,7 +65,7 @@ function HomePage(props) {
         </ul>
         <ul id='home-page-nav' className='collection with-header'>
           <div>
-            <li className='collection-header center indigo-text text-darken-3'>
+            <li className='collection-header center grey lighten-5 indigo-text text-darken-3'>
               <b>Construct-A-Network</b>
             </li>
           </div>

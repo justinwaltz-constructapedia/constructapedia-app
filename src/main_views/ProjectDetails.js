@@ -136,128 +136,176 @@ function ProjectDetails(props) {
   });
 
   return (
-    <div className='col s12 blue-grey darken-4 blue-grey-text text-lighten-5'>
-      <div className='nav-wrapper row blue-grey darken-4 blue-grey-text text-lighten-5'>
-        <div className='col s12'>
-          <button
-            type='button'
-            className='waves-effect waves-blue btn-flat blue-grey darken-4 blue-grey-text text-lighten-5 '
-            onClick={() => {
-              props.handleMainAppView('HomePage');
-            }}
-          >
-            <i className='material-icons left'>arrow_back</i>
-          </button>
-          <h5
-            id={props.userPlans[props.selectedPlanIndex].id}
-            className='blue-grey darken-4 blue-grey-text text-lighten-5 header'
-          >
-            {props.userPlans[props.selectedPlanIndex].title}
-          </h5>
-        </div>
-      </div>
-      <div className='row'>
-        <div className='col s12'>
-          <button
-            className='btn waves-effect waves-light blue-grey darken-3 blue-grey-text text-lighten-5'
-            type='button'
-            name='action'
-            onClick={() => props.handleMainAppView('SearchResults')}
-          >
-            <i className='material-icons left tiny'>search</i>
-            Constructapedia
-          </button>
-        </div>
-      </div>
-      <div className='row blue-grey darken-4 blue-grey-text text-lighten-5'>
-        <div className='col s8 offset-s1'>
-          <div className='row'>
-            <ProjectLevel
-              userPlans={props.userPlans}
-              selectedPlanIndex={props.selectedPlanIndex}
-              changeOrUpdatePlanDraft={props.changeOrUpdatePlanDraft}
-              savePlanChanges={props.savePlanChanges}
-            />
+    <div>
+      <div className='col s12 blue-grey darken-4 blue-grey-text text-lighten-5'>
+        <div className='nav-wrapper row blue-grey darken-4 blue-grey-text text-lighten-5'>
+          <div className='col s12'>
+            <button
+              type='button'
+              className='waves-effect waves-blue btn-flat blue-grey darken-4 blue-grey-text text-lighten-5 '
+              onClick={() => {
+                props.handleMainAppView('HomePage');
+              }}
+            >
+              <i className='material-icons left'>arrow_back</i>
+            </button>
+            <h5
+              id={props.userPlans[props.selectedPlanIndex].id}
+              className='blue-grey darken-4 blue-grey-text text-lighten-5 header'
+            >
+              {props.userPlans[props.selectedPlanIndex].title}
+            </h5>
           </div>
-          <div className='row'>{substepSections}</div>
         </div>
-        <PlanDetailsMenu
-          userPlans={props.userPlans}
-          selectedPlanIndex={props.selectedPlanIndex}
-          updateSelectedPlan={props.updateSelectedPlan}
-          addUserPlan={props.addUserPlan}
-          removeUserPlan={props.removeUserPlan}
-          savePlanChanges={props.savePlanChanges}
-          updateSearchResults={props.updateSearchResults}
-          handleMainAppView={props.handleMainAppView}
-          openAddModal={openAddModal}
-        />
-      </div>
-      <div
-        ref={addModal}
-        id={'add-modal' + props.userPlans[props.selectedPlanIndex].title}
-        className='modal'
-      >
-        <div className='modal-content'>
-          <h4>{addModalTitle}</h4>
-          <div className='input-field'>
-            <input
-              type='text'
-              placeholder='Title'
-              id={'add-modal-title-input'}
-              className='validate'
-              value={addModalValue}
-              onChange={(e) => handleChange(e)}
-            />
+        <div className='row'>
+          <div className='col s12'>
+            <button
+              className='btn waves-effect waves-light blue-grey darken-3 blue-grey-text text-lighten-5'
+              type='button'
+              name='action'
+              onClick={() => props.handleMainAppView('SearchResults')}
+            >
+              <i className='material-icons left tiny'>search</i>
+              Constructapedia
+            </button>
           </div>
-          <div className='row'>
-            {addModalType === 'checklist' && (
+        </div>
+        <div className='row blue-grey darken-4 blue-grey-text text-lighten-5'>
+          <div className='col s8 offset-s1'>
+            <div className='row'>
+              <ProjectLevel
+                userPlans={props.userPlans}
+                selectedPlanIndex={props.selectedPlanIndex}
+                changeOrUpdatePlanDraft={props.changeOrUpdatePlanDraft}
+                savePlanChanges={props.savePlanChanges}
+              />
+            </div>
+            <div className='row'>{substepSections}</div>
+          </div>
+          <PlanDetailsMenu
+            userPlans={props.userPlans}
+            selectedPlanIndex={props.selectedPlanIndex}
+            updateSelectedPlan={props.updateSelectedPlan}
+            addUserPlan={props.addUserPlan}
+            removeUserPlan={props.removeUserPlan}
+            savePlanChanges={props.savePlanChanges}
+            updateSearchResults={props.updateSearchResults}
+            handleMainAppView={props.handleMainAppView}
+            openAddModal={openAddModal}
+          />
+        </div>
+        <div
+          ref={addModal}
+          id={'add-modal' + props.userPlans[props.selectedPlanIndex].title}
+          className='modal'
+        >
+          <div className='modal-content'>
+            <h4>{addModalTitle}</h4>
+            <div className='input-field'>
+              <input
+                type='text'
+                placeholder='Title'
+                id={'add-modal-title-input'}
+                className='validate'
+                value={addModalValue}
+                onChange={(e) => handleChange(e)}
+              />
+            </div>
+            <div className='row'>
+              {addModalType === 'checklist' && (
+                <div className='input-field col s6'>
+                  <select
+                    id='add-modal-checks-select'
+                    ref={addModalChecksSelect}
+                    value={addModalCheckTypeValue}
+                    onChange={handleChange}
+                  >
+                    <option value='tools'>Tools</option>
+                    <option value='materials'>Materials</option>
+                  </select>
+                  <label>Checklist Type</label>
+                </div>
+              )}
               <div className='input-field col s6'>
                 <select
-                  id='add-modal-checks-select'
-                  ref={addModalChecksSelect}
-                  value={addModalCheckTypeValue}
+                  id='add-modal-select'
+                  ref={addModalSelect}
+                  value={addModalSelectValue}
                   onChange={handleChange}
                 >
-                  <option value='tools'>Tools</option>
-                  <option value='materials'>Materials</option>
+                  <option value={props.userPlans[props.selectedPlanIndex].id}>
+                    Plan Overview
+                  </option>
+                  {props.userPlans[props.selectedPlanIndex].sub_plans.map(
+                    (subPlan, i) => {
+                      return (
+                        <option key={subPlan.title + i} value={subPlan.id}>
+                          {subPlan.title}
+                        </option>
+                      );
+                    }
+                  )}
                 </select>
-                <label>Checklist Type</label>
+                <label>Add to...</label>
               </div>
-            )}
-            <div className='input-field col s6'>
-              <select
-                id='add-modal-select'
-                ref={addModalSelect}
-                value={addModalSelectValue}
-                onChange={handleChange}
-              >
-                <option value={props.userPlans[props.selectedPlanIndex].id}>
-                  Plan Overview
-                </option>
-                {props.userPlans[props.selectedPlanIndex].sub_plans.map(
-                  (subPlan, i) => {
-                    return (
-                      <option key={subPlan.title + i} value={subPlan.id}>
-                        {subPlan.title}
-                      </option>
-                    );
-                  }
-                )}
-              </select>
-              <label>Add to...</label>
             </div>
           </div>
+          <div className='modal-footer'>
+            <a
+              id='addModal-add-btn'
+              href='#projectDetails'
+              className='modal-close waves-effect waves-blue btn-flat'
+              onClick={addNewSection}
+            >
+              Add
+            </a>
+          </div>
         </div>
-        <div className='modal-footer'>
-          <a
-            id='addModal-add-btn'
-            href='#projectDetails'
-            className='modal-close waves-effect waves-blue btn-flat'
-            onClick={addNewSection}
-          >
-            Add
-          </a>
+      </div>
+
+      {/*Collection List*/}
+
+      <div className='row'>
+        <div className='col s12'>
+          <ul class='collection with-header'>
+            <li
+              id={props.userPlans[props.selectedPlanIndex].id}
+              className='collection-header center grey lighten-5 indigo-text text-darken-3'
+            >
+              <b>{props.userPlans[props.selectedPlanIndex].title}</b>
+            </li>
+            <li className='collection-header indigo-text text-darken-3 indigo lighten-5'>
+              <b>References</b>
+              <li className='collection item'>
+                <div className='indigo-text text-darken-3'></div>
+              </li>
+            </li>
+            <li className='collection-header indigo-text text-darken-3 indigo lighten-5'>
+              <b>Notes</b>
+              <li className='collection item'>
+                <div className='indigo-text text-darken-3'>
+                  <ProjectLevel
+                    userPlans={props.userPlans}
+                    selectedPlanIndex={props.selectedPlanIndex}
+                    changeOrUpdatePlanDraft={props.changeOrUpdatePlanDraft}
+                    savePlanChanges={props.savePlanChanges}
+                  />
+                </div>
+              </li>
+            </li>
+            <li className='collection-header indigo-text text-darken-3 indigo lighten-5'>
+              <b>Checklists</b>
+              <li className='collection item'>
+                <div className='indigo-text text-darken-3'></div>
+              </li>
+            </li>
+            <li className='collection-header indigo-text text-darken-3 indigo lighten-5'>
+              <b>Work Steps</b>
+              <li className='collection item'>
+                <div className='indigo-text text-darken-3'></div>
+              </li>
+            </li>
+          </ul>
         </div>
       </div>
     </div>
