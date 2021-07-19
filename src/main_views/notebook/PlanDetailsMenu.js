@@ -11,8 +11,7 @@ function PlanDetailsMenu(props){
     }, [])
 
     return (
-
-          <ul id="sticky-project-nav" className="col s3 push-s9 center-align blue-grey darken-4 blue-grey-text text-lighten-5">
+            <ul id="sticky-project-nav" className="col s3 push-s9 center-align blue-grey darken-4 blue-grey-text text-lighten-5">
               <h5 className="center-align"><b>&#123;C&#125;</b></h5>
               {/*<SelectedPlanNav
                   selectedPlan={props.userPlans[props.selectedPlanIndex]}
