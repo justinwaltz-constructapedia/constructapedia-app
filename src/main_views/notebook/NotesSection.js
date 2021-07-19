@@ -94,45 +94,52 @@ function NotesSection (props) {
                                 }}
                                 placeholder={"Add New Note"}/>
                     </div>
-
-  function addNewNote() {
-    props.saveNotes(newNoteValue);
-  }
-  return (
-    <div className='row'>
-      <div className='col s12'>
-        {noteAreas.current}
-        <div className='row valign-wrapper'>
-          <div className='col s1'>
-            <button
-              id={'add-note-btn-' + props.selectedPlanId}
-              className='btn-floating btn-small waves-effect waves-light'
-              type='button'
-              onClick={addNewNote}
-            >
-              <i className='material-icons'>add</i>
-            </button>
-          </div>
-          <div className='col s11 input-field'>
-            <input
-              type='text'
-              className='validate'
-              value={newNoteValue}
-              onChange={(e) => setNewNoteValue(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.keyCode === 13) {
-                  addNewNote();
-                }
-              }}
-              placeholder={'Add New Note'}
-            />
-          </div>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
-  );
+    )
 }
+
 
 export default NotesSection;
 //onKeyDown={(e)=>{if(e.keyCode===13){saveEntirePlan()}}}
 //onChange={(e)=>setNotesValue(e.target.value)}
+/*
+function addNewNote() {
+  props.saveNotes(newNoteValue);
+}
+return (
+  <div className='row'>
+    <div className='col s12'>
+      {noteAreas.current}
+      <div className='row valign-wrapper'>
+        <div className='col s1'>
+          <button
+            id={'add-note-btn-' + props.selectedPlanId}
+            className='btn-floating btn-small waves-effect waves-light'
+            type='button'
+            onClick={addNewNote}
+          >
+            <i className='material-icons'>add</i>
+          </button>
+        </div>
+        <div className='col s11 input-field'>
+          <input
+            type='text'
+            className='validate'
+            value={newNoteValue}
+            onChange={(e) => setNewNoteValue(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.keyCode === 13) {
+                addNewNote();
+              }
+            }}
+            placeholder={'Add New Note'}
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+);
+}
+ */
