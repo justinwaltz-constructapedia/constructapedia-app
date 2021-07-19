@@ -148,20 +148,20 @@ function ProjectLevel(props) {
               />
             </div>
           </li>
-          <li className='collection'>
+          <li className='collection-item'>
             <NotesSection
               saveNotes={saveNotes}
               notes={props.userPlans[props.selectedPlanIndex].notes}
               selectedPlanId={props.userPlans[props.selectedPlanIndex].id}
             />
           </li>
-          <li className='collection'>
+          <li className='collection-item'>
             <div className='row'>
               {props.userPlans[props.selectedPlanIndex].checks.length > 0 &&
                 checksSections}
             </div>
           </li>
-          <li className='collection'>{substepSections}</li>
+          <li className='collection-item'>{substepSections}</li>
         </ul>
       </div>
     </div>
