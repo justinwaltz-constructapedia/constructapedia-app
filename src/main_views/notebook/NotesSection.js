@@ -1,4 +1,4 @@
-import React, {useState, useRef, useEffect} from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 
 function NotesSection (props) {
     const initialNotesValues = (props.notes.length > 0) ? props.notes : null;
@@ -11,17 +11,19 @@ function NotesSection (props) {
         populateNoteValues(props.notes)
     }, [props.notes]);
 
-    function populateNoteValues (notesToSet) {
-        if (notesToSet.length > 0) {
-            setNoteValues(notesToSet.reduce(
-                (options, option, index) => ({
-                    ...options,
-                    [index]:option.contents
-                }),
-                {}
-            ))
-        }
+  function populateNoteValues(notesToSet) {
+    if (notesToSet.length > 0) {
+      setNoteValues(
+        notesToSet.reduce(
+          (options, option, index) => ({
+            ...options,
+            [index]: option.contents,
+          }),
+          {}
+        )
+      );
     }
+  }
 
     function editNoteValue (e, i) {
         console.log("editNoteValue");
@@ -93,10 +95,42 @@ function NotesSection (props) {
                                 placeholder={"Add New Note"}/>
                     </div>
 
-                </div>
-            </div>
+  function addNewNote() {
+    props.saveNotes(newNoteValue);
+  }
+  return (
+    <div className='row'>
+      <div className='col s12'>
+        {noteAreas.current}
+        <div className='row valign-wrapper'>
+          <div className='col s1'>
+            <button
+              id={'add-note-btn-' + props.selectedPlanId}
+              className='btn-floating btn-small waves-effect waves-light'
+              type='button'
+              onClick={addNewNote}
+            >
+              <i className='material-icons'>add</i>
+            </button>
+          </div>
+          <div className='col s11 input-field'>
+            <input
+              type='text'
+              className='validate'
+              value={newNoteValue}
+              onChange={(e) => setNewNoteValue(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.keyCode === 13) {
+                  addNewNote();
+                }
+              }}
+              placeholder={'Add New Note'}
+            />
+          </div>
         </div>
-    )
+      </div>
+    </div>
+  );
 }
 
 export default NotesSection;

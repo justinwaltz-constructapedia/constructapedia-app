@@ -1,0 +1,28 @@
+.footer-tm {
+  margin: 20px;
+  font-size: 10px;
+}
+
+.sidenav-email {
+  font-size: 10px;
+}
+
+.header-name {
+  font-size: 15px !important;
+}
+
+.header-width {
+  margin-left: 15px !important;
+}
+
+.header-icon {
+  padding: 0px 0px 0px 0px !important;
+  margin: 0px 15px 0px 0px !important;
+  height: 30px !important;
+  line-height: 30px !important;
+}
+
+.nav-bar-override {
+  height: 30px !important;
+  line-height: 30px !important;
+}

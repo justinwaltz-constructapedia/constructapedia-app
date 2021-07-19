@@ -1,22 +1,37 @@
 import React from 'react';
-function Header (props) {
+import './Custom.css';
 
-    return (
-        <header>
-            <nav className="top-nav black z-depth-0">
-                <div className="nav-wrapper blue-grey darken-4 blue-grey-text text-lighten-5">
-                    <a href="index.html" className="brand-logo center">Contructapedia</a>
-                    <ul className="right">
-                        <li><a href="#slide-out" data-target="slide-out" className="sidenav-trigger white-text show-on-large"><i className="large material-icons">account_circle</i></a></li>
-                    </ul>
-                </div>
-            </nav>
-            {/* <div className="container">
+function Header(props) {
+  return (
+    <header>
+      <div className='navbar-fixed'>
+        <nav className='z-depth-1 indigo lighten-5 nav-bar-override'>
+          <div className='header-width'>
+            <div className='nav-wrapper white'>
+              <a
+                href='index.html'
+                className='brand-logo left indigo-text text-darken-3 header-name'
+              >
+                <b>Constructapedia</b>
+              </a>
+            </div>
+            <div class='nav-wrapper right'>
+              <a
+                href='#slide-out'
+                data-target='slide-out'
+                className='sidenav-trigger white-text show-on-large indigo-text text-darken-3'
+              >
+                <i className='material-icons header-icon'>more_horiz</i>
+              </a>
+            </div>
+          </div>
+        </nav>
+      </div>
+      {/* <div className="container">
                 <a href="#projects" data-target="project-nav" className="top-nav sidenav-trigger full hide-on-large-only"><i className="medium material-icons">view_list</i></a>
             </div> */}
-
-        </header>
-    )
+    </header>
+  );
 }
 
 export default Header;
