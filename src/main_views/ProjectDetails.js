@@ -119,7 +119,7 @@ function ProjectDetails(props) {
       <div key={subPlan.title + i} id={subPlan.id} className='row'>
         <div className='nav-wrapper'>
           <div className='row blue lighten-3'>
-            <div className='col s12 blue-grey darken-4 blue-grey-text text-lighten-5'>
+            <div className='col s12'>
               <h6 className='center-align'>{subPlan.title}</h6>
             </div>
           </div>
@@ -137,30 +137,20 @@ function ProjectDetails(props) {
 
   return (
     <div>
-      <div className='col s12 blue-grey darken-4 blue-grey-text text-lighten-5'>
-        <div className='nav-wrapper row blue-grey darken-4 blue-grey-text text-lighten-5'>
+      <div className='col s12'>
+        <div className='row'>
           <div className='col s12'>
             <button
               type='button'
-              className='waves-effect waves-blue btn-flat blue-grey darken-4 blue-grey-text text-lighten-5 '
+              className='waves-effect waves-blue btn-flat '
               onClick={() => {
                 props.handleMainAppView('HomePage');
               }}
             >
-              <i className='material-icons left'>arrow_back</i>
+              <i className='material-icons left indigo-text'>arrow_back</i>
             </button>
-            <h5
-              id={props.userPlans[props.selectedPlanIndex].id}
-              className='blue-grey darken-4 blue-grey-text text-lighten-5 header'
-            >
-              {props.userPlans[props.selectedPlanIndex].title}
-            </h5>
-          </div>
-        </div>
-        <div className='row'>
-          <div className='col s12'>
             <button
-              className='btn waves-effect waves-light blue-grey darken-3 blue-grey-text text-lighten-5'
+              className='btn waves-effect waves-light indigo'
               type='button'
               name='action'
               onClick={() => props.handleMainAppView('SearchResults')}
@@ -170,17 +160,26 @@ function ProjectDetails(props) {
             </button>
           </div>
         </div>
-        <div className='row blue-grey darken-4 blue-grey-text text-lighten-5'>
+        <div className='row'>
           <div className='col s8 offset-s1'>
-            <div className='row'>
-              <ProjectLevel
-                userPlans={props.userPlans}
-                selectedPlanIndex={props.selectedPlanIndex}
-                changeOrUpdatePlanDraft={props.changeOrUpdatePlanDraft}
-                savePlanChanges={props.savePlanChanges}
-              />
-            </div>
-            <div className='row'>{substepSections}</div>
+            <ul class='collection with-header'>
+              <li
+                id={props.userPlans[props.selectedPlanIndex].id}
+                className='collection-header indigo-text'
+              >
+                <b>{props.userPlans[props.selectedPlanIndex].title}</b>
+
+                <li className='collection-item'>
+                  <ProjectLevel
+                    userPlans={props.userPlans}
+                    selectedPlanIndex={props.selectedPlanIndex}
+                    changeOrUpdatePlanDraft={props.changeOrUpdatePlanDraft}
+                    savePlanChanges={props.savePlanChanges}
+                  />
+                </li>
+                <li className='collection-item'>{substepSections}</li>
+              </li>
+            </ul>
           </div>
           <PlanDetailsMenu
             userPlans={props.userPlans}
@@ -260,52 +259,6 @@ function ProjectDetails(props) {
               Add
             </a>
           </div>
-        </div>
-      </div>
-
-      {/*Collection List*/}
-
-      <div className='row'>
-        <div className='col s12'>
-          <ul class='collection with-header'>
-            <li
-              id={props.userPlans[props.selectedPlanIndex].id}
-              className='collection-header center grey lighten-5 indigo-text text-darken-3'
-            >
-              <b>{props.userPlans[props.selectedPlanIndex].title}</b>
-            </li>
-            <li className='collection-header indigo-text text-darken-3 indigo lighten-5'>
-              <b>References</b>
-              <li className='collection item'>
-                <div className='indigo-text text-darken-3'></div>
-              </li>
-            </li>
-            <li className='collection-header indigo-text text-darken-3 indigo lighten-5'>
-              <b>Notes</b>
-              <li className='collection item'>
-                <div className='indigo-text text-darken-3'>
-                  <ProjectLevel
-                    userPlans={props.userPlans}
-                    selectedPlanIndex={props.selectedPlanIndex}
-                    changeOrUpdatePlanDraft={props.changeOrUpdatePlanDraft}
-                    savePlanChanges={props.savePlanChanges}
-                  />
-                </div>
-              </li>
-            </li>
-            <li className='collection-header indigo-text text-darken-3 indigo lighten-5'>
-              <b>Checklists</b>
-              <li className='collection item'>
-                <div className='indigo-text text-darken-3'></div>
-              </li>
-            </li>
-            <li className='collection-header indigo-text text-darken-3 indigo lighten-5'>
-              <b>Work Steps</b>
-              <li className='collection item'>
-                <div className='indigo-text text-darken-3'></div>
-              </li>
-            </li>
-          </ul>
         </div>
       </div>
     </div>
