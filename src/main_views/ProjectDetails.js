@@ -112,7 +112,8 @@ function ProjectDetails(props) {
     addModalInstance.open();
   }
 
-  const substepSections = props.userPlans[
+  {
+    /*const substepSections = props.userPlans[
     props.selectedPlanIndex
   ].sub_plans.map((subPlan, i) => {
     return (
@@ -133,7 +134,8 @@ function ProjectDetails(props) {
         />
       </div>
     );
-  });
+  });*/
+  }
 
   return (
     <div>
@@ -177,7 +179,9 @@ function ProjectDetails(props) {
                     savePlanChanges={props.savePlanChanges}
                   />
                 </li>
+                {/*
                 <li className='collection-item'>{substepSections}</li>
+                */}
               </li>
             </ul>
           </div>

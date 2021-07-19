@@ -61,7 +61,7 @@ function PlanDetailsMenu(props) {
               className='grey-text'
               onClick={(e) => alert('Not ready yet Zach!')}
             >
-              Attach File
+              + Pictures
             </a>
           </li>
         </li>
