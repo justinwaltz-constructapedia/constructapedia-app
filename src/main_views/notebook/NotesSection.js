@@ -1,11 +1,12 @@
 import React, {useState, useRef, useEffect} from 'react';
 
 function NotesSection (props) {
-    //const initialNotesValues = (props.notes.length > 0) ? props.notes : [""];
+    const initialNotesValues = (props.notes.length > 0) ? props.notes : null;
     const [newNoteValue, setNewNoteValue] = useState("");
     const [noteValues, setNoteValues] = useState("");
-    const noteAreas = useRef(<div></div>);
-    noteAreas.current = makeNotesElements(props.notes);
+
+    const noteAreas = makeNotesElements(initialNotesValues);
+
     useEffect(() => {
         populateNoteValues(props.notes)
     }, [props.notes]);
@@ -22,9 +23,25 @@ function NotesSection (props) {
         }
     }
 
+    function editNoteValue (e, i) {
+        console.log("editNoteValue");
+        const updatedNotes = (prevNotes) => {
+            return {
+                ...prevNotes,
+                [i]: e.target.value
+            }
+        }
+        setNoteValues(prevNoteValues => updatedNotes(prevNoteValues))
+    }
+
+    function saveChangesToNote (i) {
+        console.log(i);
+        //props.saveNotes(noteValues[i], i)
+    }
+
     function makeNotesElements (notesArr) {
         console.log(notesArr);
-        if (notesArr.length > 0) {
+        if (notesArr) {
             return notesArr.map((noteObj, i) => {
                 return (
                     <div key={"notes_textarea"+i} className="row">
@@ -32,13 +49,13 @@ function NotesSection (props) {
                             <textarea
                                 className="materialize-textarea blue-grey darken-4 blue-grey-text text-lighten-5"
                                 value={noteValues[i]}
-                                onChange={(e) => setNoteValues(prevNoteValues => prevNoteValues[i]=e.target.value)}
+                                onChange={(e) => console.log(e)/*editNoteValue(e, i)*/}
                                 />
                         </div>
                         <div className= "col s2">
                             <button className="btn-floating waves-effect waves-light blue-grey darken-3 blue-grey-text text-lighten-5 left"
                                     type="button"
-                                    onClick={()=>props.saveNotes(i, noteValues[i])}>
+                                    onClick={()=>saveChangesToNote(i)}>
                                 <i className="material-icons">save</i>
                             </button>
                         </div>
@@ -50,28 +67,30 @@ function NotesSection (props) {
         }
     }
 
-    function addNewNote () {
-        props.saveNotes(newNoteValue);
-    }
+
     return (
         <div className="row blue-grey darken-4 blue-grey-text text-lighten-5">
             <div className="col s12 blue-grey darken-4 blue-grey-text text-lighten-5">
                 <h5>Note Pad</h5>
-                {noteAreas.current}
+                {noteAreas}
                 <div className="row valign-wrapper">
                     <div className="col s1">
                         <button id={"add-note-btn-" + props.selectedPlanId}
                                 className="btn-floating btn-small waves-effect waves-light blue-grey darken-3 blue-grey-text text-lighten-5" type="button"
-                                onClick={addNewNote}>
+                                onClick={() => props.saveNotes(newNoteValue, -1)}>
                                 <i className="material-icons">add</i>
                         </button>
                     </div>
                     <div className="col s11 input-field blue-grey darken-4 blue-grey-text text-lighten-5">
                         <input type="text" className="validate blue-grey darken-4 blue-grey-text text-lighten-5"
-                            value={newNoteValue}
-                            onChange={(e) => setNewNoteValue(e.target.value)}
-                            onKeyDown={(e)=>{if(e.keyCode===13){addNewNote()}}}
-                            placeholder={"Add New Note"}/>
+                                value={newNoteValue}
+                                onChange={(e) => setNewNoteValue(e.target.value)}
+                                onKeyDown={(e)=>{
+                                    if(e.keyCode===13){
+                                        props.saveNotes(newNoteValue, -1)
+                                    }
+                                }}
+                                placeholder={"Add New Note"}/>
                     </div>
 
                 </div>

@@ -37,7 +37,7 @@ function ProjectLevel (props) {
         const planId = props.userPlans[props.selectedPlanIndex].id;
         const currentNotes = props.userPlans[props.selectedPlanIndex].notes
         let updatedNotes;
-        if (!noteIndex) {
+        if (noteIndex < 0) {
             updatedNotes = currentNotes.concat([{contents:noteValue}])
         }
         props.savePlanChanges(planId, {notes:updatedNotes})
