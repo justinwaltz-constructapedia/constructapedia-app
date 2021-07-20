@@ -34,7 +34,8 @@ function ProjectDetails(props) {
     setSelectedLevel(props.userPlans[props.selectedPlanIndex].id);
   }, [props.userPlans, props.selectedPlanIndex]);
 
-  function updateSubPlan(index, newSubPlanObj) {
+  {
+    /*function updateSubPlan(index, newSubPlanObj) {
     const updatedSubPlans = [].concat(
       props.userPlans[props.selectedPlanIndex].sub_plans
     );
@@ -42,6 +43,7 @@ function ProjectDetails(props) {
     props.savePlanChanges(props.userPlans[props.selectedPlanIndex].id, {
       sub_plans: updatedSubPlans,
     });
+  }*/
   }
   function handleChange(event) {
     const eventId = event.target.id;
@@ -164,26 +166,24 @@ function ProjectDetails(props) {
         </div>
         <div className='row'>
           <div className='col s8 offset-s1'>
-            <ul class='collection with-header'>
-              <li
+            {/*<li
                 id={props.userPlans[props.selectedPlanIndex].id}
                 className='collection-header indigo-text'
               >
                 <b>{props.userPlans[props.selectedPlanIndex].title}</b>
+              </li>*/}
 
-                <li className='collection-item'>
-                  <ProjectLevel
-                    userPlans={props.userPlans}
-                    selectedPlanIndex={props.selectedPlanIndex}
-                    changeOrUpdatePlanDraft={props.changeOrUpdatePlanDraft}
-                    savePlanChanges={props.savePlanChanges}
-                  />
-                </li>
-                {/*
+            <div>
+              <ProjectLevel
+                userPlans={props.userPlans}
+                selectedPlanIndex={props.selectedPlanIndex}
+                changeOrUpdatePlanDraft={props.changeOrUpdatePlanDraft}
+                savePlanChanges={props.savePlanChanges}
+              />
+            </div>
+            {/*
                 <li className='collection-item'>{substepSections}</li>
                 */}
-              </li>
-            </ul>
           </div>
           <PlanDetailsMenu
             userPlans={props.userPlans}
