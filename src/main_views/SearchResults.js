@@ -4,6 +4,7 @@ import "materialize-css/dist/css/materialize.min.css";
 import BottomModalContent from '../modals/BottomModalContent.js'
 import SearchBar from '../utility_components/SearchBar.js';
 import {postSelectionToScrape, googleSearch} from '../api/searchApi.js';
+import {scrapper} from '../api/scrapper.js';
 
 function SearchResults(props) {
     const results = props.results;
@@ -78,10 +79,11 @@ function SearchResults(props) {
 
 function ResultListItem(props) {
     function scrapePage (url){
-        const selectionEndpoint = url.replace('https://google.com/',"");
-        postSelectionToScrape(selectionEndpoint).then((res) => {
-            props.updateProjectDraft(res);
-        });
+        // const selectionEndpoint = url.replace('https://google.com/',"");
+        // postSelectionToScrape(selectionEndpoint).then((res) => {
+        //     props.updateProjectDraft(res);
+        // });
+        console.log(scrapper(url));
     }
     return(
             <div className="col s12 m6 l4 blue-grey darken-4 blue-grey-text text-lighten-5">

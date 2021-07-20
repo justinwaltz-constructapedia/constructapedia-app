@@ -4,7 +4,7 @@ const cheerio = require('cheerio');
 
 
 //make a request
-function Scrapper( link){
+function scrapper( link){
 	var scrapped_data = new Object();
 	scrapped_data.Materials = new Array();
 	scrapped_data.Steps = new Array();
@@ -38,3 +38,4 @@ function Scrapper( link){
 	});
 	return scrapped_data;
 }
+export {scrapper};
