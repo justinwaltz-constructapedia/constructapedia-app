@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import SimpleCheckboxSection from './SimpleCheckboxSection.js';
 import NotesSection from './NotesSection.js';
 import ProjectStepsSection from './ProjectStepsSection.js';
 
 function ProjectLevel(props) {
   const [videoUrlValue, setVideoUrlValue] = useState('');
+  const [selectedLevel, setSelectedLevel] = useState('');
   const videoDisplays = props.userPlans[props.selectedPlanIndex].video_urls.map(
     (url, i) => {
       return (
@@ -19,6 +20,10 @@ function ProjectLevel(props) {
       );
     }
   );
+
+  useEffect(() => {
+    setSelectedLevel(props.userPlans[props.selectedPlanIndex].id);
+  }, [props.userPlans, props.selectedPlanIndex]);
 
   //does this need to be a separate function? YES
 
@@ -127,7 +132,13 @@ function ProjectLevel(props) {
           videoDisplays}
       </div>
       <div className='row'>
-        <ul className='collection'>
+        <ul className='collection with-header'>
+          <li
+            id={props.userPlans[props.selectedPlanIndex].id}
+            className='collection-header indigo-text center'
+          >
+            <b>{props.userPlans[props.selectedPlanIndex].title}</b>
+          </li>
           <li className='collection-item'>
             <button
               id='add-video-btn'

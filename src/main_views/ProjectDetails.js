@@ -166,26 +166,24 @@ function ProjectDetails(props) {
         </div>
         <div className='row'>
           <div className='col s8 offset-s1'>
-            <ul class='collection with-header'>
-              <li
+            {/*<li
                 id={props.userPlans[props.selectedPlanIndex].id}
                 className='collection-header indigo-text'
               >
                 <b>{props.userPlans[props.selectedPlanIndex].title}</b>
-              </li>
+              </li>*/}
 
-              <li className='collection-item'>
-                <ProjectLevel
-                  userPlans={props.userPlans}
-                  selectedPlanIndex={props.selectedPlanIndex}
-                  changeOrUpdatePlanDraft={props.changeOrUpdatePlanDraft}
-                  savePlanChanges={props.savePlanChanges}
-                />
-              </li>
-              {/*
+            <div>
+              <ProjectLevel
+                userPlans={props.userPlans}
+                selectedPlanIndex={props.selectedPlanIndex}
+                changeOrUpdatePlanDraft={props.changeOrUpdatePlanDraft}
+                savePlanChanges={props.savePlanChanges}
+              />
+            </div>
+            {/*
                 <li className='collection-item'>{substepSections}</li>
                 */}
-            </ul>
           </div>
           <PlanDetailsMenu
             userPlans={props.userPlans}
