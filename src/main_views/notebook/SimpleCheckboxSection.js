@@ -3,8 +3,8 @@ import React, { useState, useEffect } from 'react';
 function SimpleCheckboxSection(props) {
     const initialCheckboxes = props.checklist.reduce(
         (options, option) => ({
-          ...options,
-          [option.text_value]: option.is_complete,
+            ...options,
+            [option.text_value]: option.is_complete,
         }),
         {}
     );
@@ -49,8 +49,8 @@ function SimpleCheckboxSection(props) {
         if (target.type === 'checkbox') {
             const updatedChecks = (prevCheckboxes) => {
                 const newChecks = {
-                  ...prevCheckboxes,
-                  [name]: !prevCheckboxes[name],
+                    ...prevCheckboxes,
+                    [name]: !prevCheckboxes[name],
                 };
                 return newChecks;
             };
@@ -82,11 +82,11 @@ function SimpleCheckboxSection(props) {
             console.log(itemToUpdate, value);
             const updatedChecksObjs = (prevChecksObjs) => {
                 const newChecksObjs = {
-                  ...prevChecksObjs,
-                  [name]: {
-                    quantity: prevChecksObjs[name].quantity,
-                    unit_of_measure: value,
-                  },
+                    ...prevChecksObjs,
+                    [name]: {
+                        quantity: prevChecksObjs[name].quantity,
+                        unit_of_measure: value,
+                    },
                 };
                 return newChecksObjs;
             };
