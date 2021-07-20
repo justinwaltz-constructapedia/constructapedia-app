@@ -3,7 +3,7 @@ import M from "materialize-css";
 import "materialize-css/dist/css/materialize.min.css";
 import BottomModalContent from '../modals/BottomModalContent.js'
 import SearchBar from '../utility_components/SearchBar.js';
-import {getSearchResults, postSelectionToScrape, googleSearch} from '../api/searchApi.js';
+import {postSelectionToScrape, googleSearch} from '../api/searchApi.js';
 
 function SearchResults(props) {
     const results = props.results;

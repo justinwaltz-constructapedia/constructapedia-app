@@ -99,7 +99,7 @@ class App extends React.Component {
           <section className='section section-icons grey lighten-4 center'>
             <div id='app-body-container' className='container'>
               <div className='row' id='index-banner'>
-                <div clasName='col s12 m4'>
+                <div className='col s12 m4 offset-m4'>
                   <div className='card-panel'>
                     {this.state.isLoading ? (
                       <Preloader />
@@ -109,7 +109,7 @@ class App extends React.Component {
                         data-target='slide-out'
                         className='sidenav-trigger show-on-large'
                       >
-                        <i class='material-icons large indigo-text text-darken-3'>
+                        <i className='material-icons large indigo-text text-darken-3'>
                           settings_power
                         </i>
                         <h5 className='indigo-text text-darken-3'>
@@ -126,7 +126,7 @@ class App extends React.Component {
             </div>
           </section>
 
-          <footer class='section footer-tm right'>
+          <footer className='section footer-tm right'>
             <p>Constructapedia &copy; &trade; 2020</p>
           </footer>
         </div>
@@ -151,7 +151,7 @@ class App extends React.Component {
             updateUser={this.updateUser}
             isLoading={this.state.isLoading}
           />
-          <footer class='section footer-tm right'>
+          <footer className='section footer-tm right'>
             <p>Constructapedia &copy; &trade; 2020</p>
           </footer>
         </div>
