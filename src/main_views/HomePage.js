@@ -22,9 +22,9 @@ function HomePage(props) {
             </li>
           </div>
 
-          <li className='collection-header indigo-text text-darken-3 indigo lighten-5'>
-            <b>In Progress</b>
-
+            <li className='collection-header indigo-text text-darken-3 indigo lighten-5'>
+                <b>In Progress</b>
+            </li>
             {props.userPlans.length > 0 &&
               props.userPlans.map((plan) => {
                 return (
@@ -55,13 +55,14 @@ function HomePage(props) {
                   </li>
                 );
               })}
-          </li>
-          <li className='collection-header indigo-text text-darken-3 indigo lighten-5'>
-            <b>Finished</b>
+
+            <li className='collection-header indigo-text text-darken-3 indigo lighten-5'>
+                <b>Finished</b>
+            </li>
             <li className='collection-item'>
               Coming Soon <i className='material-icons'>share</i>
             </li>
-          </li>
+
         </ul>
         <ul id='home-page-nav' className='collection with-header'>
           <div>

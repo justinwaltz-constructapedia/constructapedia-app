@@ -1,99 +1,100 @@
 import React, { useState, useEffect } from 'react';
 
 function SimpleCheckboxSection(props) {
-  const initialCheckboxes = props.checklist.reduce(
-    (options, option) => ({
-      ...options,
-      [option.text_value]: option.is_complete,
-    }),
-    {}
-  );
-  const [newItemValue, setNewItemValue] = useState('');
-  const [checkboxes, setCheckboxes] = useState(initialCheckboxes);
-  const [checksObjs, setChecksObjs] = useState([]);
-  const checkboxElements = makeListOfCheckboxElements(props.checklist);
-  const displayListType = props.listType
-    .trim()
-    .replace(/^\w/, (c) => c.toUpperCase());
-
-  useEffect(() => {
-    const checksToSet = props.checklist;
-    setCheckboxes(
-      checksToSet.reduce(
+    const initialCheckboxes = props.checklist.reduce(
         (options, option) => ({
           ...options,
           [option.text_value]: option.is_complete,
         }),
         {}
-      )
     );
-    setChecksObjs(
-      checksToSet.reduce(
-        (options, option) => ({
-          ...options,
-          [option.text_value]: {
-            quantity: option.quantity,
-            unit_of_measure: option.unit_of_measure,
-          },
-        }),
-        {}
-      )
-    );
-  }, [props.checklist]);
+    const [newItemValue, setNewItemValue] = useState('');
+    const [checkboxes, setCheckboxes] = useState(initialCheckboxes);
+    const [checksObjs, setChecksObjs] = useState([]);
+    const checkboxElements = makeListOfCheckboxElements(props.checklist);
+    const displayListType = props.listType
+        .trim()
+        .replace(/^\w/, (c) => c.toUpperCase());
 
-  function handleInputChange(event, index) {
-    const target = event.target;
-    const value = target.value;
-    const { name } = target;
-    if (target.type === 'checkbox') {
-      const updatedChecks = (prevCheckboxes) => {
-        const newChecks = {
-          ...prevCheckboxes,
-          [name]: !prevCheckboxes[name],
-        };
-        return newChecks;
-      };
-      setCheckboxes((prevCheckboxes) => updatedChecks(prevCheckboxes));
-      const newChecks = [].concat(props.checks);
-      const checkedAttribute = target.checked;
-      //could be simplified with index parameter now
-      const indexOfCheckToChange = newChecks.findIndex(
-        (check) => check.text_value === target.name
-      );
-      newChecks[indexOfCheckToChange].is_complete = checkedAttribute;
-      props.savePlanChanges(props.selectedPlanId, { checks: newChecks });
-    } else if (target.id.includes('quantity')) {
-      const itemToUpdate = props.checks[index];
-      console.log(itemToUpdate, value);
-      const updatedChecksObjs = (prevChecksObjs) => {
-        const newChecksObjs = {
-          ...prevChecksObjs,
-          [name]: {
-            quantity: value,
-            unit_of_measure: prevChecksObjs[name].unit_of_measure,
-          },
-        };
-        return newChecksObjs;
-      };
-      setChecksObjs((prevCheckboxes) => updatedChecksObjs(prevCheckboxes));
-    } else if (target.id.includes('unit')) {
-      const itemToUpdate = props.checks[index];
-      console.log(itemToUpdate, value);
-      const updatedChecksObjs = (prevChecksObjs) => {
-        const newChecksObjs = {
-          ...prevChecksObjs,
-          [name]: {
-            quantity: prevChecksObjs[name].quantity,
-            unit_of_measure: value,
-          },
-        };
-        return newChecksObjs;
-      };
-      setChecksObjs((prevCheckboxes) => updatedChecksObjs(prevCheckboxes));
-    } else {
-      setNewItemValue(value);
+    useEffect(() => {
+        console.log("checklist");
+        const checksToSet = props.checklist;
+        setCheckboxes(
+            checksToSet.reduce(
+                (options, option) => ({
+                    ...options,
+                    [option.text_value]: option.is_complete
+                }),
+                {}
+            )
+        );
+        setChecksObjs(
+            checksToSet.reduce(
+                (options, option) => ({
+                    ...options,
+                    [option.text_value]: {
+                        quantity: option.quantity,
+                        unit_of_measure: option.unit_of_measure,
+                    },
+                }),
+                {}
+            )
+        );
+    }, [props.checklist]);
+
+    function handleInputChange(event, index) {
+        const target = event.target;
+        const value = target.value;
+        const { name } = target;
+        if (target.type === 'checkbox') {
+            const updatedChecks = (prevCheckboxes) => {
+                const newChecks = {
+                  ...prevCheckboxes,
+                  [name]: !prevCheckboxes[name],
+                };
+                return newChecks;
+            };
+            setCheckboxes((prevCheckboxes) => updatedChecks(prevCheckboxes));
+            const newChecks = [].concat(props.checks);
+            const checkedAttribute = target.checked;
+            //could be simplified with index parameter now
+            const indexOfCheckToChange = newChecks.findIndex(
+                (check) => check.text_value === target.name
+            );
+            newChecks[indexOfCheckToChange].is_complete = checkedAttribute;
+            props.savePlanChanges(props.selectedPlanId, { checks: newChecks });
+        } else if (target.id.includes('quantity')) {
+            const itemToUpdate = props.checks[index];
+            console.log(itemToUpdate, value);
+            const updatedChecksObjs = (prevChecksObjs) => {
+            const newChecksObjs = {
+                ...prevChecksObjs,
+                [name]: {
+                    quantity: value,
+                    unit_of_measure: prevChecksObjs[name].unit_of_measure,
+                },
+            };
+            return newChecksObjs;
+            };
+            setChecksObjs((prevCheckboxes) => updatedChecksObjs(prevCheckboxes));
+        } else if (target.id.includes('unit')) {
+            const itemToUpdate = props.checks[index];
+            console.log(itemToUpdate, value);
+            const updatedChecksObjs = (prevChecksObjs) => {
+                const newChecksObjs = {
+                  ...prevChecksObjs,
+                  [name]: {
+                    quantity: prevChecksObjs[name].quantity,
+                    unit_of_measure: value,
+                  },
+                };
+                return newChecksObjs;
+            };
+            setChecksObjs((prevCheckboxes) => updatedChecksObjs(prevCheckboxes));
+        } else {
+            setNewItemValue(value);
+        }
     }
-  }
 
   function makeListOfCheckboxElements(arr) {
     if (props.listType === 'materials') {
@@ -162,7 +163,7 @@ function SimpleCheckboxSection(props) {
     }
   }
 
-  //Make the part of the props.addNewItem
+  //Make part of the props.addNewItem
   function addNewChecklistItem() {
     const newChecks = [].concat(props.checks);
     if (newItemValue.trim().length > 0) {

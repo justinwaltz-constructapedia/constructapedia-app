@@ -15,7 +15,7 @@ function Header(props) {
                 <b>Constructapedia</b>
               </a>
             </div>
-            <div class='nav-wrapper right'>
+            <div className='nav-wrapper right'>
               <a
                 href='#slide-out'
                 data-target='slide-out'

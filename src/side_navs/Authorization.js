@@ -100,7 +100,7 @@ function Authorization(props) {
                     className='white'
                     onChange={(e) => setEmail(e.target.value)}
                   />
-                  <label for='email'>Email</label>
+                  <label htmlFor='email'>Email</label>
                 </div>
                 <div className='input-field'>
                   <input
@@ -109,7 +109,7 @@ function Authorization(props) {
                     className=''
                     onChange={(e) => setPassword(e.target.value)}
                   />
-                  <label for='password'>Password</label>
+                  <label htmlFor='password'>Password</label>
                 </div>
                 <p className='container'>
                   <label>
@@ -163,7 +163,7 @@ function Authorization(props) {
                     type='text'
                     onChange={(e) => setName(e.target.value)}
                   />
-                  <label for='name'>Name</label>
+                  <label htmlFor='name'>Name</label>
                 </div>
                 <div className='input-field'>
                   <input
@@ -171,7 +171,7 @@ function Authorization(props) {
                     type='email'
                     onChange={(e) => setEmail(e.target.value)}
                   />
-                  <label for='signUpEmail'>Email</label>
+                  <label htmlFor='signUpEmail'>Email</label>
                 </div>
                 <div className='input-field'>
                   <input
@@ -179,7 +179,7 @@ function Authorization(props) {
                     type='password'
                     onChange={(e) => setPassword(e.target.value)}
                   />
-                  <label for='signUpPassword'>Password</label>
+                  <label htmlFor='signUpPassword'>Password</label>
                 </div>
                 <div className='input-field'>
                   <input
@@ -187,7 +187,7 @@ function Authorization(props) {
                     type='password'
                     onChange={(e) => setConfirmPassword(e.target.value)}
                   />
-                  <label for='confirmPassword'>Confrim Password</label>
+                  <label htmlFor='confirmPassword'>Confrim Password</label>
                 </div>
                 <p className='container'>
                   <label>
