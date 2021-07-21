@@ -47,17 +47,25 @@ function ProjectLevel(props) {
         props.savePlanChanges(planId, { notes: updatedNotes });
     }
     function updateChecklist(checklistIndex, action, itemArr, itemIndex) {
-        const currentChecks = [].concat(
-            props.userPlans[props.selectedPlanIndex].checks
-        );
+        const currentChecks = [].concat(props.userPlans[props.selectedPlanIndex].checks)
         console.log(checklistIndex, action, itemArr, itemIndex);
+        console.log(currentChecks);
         switch (action) {
             case 'addItem':
-                currentChecks[checklistIndex].list.push(itemArr[0]);
-                console.log(currentChecks);
-                props.savePlanChanges(props.userPlans[props.selectedPlanIndex].id, {
-                  checks: currentChecks,
-                });
+                const newChecks = currentChecks.reduce((checks, check, index) => {
+                    if (checklistIndex === index) {
+                        const newCheckList = currentChecks[checklistIndex].list.concat(itemArr);
+                        check.list = newCheckList;
+                    }
+                    checks.push(check);
+                    return checks;
+                }, [])
+                console.log(newChecks);
+                props.savePlanChanges(props.userPlans[props.selectedPlanIndex].id, {checks: newChecks});
+                break;
+            case 'updateItem':
+                currentChecks[checklistIndex].list = itemArr;
+                props.savePlanChanges(props.userPlans[props.selectedPlanIndex].id, {checks: currentChecks});
                 break;
             default:
         }
@@ -76,16 +84,15 @@ function ProjectLevel(props) {
   const checksSections = props.userPlans[props.selectedPlanIndex].checks.map(
     (checkObj, i) => {
         return (
-            <form key={checkObj.title + i}>
+            <div key={checkObj.title + i}>
                 <SimpleCheckboxSection
                     checklist={checkObj.list}
-                    selectedPlanId={props.userPlans[props.selectedPlanIndex].id}
                     listType={checkObj.list_type}
                     listTitle={checkObj.title}
                     checklistIndex={i}
                     updateChecklist={updateChecklist}
                 />
-            </form>
+            </div>
         );
     }
   );

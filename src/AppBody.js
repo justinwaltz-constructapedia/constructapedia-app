@@ -83,23 +83,27 @@ function AppBody(props) {
   function savePlanChanges(planId, planUpdateObj) {
     console.log(planUpdateObj);
     putPlanUpdate(planId, planUpdateObj).then((res) => {
-      if (res === 1) {
-        getUserPlans()
-          .then((plans) => {
-            setUserPlans(plans);
-            return;
-          })
-          .then(() => {
-            const searchIndex = (item) => item.id === planId;
-            const indexOfPlan = userPlans.findIndex(searchIndex);
-            console.log(indexOfPlan);
-            if (indexOfPlan !== selectedPlanIndex) {
-              setSelectedPlanIndex(indexOfPlan);
-            }
-          });
-      } else {
-        console.log('fail');
-      }
+        console.log("plan update put");
+        if (res === 1) {
+            getUserPlans()
+                .then((plans) => {
+                    console.log("got user plans");
+                    console.log(plans);
+                    setUserPlans(plans);
+                    return;
+                })
+                .then(() => {
+                    console.log("searching for plan");
+                    const searchIndex = (item) => item.id === planId;
+                    const indexOfPlan = userPlans.findIndex(searchIndex);
+                    console.log(indexOfPlan);
+                    if (indexOfPlan !== selectedPlanIndex) {
+                        setSelectedPlanIndex(indexOfPlan);
+                    }
+                });
+        } else {
+            console.log('fail');
+        }
     });
   }
 
