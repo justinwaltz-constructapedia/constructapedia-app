@@ -79,7 +79,6 @@ function ProjectLevel(props) {
             <form key={checkObj.title + i}>
                 <SimpleCheckboxSection
                     checklist={checkObj.list}
-                    selectedPlanId={props.userPlans[props.selectedPlanIndex].id}
                     listType={checkObj.list_type}
                     listTitle={checkObj.title}
                     checklistIndex={i}
