@@ -1,32 +1,14 @@
 import React, { useState, useEffect } from 'react';
 
 function SimpleCheckboxSection(props) {
-    // const initialCheckboxes = props.checklist.reduce(
-    //     (options, option) => ({
-    //         ...options,
-    //         [option.text_value]: {is_complete: option.is_complete, quantity: option.quantity,unit_of_measure: option.unit_of_measure},
-    //     }),
-    //     {}
-    // );
     const [newItemValue, setNewItemValue] = useState('');
     //const [checkboxes, setCheckboxes] = useState();
     const [checksObjs, setChecksObjs] = useState({});
     const checkboxElements = makeListOfCheckboxElements(props.checklist);
-    const displayListType = props.listType
-        .trim()
-        .replace(/^\w/, (c) => c.toUpperCase());
+    const displayListType = props.listType.trim().replace(/^\w/, (c) => c.toUpperCase());
 
     useEffect(() => {
         const checksToSet = [].concat(props.checklist);
-        // setCheckboxes(
-        //     checksToSet.reduce(
-        //         (options, option) => ({
-        //             ...options,
-        //             [option.text_value]: option.is_complete
-        //         }),
-        //         {}
-        //     )
-        // );
         setChecksObjs(
             checksToSet.reduce(
                 (options, option) => ({
@@ -179,7 +161,6 @@ function SimpleCheckboxSection(props) {
 
 function CheckListItem (props) {
     if (props.listType === 'materials') {
-        //add checked="checked" attribute to the input, make the onChange effect the db
         console.log(props.listItem);
         return (
             <div key={props.listType + props.itemIndex} className='row valign-wrapper'>
