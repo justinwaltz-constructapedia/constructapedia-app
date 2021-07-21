@@ -3,7 +3,7 @@ import M from "materialize-css";
 import "materialize-css/dist/css/materialize.min.css";
 import BottomModalContent from '../modals/BottomModalContent.js'
 import SearchBar from '../utility_components/SearchBar.js';
-import {postSelectionToScrape, googleSearch} from '../api/searchApi.js';
+import {/*postSelectionToScrape,*/googleSearch} from '../api/searchApi.js';
 import {scrapper} from '../api/scrapper.js';
 
 function SearchResults(props) {
@@ -60,13 +60,13 @@ function SearchResults(props) {
                                 {resultsList}
                             </div>
                             <ul className="pagination">
-                                <li className="disabled"><a href="#prevpage"><i class="material-icons">chevron_left</i></a></li>
+                                <li className="disabled"><a href="#prevpage"><i className="material-icons">chevron_left</i></a></li>
                                 <li className="active"><a href="#1">1</a></li>
                                 <li className="waves-effect"><a href="#2">2</a></li>
                                 <li className="waves-effect"><a href="#3">3</a></li>
                                 <li className="waves-effect"><a href="#4">4</a></li>
                                 <li className="waves-effect"><a href="#5">5</a></li>
-                                <li className="waves-effect"><a href="#nextpage"><i class="material-icons">chevron_right</i></a></li>
+                                <li className="waves-effect"><a href="#nextpage"><i className="material-icons">chevron_right</i></a></li>
                             </ul>
                         </div>
                     </div>

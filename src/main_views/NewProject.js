@@ -2,27 +2,30 @@ import React, {useState} from 'react';
 import SearchBar from '../utility_components/SearchBar.js'
 import {getSearchResults} from '../api/searchApi.js';
 //import {postPlan, getUserPlans} from '../api/projectsApi.js';
-
+import {googleSearch} from '../api/searchApi.js';
 function NewProject(props){
     const [planTitleValue, setPlanTitleValue] = useState('');
 
-    function createBlankPlan () {
-        if (planTitleValue.trim().length > 0) {
+    function createBlankPlan (searchString) {
             props.addUserPlan({title:planTitleValue})
-            props.handleMainAppView('HomePage');
-        }else{
-            alert("needs title value");
-        }
+            if (!searchString.trim().length > 0) {
+                props.handleMainAppView('HomePage');
+            }
     }
     function searchForPlans(userInput) {
-        if (planTitleValue.trim().length > 0 && userInput.trim().length > 0) {
-            createBlankPlan();
-            getSearchResults(userInput).then((res) => {
-                props.updateSearchResults(res);
-                props.handleMainAppView('SearchResults');
-            })
+        if (planTitleValue.trim().length > 0 || userInput.trim().length > 0) {
+            if (planTitleValue.trim().length > 0) {
+                createBlankPlan(userInput);
+            }
+            if (userInput.trim().length > 0) {
+                googleSearch(userInput).then((res) => {
+                    console.log(res);
+                    props.updateSearchResults(res.items);
+                    props.handleMainAppView('SearchResults');
+                })
+            }
         } else {
-            alert("Enter a title and search term");
+            alert("Enter a title and/or search term");
         }
     }
 
