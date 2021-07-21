@@ -1,23 +1,23 @@
 import React, { useState, useEffect } from 'react';
 
 function SimpleCheckboxSection(props) {
-    const initialCheckboxes = props.checklist.reduce(
-        (options, option) => ({
-            ...options,
-            [option.text_value]: {is_complete: option.is_complete, quantity: option.quantity,unit_of_measure: option.unit_of_measure},
-        }),
-        {}
-    );
+    // const initialCheckboxes = props.checklist.reduce(
+    //     (options, option) => ({
+    //         ...options,
+    //         [option.text_value]: {is_complete: option.is_complete, quantity: option.quantity,unit_of_measure: option.unit_of_measure},
+    //     }),
+    //     {}
+    // );
     const [newItemValue, setNewItemValue] = useState('');
     //const [checkboxes, setCheckboxes] = useState();
-    const [checksObjs, setChecksObjs] = useState(initialCheckboxes);
+    const [checksObjs, setChecksObjs] = useState({});
     const checkboxElements = makeListOfCheckboxElements(props.checklist);
     const displayListType = props.listType
         .trim()
         .replace(/^\w/, (c) => c.toUpperCase());
 
     useEffect(() => {
-        const checksToSet = props.checklist;
+        const checksToSet = [].concat(props.checklist);
         // setCheckboxes(
         //     checksToSet.reduce(
         //         (options, option) => ({
@@ -69,7 +69,7 @@ function SimpleCheckboxSection(props) {
             newChecks[indexOfCheckToChange].is_complete = checkedAttribute;
             //Needs to be moved so that it make call for unit and quantity
             //Take out the "action" param and just use index -1 for create
-            props.updateChecklist(props.checklistIndex, "addItem", newChecks)
+            props.updateChecklist(props.checklistIndex, "updateItem", newChecks)
         } else if (target.id.includes('quantity')) {
             const itemToUpdate = props.checklist[index];
             console.log(itemToUpdate, value);
@@ -105,83 +105,35 @@ function SimpleCheckboxSection(props) {
         }
     }
 
-  function makeListOfCheckboxElements(arr) {
-    if (props.listType === 'materials') {
+    function makeListOfCheckboxElements(arr) {
         return arr.map((listItem, i) => {
-            //add checked="checked" attribute to the input, make the onChange effect the db
-            return (
-                <div key={props.listType + i} className='row valign-wrapper'>
-                    <div className='col s12 left-align'>
-                        <label className='left-align active'>
-                            <input
-                                type='checkbox'
-                                name={listItem.text_value}
-                                checked={checksObjs[listItem.text_value].is_complete}
-                                onChange={(e) => handleInputChange(e,i)}
-                                className='filled-in'
-                            />
-                            <span>{listItem.text_value}</span>
-                        </label>
-                    </div>
-                    {/*<div className='col s3'>
-                      <div className='input-field no-margin no-padding'>
-                        <input
-                          id={'quantity' + i}
-                          type='number'
-                          className='validate no-margin no-padding'
-                          value={listItem.quantity}
-                          placeholder='Need'
-                          onChange={(e) => handleInputChange(e, i)}
-                        />
-                      </div>
-                    </div>
-                    <div className='col s4'>
-                      <div className='input-field no-margin no-padding'>
-                        <input
-                          id={'unit' + i}
-                          type='text'
-                          className='validate no-margin no-padding'
-                          placeholder='Unit'
-                          value={listItem.unit_of_measure}
-                          onChange={(e) => handleInputChange(e, i)}
-                        />
-                      </div>
-                    </div>*/}
-                </div>
-            );
-        });
-        } else if (props.listType === 'tools') {
-            return arr.map((listItem, i) => {
+            if (checksObjs[listItem.text_value]) {
                 return (
-                    <div key={props.listType + i} className='row valign-wrapper'>
-                        <div className='col s12 left-align'>
-                            <label className='left-align active'>
-                                <input
-                                    type='checkbox'
-                                    className='filled-in'
-                                    name={listItem.text_value}
-                                    checked={checksObjs[listItem.text_value].is_complete}
-                                    onChange={(e) => handleInputChange(e, i)}
-                                />
-                                <span>{listItem.text_value}</span>
-                            </label>
-                        </div>
-                    </div>
-                );
-            });
-        }
-  }
+                    <CheckListItem
+                        key={i+listItem.text_value}
+                        listType = {props.listType}
+                        listItem = {listItem}
+                        checked = {checksObjs[listItem.text_value].is_complete}
+                        handleInputChange = {handleInputChange}
+                        itemIndex = {i}
+                    />
+                )
+            } else {
+                return null;
+            }
+
+        })
+    }
 
   //Make part of the props.addNewItem
-  function addNewChecklistItem() {
-    const newChecks = [].concat(props.checklist);
+  function addNewChecklistItem(e) {
     if (newItemValue.trim().length > 0) {
         const newCheck = {
             text_value: newItemValue,
-            //is_complete:
+            is_complete: false
         };
-        newChecks.push(newCheck);
-        console.log(newChecks);
+        console.log(newCheck);
+        console.log(checksObjs)
         props.updateChecklist(props.checklistIndex, 'addItem', [newCheck]);
         setNewItemValue('');
     }
@@ -195,10 +147,12 @@ function SimpleCheckboxSection(props) {
                     type='text'
                     className='validate'
                     value={newItemValue}
-                    onChange={(e) => handleInputChange(e)}
+                    onChange={(e) => {
+                        handleInputChange(e)
+                    }}
                     onKeyDown={(e) => {
                         if (e.keyCode === 13) {
-                            addNewChecklistItem();
+                            addNewChecklistItem(e);
                         }
                     }}
                     placeholder={'Add New ' + displayListType}
@@ -208,7 +162,7 @@ function SimpleCheckboxSection(props) {
                 id={'add-' + props.listType + '-btn-' + props.checklistIndex}
                 className='btn-floating btn-small waves-effect waves-light'
                 type='button'
-                onClick={addNewChecklistItem}
+                onClick={e => addNewChecklistItem(e)}
             >
                 <i className='material-icons'>add</i>
             </button>
@@ -223,4 +177,69 @@ function SimpleCheckboxSection(props) {
   );
 }
 
+function CheckListItem (props) {
+    if (props.listType === 'materials') {
+        //add checked="checked" attribute to the input, make the onChange effect the db
+        console.log(props.listItem);
+        return (
+            <div key={props.listType + props.itemIndex} className='row valign-wrapper'>
+                <div className='col s12 left-align'>
+                    <label className='left-align active'>
+                        <input
+                            type='checkbox'
+                            name={props.listItem.text_value}
+                            checked={props.checked}
+                            onChange={(e) => props.handleInputChange(e,props.itemIndex)}
+                            className='filled-in'
+                        />
+                        <span>{props.listItem.text_value}</span>
+                    </label>
+                </div>
+            </div>
+        );
+    } else if (props.listType === 'tools') {
+        console.log(props.listItem);
+        return (
+            <div key={props.listType + props.itemIndex} className='row valign-wrapper'>
+                <div className='col s12 left-align'>
+                    <label className='left-align active'>
+                        <input
+                            type='checkbox'
+                            className='filled-in'
+                            name={props.listItem.text_value}
+                            checked={props.checked}
+                            onChange={(e) => props.handleInputChange(e, props.itemIndex)}
+                        />
+                        <span>{props.listItem.text_value}</span>
+                    </label>
+                </div>
+            </div>
+        );
+    }
+}
+
 export default SimpleCheckboxSection;
+/*<div className='col s3'>
+  <div className='input-field no-margin no-padding'>
+    <input
+      id={'quantity' + i}
+      type='number'
+      className='validate no-margin no-padding'
+      value={props.listItem.quantity}
+      placeholder='Need'
+      onChange={(e) => handleInputChange(e, i)}
+    />
+  </div>
+</div>
+<div className='col s4'>
+  <div className='input-field no-margin no-padding'>
+    <input
+      id={'unit' + i}
+      type='text'
+      className='validate no-margin no-padding'
+      placeholder='Unit'
+      value={props.listItem.unit_of_measure}
+      onChange={(e) => handleInputChange(e, i)}
+    />
+  </div>
+</div>*/
