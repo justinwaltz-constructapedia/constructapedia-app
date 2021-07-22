@@ -104,8 +104,6 @@ function ProjectDetails(props) {
     addModalInstance.open();
   }
 
-  function openNavBar() {}
-
   return (
     <div>
       <div className='col s12'>
