@@ -56,11 +56,11 @@ function NotesSection(props) {
 
           <button
             id={'add-note-btn-' + props.selectedPlanId}
-            className='btn-floating left button-margin waves-effect waves-light'
+            className='btn-floating left button-margin waves-effect waves-light indigo'
             type='button'
             onClick={saveNewNote}
           >
-            <i className='material-icons'>add</i>
+            <i className='material-icons'>create</i>
           </button>
         </div>
         <div className='col s12'>{createNotes()}</div>

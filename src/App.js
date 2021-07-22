@@ -126,7 +126,7 @@ class App extends React.Component {
             </div>
           </section>
 
-          <footer className='section footer-tm right'>
+          <footer className='section footer-tm left'>
             <p>Constructapedia &copy; &trade; 2020</p>
           </footer>
         </div>
@@ -151,7 +151,7 @@ class App extends React.Component {
             updateUser={this.updateUser}
             isLoading={this.state.isLoading}
           />
-          <footer className='section footer-tm right'>
+          <footer className='section footer-tm left'>
             <p>Constructapedia &copy; &trade; 2020</p>
           </footer>
         </div>
