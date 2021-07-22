@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import SearchBar from '../utility_components/SearchBar.js'
-import {getSearchResults} from '../api/searchApi.js';
+//import {getSearchResults} from '../api/searchApi.js';
 //import {postPlan, getUserPlans} from '../api/projectsApi.js';
 import {googleSearch} from '../api/searchApi.js';
 function NewProject(props){
