@@ -13,16 +13,29 @@ function ProjectStepsSection(props) {
     const changesObj = props.subPlan;
     console.log(noteIndex, noteValue, changesObj);
     if (changesObj.notes.length > 0) {
-      changesObj.notes[noteIndex].contents = noteValue;
+        changesObj.notes[noteIndex].contents = noteValue;
     } else {
-      changesObj.notes = [{ contents: noteValue }];
+        changesObj.notes = [{ contents: noteValue }];
     }
     props.updateSubPlan(props.subPlanIndex, changesObj);
   }
 
   return (
     <div className='col s12'>
-      <NotesSection saveNotes={saveNotes} notes={props.subPlan.notes} />
+        <NotesSection saveNotes={saveNotes} notes={props.subPlan.notes} />
+        <section
+            id='input-notes'
+            className='section center row'
+        >
+            <button className="btn waves-effect waves-light red"
+                    type="button"
+                    name="action"
+                    onClick={() => props.deleteItemInPlan("sub_plans", props.subPlanIndex)}
+            >
+                Delete Step
+                <i className="material-icons right">delete_forever</i>
+            </button>
+        </section>
     </div>
   );
 }
