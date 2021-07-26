@@ -25,8 +25,6 @@ function SimpleCheckboxSection(props) {
         );
     }, [props.checklist]);
 
-    const checkboxElements = makeListOfCheckboxElements(props.checklist);
-
     function handleInputChange(event, index) {
         const target = event.target;
         // const value = target.value;
@@ -90,6 +88,20 @@ function SimpleCheckboxSection(props) {
         }
     }
 
+    //Make part of the props.addNewItem
+    function addNewChecklistItem(e) {
+        if (newItemValue.trim().length > 0) {
+            const newCheck = {
+                text_value: newItemValue,
+                is_complete: false,
+            };
+            console.log(newCheck);
+            console.log(checksObjs);
+            props.updateChecklist(props.checklistIndex, 'addItem', [newCheck]);
+            setNewItemValue('');
+        }
+    }
+
     function makeListOfCheckboxElements(arr) {
         return arr.map((listItem, i) => {
             if (checksObjs[listItem.text_value]) {
@@ -109,19 +121,8 @@ function SimpleCheckboxSection(props) {
         });
     }
 
-    //Make part of the props.addNewItem
-    function addNewChecklistItem(e) {
-        if (newItemValue.trim().length > 0) {
-            const newCheck = {
-                text_value: newItemValue,
-                is_complete: false,
-            };
-            console.log(newCheck);
-            console.log(checksObjs);
-            props.updateChecklist(props.checklistIndex, 'addItem', [newCheck]);
-            setNewItemValue('');
-        }
-    }
+    const checkboxElements = makeListOfCheckboxElements(props.checklist);
+
     return (
         <div className='col s12 l6'>
             <div>
@@ -161,7 +162,7 @@ function SimpleCheckboxSection(props) {
 
 function CheckListItem(props) {
   if (props.listType === 'materials') {
-    console.log(props.listItem);
+    //console.log(props.listItem);
     return (
         <div
             key={props.listType + props.itemIndex}
@@ -182,7 +183,7 @@ function CheckListItem(props) {
         </div>
     );
   } else if (props.listType === 'tools') {
-    console.log(props.listItem);
+    //console.log(props.listItem);
     return (
         <div
             key={props.listType + props.itemIndex}
