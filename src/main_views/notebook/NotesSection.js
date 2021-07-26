@@ -5,8 +5,8 @@ function NotesSection(props) {
     const [newNoteValue, setNewNoteValue] = useState('');
     const [noteValues, setNoteValues] = useState({});
     const [autoSave, setAutoSave] = useState(false);
-    // const [timeOfLastChange, setTimeOfLastChange] = useState(0);
     const timeOfLastChange = useRef(0)
+    //const notesToUpdateLog = useRef([]);
 
     useEffect(() => {
         const notesToSet = [].concat(props.notes);
@@ -20,9 +20,24 @@ function NotesSection(props) {
             )
         );
     }, [props.notes]);
-    // useEffect(() => {
-    //     autoSaveNotes()
-    // },[timeOfLastChange])
+    useEffect(() => {
+        console.log("rerender");
+        console.log(timeOfLastChange.current);
+        if (timeOfLastChange.current > 0) {
+            const saveTimer = setTimeout (save,3000);
+            function save () {
+                const timeNow = Date.now();
+                console.log(typeof timeNow, timeNow, timeOfLastChange.current);
+                const timeElapsed = (timeNow - timeOfLastChange.current);
+                console.log(timeElapsed);
+                if (timeElapsed <= 3000) {
+                    console.log("Waiting");
+                } else {
+                    autoSaveNotes()
+                }
+            }
+        }
+    },[noteValues])
 
     function saveNewNote() {
         props.updateNotes(true, {contents: newNoteValue});
@@ -40,23 +55,18 @@ function NotesSection(props) {
             [noteIndex]: noteValue
         })
         setNoteValues((prevNoteValues) => updatedNoteValues(prevNoteValues))
-        autoSaveNotes(noteValue, noteIndex)
     }
 
-    function autoSaveNotes(changedNoteValue, changedNoteIndex) {
+    function autoSaveNotes() {
         //Function to update database
         const updateDatabase = () => {
-                const updateNote = (prevNote) => ({
+                const updateNote = (prevNote, prevNoteIndex) => ({
                     ...prevNote,
-                    contents: changedNoteValue
+                    contents: noteValues[prevNoteIndex]
                 })
                 const updatedNotes = props.notes.reduce(
                     (notes, note, index) => {
-                        if (index === changedNoteIndex) {
-                            notes.push(updateNote(note));
-                        } else {
-                            notes.push(note);
-                        }
+                        notes.push(updateNote(note, index));
                         return notes;
                     }, []
                 )
@@ -65,24 +75,22 @@ function NotesSection(props) {
                 timeOfLastChange.current = 0;
                 console.log('saved');
         }
-
+        updateDatabase();
         //Update database if it has been 3 secs since last time the function fired
         //The setTimeout should be to wait for more changes
         //The Interval should resart on each change
-        const saveTimer = setTimeout (save,3000);
-        function save () {
-            // const dateNow = new Date();
-            const timeNow = Date.now();
-            console.log(typeof timeNow, timeNow, timeOfLastChange.current);
-            const timeElapsed = (timeNow - timeOfLastChange.current);
-            console.log(timeElapsed);
-            if (timeElapsed <= 3000) {
-                console.log("Waiting");
-                //clearTimeout(saveTimer);
-            } else {
-                updateDatabase();
-            }
-        }
+        // const saveTimer = setTimeout (save,3000);
+        // function save () {
+        //     const timeNow = Date.now();
+        //     console.log(typeof timeNow, timeNow, timeOfLastChange.current);
+        //     const timeElapsed = (timeNow - timeOfLastChange.current);
+        //     console.log(timeElapsed);
+        //     if (timeElapsed <= 3000) {
+        //         console.log("Waiting");
+        //     } else {
+        //         updateDatabase();
+        //     }
+        // }
     }
 
     const makeListOfNoteElements = () => {
