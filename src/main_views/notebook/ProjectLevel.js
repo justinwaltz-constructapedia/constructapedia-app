@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import M from 'materialize-css';
+import 'materialize-css/dist/css/materialize.min.css';
 import SimpleCheckboxSection from './SimpleCheckboxSection.js';
 import NotesSection from './NotesSection.js';
 import ProjectStepsSection from './ProjectStepsSection.js';
@@ -6,6 +8,8 @@ import UrlLinks from './UrlLinks.js';
 
 function ProjectLevel(props) {
     const [selectedLevel, setSelectedLevel] = useState('');
+
+    const substepTabsUl = useRef(null);
     const videoDisplays = props.userPlans[props.selectedPlanIndex].video_urls.map(
     (url, i) => {
         return (
@@ -19,6 +23,13 @@ function ProjectLevel(props) {
             </div>
         );
     });
+
+    useEffect(() => {
+        const tabsOptions = {
+            swipeable: true
+        }
+        M.Tabs.init(substepTabsUl.current, tabsOptions);
+    })
 
     useEffect(() => {
         setSelectedLevel(props.userPlans[props.selectedPlanIndex].id);
@@ -91,10 +102,17 @@ function ProjectLevel(props) {
             );
         }
     );
+    // const createSubstepTabs = () => {
+    //
+    // }
+    const substepTabs = props.userPlans[props.selectedPlanIndex].sub_plans.map((subPlan, i) => {
+        return <li key={subPlan.id} className="tab col s3"><a href={"#"+subPlan.id}>{subPlan.title}</a></li>
+    })
+
 
     const substepSections = props.userPlans[props.selectedPlanIndex].sub_plans.map((subPlan, i) => {
         return (
-            <div key={subPlan.title + i} id={subPlan.id} className='row'>
+            <div key={subPlan.title + i} id={subPlan.id} className='col s12'>
                 <div className='nav-wrapper'>
                     <div className='row blue lighten-3'>
                         <div className='col s12'>
@@ -108,6 +126,7 @@ function ProjectLevel(props) {
                     updateSubPlan={updateSubPlan}
                     planId={props.userPlans[props.selectedPlanIndex].id}
                     savePlanChanges={props.savePlanChanges}
+                    deleteItemInPlan={props.deleteItemInPlan}
                 />
             </div>
         );
@@ -143,7 +162,17 @@ function ProjectLevel(props) {
                         {props.userPlans[props.selectedPlanIndex].checks.length > 0 && checksSections}
                     </div>
                 </li>
-                <li className='collection-item'>{substepSections}</li>
+                {
+                    props.reload &&
+                    <li className='collection-item'>
+                        <div className="col s12">
+                            <ul ref={substepTabsUl} id="substep-tabs-swipe" className="tabs">
+                                {substepTabs}
+                            </ul>
+                        </div>
+                        {substepSections}
+                    </li>
+                }
             </ul>
           </div>
         </div>

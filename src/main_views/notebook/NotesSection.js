@@ -117,7 +117,7 @@ function NotesSection(props) {
     return (
         <section
             id='input-notes'
-            className='section section-note center scrollspy row'
+            className='section section-note center row'
         >
             <div className='row'>
                 <div className='col s12'>

@@ -12,7 +12,7 @@ function ProjectDetails(props) {
     const [addModalSelectValue, setAddModalSelectValue] = useState('');
     const [addModalCheckTypeValue, setAddModalCheckTypeValue] = useState('tools');
     const [selectedLevel, setSelectedLevel] = useState('');
-    //const scrollspyElems = useRef(null);
+    const [reload, setReload] = useState(true);
     const addModalSelect = useRef(null);
     const addModalChecksSelect = useRef(null);
 
@@ -30,6 +30,7 @@ function ProjectDetails(props) {
     }, []);
     useEffect(() => {
         setSelectedLevel(props.userPlans[props.selectedPlanIndex].id);
+        setReload(true);
     }, [props.userPlans, props.selectedPlanIndex]);
 
     function handleChange(event) {
@@ -47,6 +48,23 @@ function ProjectDetails(props) {
             default:
                 return;
         }
+    }
+//Delete function for fields directly under a plan object: sub_plans, notes, checks
+    function deleteItemInPlan (itemFieldName, itemIndex) {
+        const currentPlan = props.userPlans[props.selectedPlanIndex]
+        const newItemFieldList = currentPlan[itemFieldName].reduce(
+            (itemFieldList, item, i) => {
+                if (itemIndex != i) {
+                    itemFieldList.push(item);
+                }
+                return itemFieldList
+            },[]
+        )
+        const updateObj = {};
+        updateObj[itemFieldName] = newItemFieldList;
+        console.log(updateObj);
+        props.savePlanChanges(currentPlan.id, updateObj);
+        setReload(false);
     }
 
     function addNewSection() {
@@ -136,6 +154,8 @@ function ProjectDetails(props) {
                         selectedPlanIndex={props.selectedPlanIndex}
                         changeOrUpdatePlanDraft={props.changeOrUpdatePlanDraft}
                         savePlanChanges={props.savePlanChanges}
+                        deleteItemInPlan={deleteItemInPlan}
+                        reload={reload}
                       />
                     </div>
                   </div>
