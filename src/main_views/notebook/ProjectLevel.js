@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import M from 'materialize-css';
 import 'materialize-css/dist/css/materialize.min.css';
 import SimpleCheckboxSection from './SimpleCheckboxSection.js';
@@ -7,23 +7,11 @@ import ProjectStepsSection from './ProjectStepsSection.js';
 import UrlLinks from './UrlLinks.js';
 
 function ProjectLevel(props) {
-    // const [selectedLevel, setSelectedLevel] = useState('');
-
+//Ref hook for the substep tabs directly under the project
     const substepTabsUl = useRef(null);
-    const videoDisplays = props.userPlans[props.selectedPlanIndex].video_urls.map(
-    (url, i) => {
-        return (
-            <div key={i} className='video-container'>
-                <iframe
-                    title='video1'
-                    src={url}
-                    frameBorder='0'
-                    allowFullScreen
-                ></iframe>
-            </div>
-        );
-    });
 
+//Effect hooks
+    //Hook for intializing the substep tab functionality using Materialize
     useEffect(() => {
         if (props.userPlans[props.selectedPlanIndex].sub_plans.length > 0) {
             const tabsOptions = {
@@ -31,9 +19,7 @@ function ProjectLevel(props) {
             }
             M.Tabs.init(substepTabsUl.current, tabsOptions);
         }
-
     })
-
     // useEffect(() => {
     //     setSelectedLevel(props.userPlans[props.selectedPlanIndex].id);
     // }, [props.userPlans, props.selectedPlanIndex]);
@@ -89,7 +75,19 @@ function ProjectLevel(props) {
             { sub_plans: updatedSubPlans }
         );
     }
-
+    const videoDisplays = props.userPlans[props.selectedPlanIndex].video_urls.map(
+    (url, i) => {
+        return (
+            <div key={i} className='video-container'>
+                <iframe
+                    title='video1'
+                    src={url}
+                    frameBorder='0'
+                    allowFullScreen
+                ></iframe>
+            </div>
+        );
+    });
     const checksSections = props.userPlans[props.selectedPlanIndex].checks.map(
         (checkObj, i) => {
             return (

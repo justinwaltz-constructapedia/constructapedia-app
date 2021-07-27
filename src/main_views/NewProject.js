@@ -1,10 +1,11 @@
 import React, {useState} from 'react';
 import SearchBar from '../utility_components/SearchBar.js'
+import SearchResults from './SearchResults.js';
 //import {getSearchResults} from '../api/searchApi.js';
-//import {postPlan, getUserPlans} from '../api/projectsApi.js';
 import {googleSearch} from '../api/searchApi.js';
 function NewProject(props){
     const [planTitleValue, setPlanTitleValue] = useState('');
+    const [resultsToogle, setResultsToogle] = useState(false);
 
     function createBlankPlan (searchString) {
             props.addUserPlan({title:planTitleValue})
@@ -21,7 +22,8 @@ function NewProject(props){
                 googleSearch(userInput).then((res) => {
                     console.log(res);
                     props.updateSearchResults(res.items);
-                    props.handleMainAppView('SearchResults');
+                    //props.handleMainAppView('SearchResults');
+                    setResultsToogle(true);
                 })
             }
         } else {
@@ -50,6 +52,14 @@ function NewProject(props){
             <div className="row blue-grey darken-4 blue-grey-text text-lighten-5">
                 <SearchBar handleSearch={searchForPlans}/>
             </div>
+                {resultsToogle &&
+                    <SearchResults
+                        mainAppView={props.mainAppView}
+                        results={props.results}
+                        updateSearchResults={props.updateSearchResults}
+                        handleMainAppView={props.handleMainAppView}
+                    />
+                }
         </div>
     )
 }

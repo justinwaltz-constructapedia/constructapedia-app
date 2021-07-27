@@ -1,25 +1,29 @@
 import React, { useState, useEffect } from 'react';
+//Project Components
 import HomePage from './main_views/HomePage.js';
 import SearchResults from './main_views/SearchResults.js';
 import ProjectDetails from './main_views/ProjectDetails.js';
 import NewProject from './main_views/NewProject.js';
-
-//import Preloader from './utility_components/Preloader.js';
-
+//Project API Calls
 import {getUserPlans, putPlanUpdate, deletePlan, postPlan} from './api/projectsApi';
 
 function AppBody(props) {
+//State Hooks for Components in the <main> tag
     const [mainAppView, setMainAppView] = useState('HomePage');
     const [userPlans, setUserPlans] = useState([]);
     const [selectedPlanIndex, setSelectedPlanIndex] = useState(null);
     const [results, setResults] = useState([]);
 
+//Effect Hooks
+    //Gets user plans only on Mount
     useEffect(() => {
         getUserPlans().then((plans) => {
             setUserPlans(plans);
         });
     }, []);
-    //Functions for props to lift state
+
+//Functions for props to lift state
+    //Handling views of child components
     function handleMainAppView(view) {
         setMainAppView(view);
     }
@@ -35,6 +39,7 @@ function AppBody(props) {
             handleMainAppView('ProjectDetails');
         }
     }
+    //Updating database plans and this components state
     function addUserPlan(plan) {
         postPlan(plan)
             .then((res) => {
@@ -102,7 +107,7 @@ function AppBody(props) {
             }
         });
     }
-
+//Return view to render
     return (
         <main id='main-app-container' className='row'>
             {mainAppView === 'HomePage' && (
@@ -119,10 +124,12 @@ function AppBody(props) {
             )}
             {mainAppView === 'NewProject' && (
                 <NewProject
-                  addUserPlan={addUserPlan}
-                  updateSearchResults={updateSearchResults}
-                  updateSelectedPlan={updateSelectedPlan}
-                  handleMainAppView={handleMainAppView}
+                    addUserPlan={addUserPlan}
+                    updateSearchResults={updateSearchResults}
+                    updateSelectedPlan={updateSelectedPlan}
+                    mainAppView = {mainAppView}
+                    handleMainAppView={handleMainAppView}
+                    results={results}
                 />
             )}
             {mainAppView === 'ProjectDetails' && (
@@ -139,6 +146,7 @@ function AppBody(props) {
             )}
             {mainAppView === 'SearchResults' && (
                 <SearchResults
+                    mainAppView={mainAppView}
                     results={results}
                     updateSearchResults={updateSearchResults}
                     handleMainAppView={handleMainAppView}

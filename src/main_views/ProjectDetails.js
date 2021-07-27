@@ -5,7 +5,6 @@ import PlanDetailsMenu from './notebook/PlanDetailsMenu.js';
 import ProjectLevel from './notebook/ProjectLevel.js';
 
 function ProjectDetails(props) {
-    const addModal = useRef(null);
     const [addModalTitle, setAddModalTitle] = useState('');
     const [addModalType, setAddModalType] = useState('');
     const [addModalValue, setAddModalValue] = useState('');
@@ -15,7 +14,7 @@ function ProjectDetails(props) {
     const [reload, setReload] = useState(false);
     const addModalSelect = useRef(null);
     const addModalChecksSelect = useRef(null);
-
+    const addModal = useRef(null);
     useEffect(() => {
         M.FormSelect.init(addModalSelect.current);
         M.FormSelect.init(addModalChecksSelect.current);
