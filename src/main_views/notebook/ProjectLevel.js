@@ -98,6 +98,7 @@ function ProjectLevel(props) {
                         listTitle={checkObj.title}
                         checklistIndex={i}
                         updateChecklist={updateChecklist}
+                        deleteItemInPlan={props.deleteItemInPlan}
                     />
                 </div>
             );
@@ -155,7 +156,7 @@ function ProjectLevel(props) {
                     <NotesSection
                         updateNotes = {updateNotes}
                         notes={props.userPlans[props.selectedPlanIndex].notes}
-                        //selectedPlanId={props.userPlans[props.selectedPlanIndex].id}
+                        deleteItemInPlan={props.deleteItemInPlan}
                     />
                 </li>
                 <li className='collection-item'>

@@ -125,30 +125,41 @@ function SimpleCheckboxSection(props) {
 
     return (
         <div className='col s12 l6'>
-            <div>
-                <div className='input-field inline'>
-                    <input
-                        id={'new-' + props.listType + '-' + props.checklistIndex}
-                        type='text'
-                        className='validate'
-                        value={newItemValue}
-                        onChange={(e) => handleInputChange(e)}
-                        onKeyDown={(e) => {
-                            if (e.keyCode === 13) {
-                                addNewChecklistItem(e);
-                            }
-                        }}
-                        placeholder={'Add New ' + displayListType}
-                    />
+            <div className='row valign-wrapper'>
+                <div className='col s8'>
+                    <div className='input-field inline'>
+                        <input
+                            id={'new-' + props.listType + '-' + props.checklistIndex}
+                            type='text'
+                            className='validate'
+                            value={newItemValue}
+                            onChange={(e) => handleInputChange(e)}
+                            onKeyDown={(e) => {
+                                if (e.keyCode === 13) {
+                                    addNewChecklistItem(e);
+                                }
+                            }}
+                            placeholder={'Add New ' + displayListType}
+                        />
+                    </div>
+                    <button
+                        id={'add-' + props.listType + '-btn-' + props.checklistIndex}
+                        className='btn-floating waves-effect waves-light indigo'
+                        type='button'
+                        onClick={(e) => addNewChecklistItem(e)}
+                    >
+                        <i className='material-icons'>add</i>
+                    </button>
                 </div>
-                <button
-                    id={'add-' + props.listType + '-btn-' + props.checklistIndex}
-                    className='btn-floating waves-effect waves-light indigo'
-                    type='button'
-                    onClick={(e) => addNewChecklistItem(e)}
-                >
-                    <i className='material-icons'>add</i>
-                </button>
+                <div className='col s2'>
+                    <button
+                        className='btn-flat right waves-effect waves-light'
+                        type='button'
+                        onClick={()=>props.deleteItemInPlan('checks', props.checklistIndex)}
+                    >
+                        <i className='material-icons'>delete_forever</i>
+                    </button>
+                </div>
             </div>
             <ul className='collection with-header'>
                 <li className='collection-header indigo-text center'>

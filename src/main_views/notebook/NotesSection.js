@@ -79,6 +79,7 @@ function NotesSection(props) {
                         value={noteValues[i]}
                         noteIndex={i}
                         handleNoteChange={handleNoteChange}
+                        deleteItemInPlan={props.deleteItemInPlan}
                     />
                 )
             } else {
@@ -136,11 +137,11 @@ function Note(props) {
             </div>
             <div className='col s1'>
                 <button
-                    className='btn-flat btn-small right waves-effect waves-light'
+                    className='btn-flat right waves-effect waves-light'
                     type='button'
-                    //onClick={()=>saveChangesToNote(i)}
+                    onClick={()=>props.deleteItemInPlan('notes',props.noteIndex)}
                 >
-                    <i className='small material-icons'>more_vert</i>
+                    <i className='material-icons'>delete_forever</i>
                 </button>
             </div>
         </div>
