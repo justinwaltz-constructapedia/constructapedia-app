@@ -5,21 +5,21 @@ import PlanDetailsMenu from './notebook/PlanDetailsMenu.js';
 import ProjectLevel from './notebook/ProjectLevel.js';
 
 function ProjectDetails(props) {
-    const addModal = useRef(null);
     const [addModalTitle, setAddModalTitle] = useState('');
     const [addModalType, setAddModalType] = useState('');
     const [addModalValue, setAddModalValue] = useState('');
     const [addModalSelectValue, setAddModalSelectValue] = useState('');
     const [addModalCheckTypeValue, setAddModalCheckTypeValue] = useState('tools');
     const [selectedLevel, setSelectedLevel] = useState('');
-    const [reload, setReload] = useState(true);
+    const [reload, setReload] = useState(false);
     const addModalSelect = useRef(null);
     const addModalChecksSelect = useRef(null);
-
+    const addModal = useRef(null);
     useEffect(() => {
         M.FormSelect.init(addModalSelect.current);
         M.FormSelect.init(addModalChecksSelect.current);
     });
+
     useEffect(() => {
         const addModalOptions = {
             opacity: 0,
@@ -28,9 +28,14 @@ function ProjectDetails(props) {
         };
         M.Modal.init(addModal.current, addModalOptions);
     }, []);
+
     useEffect(() => {
         setSelectedLevel(props.userPlans[props.selectedPlanIndex].id);
-        setReload(true);
+        // if (props.userPlans[props.selectedPlanIndex].sub_plans.length === 0) {
+        //     setReload(true);
+        // } else {
+            setReload(false);
+        // }
     }, [props.userPlans, props.selectedPlanIndex]);
 
     function handleChange(event) {
@@ -54,7 +59,7 @@ function ProjectDetails(props) {
         const currentPlan = props.userPlans[props.selectedPlanIndex]
         const newItemFieldList = currentPlan[itemFieldName].reduce(
             (itemFieldList, item, i) => {
-                if (itemIndex != i) {
+                if (itemIndex !== i) {
                     itemFieldList.push(item);
                 }
                 return itemFieldList
@@ -64,7 +69,7 @@ function ProjectDetails(props) {
         updateObj[itemFieldName] = newItemFieldList;
         console.log(updateObj);
         props.savePlanChanges(currentPlan.id, updateObj);
-        setReload(false);
+        setReload(true);
     }
 
     function addNewSection() {

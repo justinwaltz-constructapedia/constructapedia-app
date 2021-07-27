@@ -7,14 +7,9 @@ import {/*postSelectionToScrape,*/googleSearch} from '../api/searchApi.js';
 import {scrapper} from '../api/scrapper.js';
 
 function SearchResults(props) {
-    const results = props.results;
     const modal = useRef(null);
     const [urlToView, setUrlToView] = useState("");
     const [urlToViewHeading, setUrlToViewHeading] = useState("");
-
-    const resultsList = results.map((result, index) => {
-        return <ResultListItem key={index} title={result.title} image={result.pagemap.cse_image[0].src} link={result.link} updateUrlToView={updateUrlToView} updateProjectDraft={props.updateProjectDraft}/>
-    })
 
     useEffect(()=>{
         const options = {
@@ -43,18 +38,24 @@ function SearchResults(props) {
         })
     }
 
+    const resultsList = props.results.map((result, index) => {
+        if (props.results.length > 0) {
+            return <ResultListItem key={index} title={result.title} image={result.pagemap.cse_image[0].src} link={result.link} updateUrlToView={updateUrlToView} updateProjectDraft={props.updateProjectDraft}/>;
+        } else {
+            return null;
+        }
+    })
     return (
         <div className="col s12">
             <div className="app-column">
-                <div className = "row">
-                    <button type="button" className="waves-effect waves-blue btn-flat blue-grey darken-4 blue-grey-text text-lighten-5 " onClick={()=>{props.handleMainAppView('ProjectDetails')}}><i className="material-icons left blue-grey-text text-lighten-5">arrow_back</i>Back to Project</button>
-                </div>
+                { props.mainAppView === "SearchResults" &&
+                    <div className = "row">
+                        <button type="button" className="waves-effect waves-blue btn-flat blue-grey darken-4 blue-grey-text text-lighten-5 " onClick={()=>{props.handleMainAppView('ProjectDetails')}}><i className="material-icons left blue-grey-text text-lighten-5">arrow_back</i>Back to Project</button>
+                    </div>
+                }
                 <div className="row">
                     <div className="col s12">
-                        <div ref={modal} id="search-modal" className="modal bottom-sheet blue-grey darken-4 blue-grey-text text-lighten-5">
-                            <BottomModalContent modalType="search" heading={urlToViewHeading} urlToView={urlToView}/>
-                        </div>
-                        <SearchBar handleSearch={searchForProjects}/>
+                        {props.mainAppView === "SearchResults" && <SearchBar handleSearch={searchForProjects}/>}
                         <div className="container">
                             <div className="row">
                                 {resultsList}
@@ -69,13 +70,15 @@ function SearchResults(props) {
                                 <li className="waves-effect"><a href="#nextpage"><i className="material-icons">chevron_right</i></a></li>
                             </ul>
                         </div>
+                        <div ref={modal} id="search-modal" className="modal bottom-sheet blue-grey darken-4 blue-grey-text text-lighten-5">
+                            <BottomModalContent modalType="search" heading={urlToViewHeading} urlToView={urlToView}/>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     );
 }
-
 
 function ResultListItem(props) {
     function scrapePage (url){

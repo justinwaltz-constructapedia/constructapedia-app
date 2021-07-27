@@ -4,9 +4,7 @@ import './NotesSection.css';
 function NotesSection(props) {
     const [newNoteValue, setNewNoteValue] = useState('');
     const [noteValues, setNoteValues] = useState({});
-    const [autoSave, setAutoSave] = useState(false);
     const timeOfLastChange = useRef(0)
-    //const notesToUpdateLog = useRef([]);
 
     useEffect(() => {
         const notesToSet = [].concat(props.notes);
@@ -20,24 +18,41 @@ function NotesSection(props) {
             )
         );
     }, [props.notes]);
+
     useEffect(() => {
-        console.log("rerender");
-        console.log(timeOfLastChange.current);
+        //Update database if it has been 3 secs since last time the function fired
+            //Function to update database
+//Could be abstracted & extracted for other autosaves (maybe a custom hook?)
+        const updateDatabase = () => {
+            const updateNote = (prevNote, prevNoteIndex) => ({
+                ...prevNote,
+                contents: noteValues[prevNoteIndex]
+            })
+            const updatedNotes = props.notes.reduce(
+                (notes, note, index) => {
+                    notes.push(updateNote(note, index));
+                    return notes;
+                }, []
+            )
+            props.updateNotes(false, updatedNotes);
+            timeOfLastChange.current = 0;
+            console.log('saved');
+        }
         if (timeOfLastChange.current > 0) {
-            const saveTimer = setTimeout (save,3000);
             function save () {
                 const timeNow = Date.now();
-                console.log(typeof timeNow, timeNow, timeOfLastChange.current);
                 const timeElapsed = (timeNow - timeOfLastChange.current);
                 console.log(timeElapsed);
                 if (timeElapsed <= 3000) {
                     console.log("Waiting");
                 } else {
-                    autoSaveNotes()
+                    updateDatabase();
                 }
             }
+            //The setTimeout is to check if more changes have occured by evaluating the timeOfLastChange ref
+            setTimeout (save,3000);
         }
-    },[noteValues])
+    },[noteValues, props])
 
     function saveNewNote() {
         props.updateNotes(true, {contents: newNoteValue});
@@ -46,8 +61,6 @@ function NotesSection(props) {
 
     function handleNoteChange(noteValue, noteIndex) {
         const timeOfChange = Date.now();
-        //const n = d.getTime();
-        console.log(typeof timeOfChange, timeOfChange);
         timeOfLastChange.current = timeOfChange;
         //Set Note value for state/UI
         const updatedNoteValues = (prev) => ({
@@ -55,42 +68,6 @@ function NotesSection(props) {
             [noteIndex]: noteValue
         })
         setNoteValues((prevNoteValues) => updatedNoteValues(prevNoteValues))
-    }
-
-    function autoSaveNotes() {
-        //Function to update database
-        const updateDatabase = () => {
-                const updateNote = (prevNote, prevNoteIndex) => ({
-                    ...prevNote,
-                    contents: noteValues[prevNoteIndex]
-                })
-                const updatedNotes = props.notes.reduce(
-                    (notes, note, index) => {
-                        notes.push(updateNote(note, index));
-                        return notes;
-                    }, []
-                )
-                console.log(updatedNotes);
-                props.updateNotes(false, updatedNotes);
-                timeOfLastChange.current = 0;
-                console.log('saved');
-        }
-        updateDatabase();
-        //Update database if it has been 3 secs since last time the function fired
-        //The setTimeout should be to wait for more changes
-        //The Interval should resart on each change
-        // const saveTimer = setTimeout (save,3000);
-        // function save () {
-        //     const timeNow = Date.now();
-        //     console.log(typeof timeNow, timeNow, timeOfLastChange.current);
-        //     const timeElapsed = (timeNow - timeOfLastChange.current);
-        //     console.log(timeElapsed);
-        //     if (timeElapsed <= 3000) {
-        //         console.log("Waiting");
-        //     } else {
-        //         updateDatabase();
-        //     }
-        // }
     }
 
     const makeListOfNoteElements = () => {
@@ -111,9 +88,6 @@ function NotesSection(props) {
     };
     const noteElements = makeListOfNoteElements();
 
-
-
-
     return (
         <section
             id='input-notes'
@@ -133,7 +107,6 @@ function NotesSection(props) {
                         }}
                         placeholder={'Add Notes'}
                     />
-
                     <button
                         id={'add-note-btn-' + props.selectedPlanId}
                         className='btn-floating left button-margin waves-effect waves-light indigo'
