@@ -7,7 +7,7 @@ import ProjectStepsSection from './ProjectStepsSection.js';
 import UrlLinks from './UrlLinks.js';
 
 function ProjectLevel(props) {
-    const [selectedLevel, setSelectedLevel] = useState('');
+    // const [selectedLevel, setSelectedLevel] = useState('');
 
     const substepTabsUl = useRef(null);
     const videoDisplays = props.userPlans[props.selectedPlanIndex].video_urls.map(
@@ -25,15 +25,18 @@ function ProjectLevel(props) {
     });
 
     useEffect(() => {
-        const tabsOptions = {
-            swipeable: true
+        if (props.userPlans[props.selectedPlanIndex].sub_plans.length > 0) {
+            const tabsOptions = {
+                swipeable: true
+            }
+            M.Tabs.init(substepTabsUl.current, tabsOptions);
         }
-        M.Tabs.init(substepTabsUl.current, tabsOptions);
+
     })
 
-    useEffect(() => {
-        setSelectedLevel(props.userPlans[props.selectedPlanIndex].id);
-    }, [props.userPlans, props.selectedPlanIndex]);
+    // useEffect(() => {
+    //     setSelectedLevel(props.userPlans[props.selectedPlanIndex].id);
+    // }, [props.userPlans, props.selectedPlanIndex]);
 
     function updateChecklist(checklistIndex, action, itemArr, itemIndex) {
         const currentChecks = [].concat(props.userPlans[props.selectedPlanIndex].checks)
@@ -163,7 +166,7 @@ function ProjectLevel(props) {
                     </div>
                 </li>
                 {
-                    props.reload &&
+                    !props.reload &&
                     <li className='collection-item'>
                         <div className="col s12">
                             <ul ref={substepTabsUl} id="substep-tabs-swipe" className="tabs">
@@ -180,15 +183,3 @@ function ProjectLevel(props) {
 }
 
 export default ProjectLevel;
-
-/*
-function saveNotes (noteValue, noteIndex) {
-    //Update for multiple notes in array using noteIndex if necessary
-    const planId = props.userPlans[props.selectedPlanIndex].id;
-    const currentNotes = props.userPlans[props.selectedPlanIndex].notes
-    let updatedNotes;
-    if (noteIndex < 0) {
-        updatedNotes = currentNotes.concat([{contents:noteValue}])
-    }
-    props.savePlanChanges(planId, {notes:updatedNotes})
-*/
