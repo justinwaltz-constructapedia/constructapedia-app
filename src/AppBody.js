@@ -150,6 +150,7 @@ function AppBody(props) {
                     results={results}
                     updateSearchResults={updateSearchResults}
                     handleMainAppView={handleMainAppView}
+                    placeholder="Constructapedia"
                 />
             )}
         </main>

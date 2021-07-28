@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import M from 'materialize-css';
 import 'materialize-css/dist/css/materialize.min.css';
 import SimpleCheckboxSection from './SimpleCheckboxSection.js';
@@ -7,6 +7,7 @@ import ProjectStepsSection from './ProjectStepsSection.js';
 import UrlLinks from './UrlLinks.js';
 
 function ProjectLevel(props) {
+
 //Ref hook for the substep tabs directly under the project
     const substepTabsUl = useRef(null);
 
@@ -149,9 +150,10 @@ function ProjectLevel(props) {
                         videoDisplays}
                 </div>
                 <UrlLinks
-                        planId={props.userPlans[props.selectedPlanIndex].id}
-                        savePlanChanges = {props.savePlanChanges}
-                        videoUrls = {props.userPlans[props.selectedPlanIndex].video_urls}/>
+                    planId={props.userPlans[props.selectedPlanIndex].id}
+                    savePlanChanges = {props.savePlanChanges}
+                    videoUrls = {props.userPlans[props.selectedPlanIndex].video_urls}
+                />
                 <li className='collection-item'>
                     <NotesSection
                         updateNotes = {updateNotes}
