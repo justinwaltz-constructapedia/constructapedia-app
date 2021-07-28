@@ -50,7 +50,7 @@ function NewProject(props){
             <div/>
             <h5 className="center-align blue-grey darken-4 blue-grey-text text-lighten-5">Do a Little Research</h5>
             <div className="row blue-grey darken-4 blue-grey-text text-lighten-5">
-                <SearchBar handleSearch={searchForPlans}/>
+                <SearchBar handleSearch={searchForPlans} placeholder="Constructapedia"/>
             </div>
                 {resultsToogle &&
                     <SearchResults

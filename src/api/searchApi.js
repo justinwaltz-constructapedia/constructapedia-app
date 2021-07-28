@@ -5,7 +5,7 @@ function getSearchResults(userInput) {
     return fetch(`https://constructapediawebapi.herokuapp.com/results/${userInput}`)
         .then(
             res => {
-                //console.log(res.json())
+                console.log(typeof res, res)
                 return res.json()
             })
         .then(
@@ -64,4 +64,50 @@ function googleSearch(userInput) {
         }
     );
 }
-export {getSearchResults, postSelectionToScrape, googleSearch};
+
+function youtubeSearch(userInput) {
+    userInput = userInput.trim();
+    //userInput = userInput.replace(/ /g, "+");
+    console.log(userInput)
+    return fetch(`https://www.googleapis.com/youtube/v3/search?key=AIzaSyDlUNekNbt3u2UX2iUQpbE9QPMV_nH08k8&part=snippet&q=${userInput}&type=video&order=viewCount`)
+    .then(
+        res => {
+            console.log(res)
+            return res.json()
+        }
+    )
+    .then(
+        res => {
+            console.log(res);
+            return res
+        },
+    error => {
+        // error handling
+        console.log(error);
+        return error;
+        }
+    );
+}
+
+function getYoutubePlayerObj (videoId) {
+    return fetch(`https://www.googleapis.com/youtube/v3/videos?key=AIzaSyDlUNekNbt3u2UX2iUQpbE9QPMV_nH08k8&part=player&id=${videoId}`)
+    .then(
+        res => {
+            console.log(typeof res, res)
+            return res.json()
+        }
+    )
+    .then(
+        res => {
+            console.log(typeof res, res)
+            return res
+        },
+    error => {
+        // error handling
+        console.log(error);
+        return error;
+        }
+    );
+}
+
+export {getSearchResults, postSelectionToScrape, googleSearch, youtubeSearch, getYoutubePlayerObj};
