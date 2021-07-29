@@ -4,21 +4,21 @@ import {youtubeSearch, getYoutubePlayerObj} from '../../api/searchApi.js'
 function UrlLinks(props) {
 //State Hooks
     const [youtubeResults, setYoutubeResults] = useState([])
-    const [videoUrlValue, setVideoUrlValue] = useState('');
+    // const [videoUrlValue, setVideoUrlValue] = useState('');
     const [youtubePlayer, setYoutubePlayer] = useState(false);
     const [playerIframe, setPlayerIframe] = useState('');
-    function addNewItem() {
-        const planId = props.planId;
-        const prevUrlLinks = props.videoUrls;
-        console.log(videoUrlValue);
-        if (videoUrlValue.trim().length > 0) {
-            //Should props be mutated like this? NO
-            prevUrlLinks.push(videoUrlValue);
-            console.log(prevUrlLinks);
-            props.savePlanChanges(planId, { video_urls: prevUrlLinks });
-            setVideoUrlValue('');
-        }
-    }
+    // function addNewItem() {
+    //     const planId = props.planId;
+    //     const prevUrlLinks = props.videoUrls;
+    //     console.log(videoUrlValue);
+    //     if (videoUrlValue.trim().length > 0) {
+    //         //Should props be mutated like this? NO
+    //         prevUrlLinks.push(videoUrlValue);
+    //         console.log(prevUrlLinks);
+    //         props.savePlanChanges(planId, { video_urls: prevUrlLinks });
+    //         setVideoUrlValue('');
+    //     }
+    // }
     function requestYoutubeSearch (userQuery) {
         youtubeSearch(userQuery).then((res) => {
             console.log(res);
@@ -38,7 +38,7 @@ function UrlLinks(props) {
     const youtubeResultDisplays = youtubeResults.map((resultItem) => {
         return (
             <li key={resultItem.id.videoId} className='collection-item'>
-                <img src={resultItem.snippet.thumbnails.default.url}/>
+                <img alt={resultItem.snippet.title} src={resultItem.snippet.thumbnails.default.url}/>
                 <p className='col s4'>{resultItem.snippet.title}</p>
                 <button
                     className='btn-small waves-effect waves-light'
@@ -52,7 +52,7 @@ function UrlLinks(props) {
 
   return (
     <>
-    {youtubePlayer && <div className="video-container"><iframe width="100%" src={`//www.youtube.com/embed/${playerIframe}`} frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe></div>}
+    {youtubePlayer && <div className="video-container"><iframe title="video-player" width="100%" src={`//www.youtube.com/embed/${playerIframe}`} frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe></div>}
     <ul className='collection with-header'>
         {youtubeResults.length > 0 && youtubeResultDisplays}
         <li className='collection-header'>

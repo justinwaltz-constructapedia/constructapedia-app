@@ -15,6 +15,7 @@ function ProjectDetails(props) {
     const addModalSelect = useRef(null);
     const addModalChecksSelect = useRef(null);
     const addModal = useRef(null);
+
     useEffect(() => {
         M.FormSelect.init(addModalSelect.current);
         M.FormSelect.init(addModalChecksSelect.current);
