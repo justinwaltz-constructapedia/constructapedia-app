@@ -40,7 +40,15 @@ function SearchResults(props) {
 
     const resultsList = props.results.map((result, index) => {
         if (props.results.length > 0) {
-            return <ResultListItem key={index} title={result.title} image={result.pagemap.cse_image[0].src} link={result.link} updateUrlToView={updateUrlToView} updateProjectDraft={props.updateProjectDraft}/>;
+            return <ResultListItem
+                        key={index}
+                        title={result.title}
+                        image={result.pagemap.cse_image[0].src}
+                        link={result.link}
+                        updateUrlToView={updateUrlToView}
+                        updateProjectDraft={props.updateProjectDraft}
+                        addUserPlan={props.addUserPlan}
+                    />;
         } else {
             return null;
         }
@@ -81,12 +89,22 @@ function SearchResults(props) {
 }
 
 function ResultListItem(props) {
-    function scrapePage (url){
-        // const selectionEndpoint = url.replace('https://google.com/',"");
-        // postSelectionToScrape(selectionEndpoint).then((res) => {
-        //     props.updateProjectDraft(res);
-        // });
-        console.log(scrapper(url));
+    async function scrapePage (url){
+        const scrapedData = await scrapper(url);
+        props.addUserPlan({
+            title: scrapedData.title,
+            checks: [
+                {
+                    title:"Imported Materials",
+                    list_type: "materials",
+                    list: scrapedData.Materials.reduce((materials, material) => {
+                        materials.push({text_value:material})
+                        return materials;
+                    },[])
+                }
+            ]
+        })
+
     }
     return(
             <div className="col s12 m6 l4 blue-grey darken-4 blue-grey-text text-lighten-5">
@@ -100,7 +118,7 @@ function ResultListItem(props) {
                     </div>
                     <div className="card-action">
                         <button className="waves-effect waves-light blue-grey darken-4 blue-grey-text text-lighten-5 btn" onClick={()=>props.updateUrlToView(props.link, props.title)}>View Page</button>
-                        <button className="waves-effect waves-light blue-grey darken-4 blue-grey-text text-lighten-5 btn" onClick={()=>scrapePage(props.link)}>Auto Import</button>
+                        <button className="waves-effect waves-light blue-grey darken-4 blue-grey-text text-lighten-5 btn" onClick={()=>scrapePage(props.link)}>{(props.mainAppView === "SearchResults")?'Auto Import':'Create Project'}</button>
                     </div>
                 </div>
             </div>
@@ -108,3 +126,7 @@ function ResultListItem(props) {
 }
 
 export default SearchResults;
+// const selectionEndpoint = url.replace('https://google.com/',"");
+// postSelectionToScrape(selectionEndpoint).then((res) => {
+//     props.updateProjectDraft(res);
+// });

@@ -58,6 +58,7 @@ function NewProject(props){
                         results={props.results}
                         updateSearchResults={props.updateSearchResults}
                         handleMainAppView={props.handleMainAppView}
+                        addUserPlan={props.addUserPlan}
                     />
                 }
         </div>
