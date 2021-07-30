@@ -27,7 +27,6 @@ function SimpleCheckboxSection(props) {
 
     function handleInputChange(event, index) {
         const target = event.target;
-        // const value = target.value;
         const { name, value } = target;
         if (target.type === 'checkbox') {
             const updatedChecks = (prevChecks) => {

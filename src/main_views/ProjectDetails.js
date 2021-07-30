@@ -131,51 +131,51 @@ function ProjectDetails(props) {
         <div>
             <div className='col s12'>
                 <div className='row'>
-                  <div className='col s12'>
-                    <button
-                      type='button'
-                      className='waves-effect waves-blue btn-flat '
-                      onClick={() => {
-                        props.handleMainAppView('HomePage');
-                      }}
-                    >
-                      <i className='material-icons left indigo-text'>arrow_back</i>
-                    </button>
-                    <button
-                      className='btn waves-effect waves-light indigo'
-                      type='button'
-                      name='action'
-                      onClick={() => props.handleMainAppView('SearchResults')}
-                    >
-                      <i className='material-icons left tiny'>search</i>
-                      Constructapedia
-                    </button>
-                  </div>
+                    <div className='col s12'>
+                        <button
+                            type='button'
+                            className='waves-effect waves-blue btn-flat '
+                            onClick={() => {
+                                props.handleMainAppView('HomePage');
+                            }}
+                        >
+                            <i className='material-icons left indigo-text'>arrow_back</i>
+                        </button>
+                        <button
+                            className='btn waves-effect waves-light indigo'
+                            type='button'
+                            name='action'
+                            onClick={() => props.handleMainAppView('SearchResults')}
+                        >
+                            <i className='material-icons left tiny'>search</i>
+                            Constructapedia
+                        </button>
+                    </div>
                 </div>
                 <div className='row'>
-                  <div className='col s12'>
-                    <div>
-                      <ProjectLevel
+                    <div className='col s12'>
+                        <div>
+                            <ProjectLevel
+                                userPlans={props.userPlans}
+                                selectedPlanIndex={props.selectedPlanIndex}
+                                changeOrUpdatePlanDraft={props.changeOrUpdatePlanDraft}
+                                savePlanChanges={props.savePlanChanges}
+                                deleteItemInPlan={deleteItemInPlan}
+                                reload={reload}
+                            />
+                        </div>
+                    </div>
+                    <PlanDetailsMenu
                         userPlans={props.userPlans}
                         selectedPlanIndex={props.selectedPlanIndex}
-                        changeOrUpdatePlanDraft={props.changeOrUpdatePlanDraft}
+                        updateSelectedPlan={props.updateSelectedPlan}
+                        addUserPlan={props.addUserPlan}
+                        removeUserPlan={props.removeUserPlan}
                         savePlanChanges={props.savePlanChanges}
-                        deleteItemInPlan={deleteItemInPlan}
-                        reload={reload}
-                      />
-                    </div>
-                  </div>
-                  <PlanDetailsMenu
-                    userPlans={props.userPlans}
-                    selectedPlanIndex={props.selectedPlanIndex}
-                    updateSelectedPlan={props.updateSelectedPlan}
-                    addUserPlan={props.addUserPlan}
-                    removeUserPlan={props.removeUserPlan}
-                    savePlanChanges={props.savePlanChanges}
-                    updateSearchResults={props.updateSearchResults}
-                    handleMainAppView={props.handleMainAppView}
-                    openAddModal={openAddModal}
-                  />
+                        updateSearchResults={props.updateSearchResults}
+                        handleMainAppView={props.handleMainAppView}
+                        openAddModal={openAddModal}
+                    />
                 </div>
                 <div
                     ref={addModal}
