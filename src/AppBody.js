@@ -41,6 +41,7 @@ function AppBody(props) {
     }
     //Updating database plans and this components state
     function addUserPlan(plan) {
+        console.log(plan);
         postPlan(plan)
             .then((res) => {
                 console.log(res.id);
