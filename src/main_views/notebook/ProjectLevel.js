@@ -10,7 +10,7 @@ function ProjectLevel(props) {
 
 //Ref hook for the substep tabs directly under the project
     const substepTabsUl = useRef(null);
-
+    const collapsibleProject = useRef(null)
 //Effect hooks
     //Hook for intializing the substep tab functionality using Materialize
     useEffect(() => {
@@ -21,6 +21,11 @@ function ProjectLevel(props) {
             M.Tabs.init(substepTabsUl.current, tabsOptions);
         }
     })
+    useEffect(() => {
+        const collapsibleOptions = {accordion: false}
+        M.Collapsible.init(collapsibleProject.current, collapsibleOptions);
+    })
+
     // useEffect(() => {
     //     setSelectedLevel(props.userPlans[props.selectedPlanIndex].id);
     // }, [props.userPlans, props.selectedPlanIndex]);
@@ -92,7 +97,7 @@ function ProjectLevel(props) {
     const checksSections = props.userPlans[props.selectedPlanIndex].checks.map(
         (checkObj, i) => {
             return (
-                <div key={checkObj.title + i}>
+                <div key={checkObj.title + i} className="row">
                     <SimpleCheckboxSection
                         checklist={checkObj.list}
                         listType={checkObj.list_type}
@@ -137,50 +142,81 @@ function ProjectLevel(props) {
 
     return (
         <div className='col s12'>
-          <div className='row'>
-            <ul className='collection with-header'>
-                <li
-                    id={props.userPlans[props.selectedPlanIndex].id}
-                    className='collection-header indigo-text center'
-                >
-                    <b>{props.userPlans[props.selectedPlanIndex].title}</b>
-                </li>
-                <div className='row'>
-                    {props.userPlans[props.selectedPlanIndex].video_urls.length > 0 &&
-                        videoDisplays}
-                </div>
-                <UrlLinks
-                    planId={props.userPlans[props.selectedPlanIndex].id}
-                    savePlanChanges = {props.savePlanChanges}
-                    videoUrls = {props.userPlans[props.selectedPlanIndex].video_urls}
-                />
-                <li className='collection-item'>
-                    <NotesSection
-                        updateNotes = {updateNotes}
-                        notes={props.userPlans[props.selectedPlanIndex].notes}
-                        deleteItemInPlan={props.deleteItemInPlan}
-                    />
-                </li>
-                <li className='collection-item'>
-                    <div className='row'>
-                        {props.userPlans[props.selectedPlanIndex].checks.length > 0 && checksSections}
-                    </div>
-                </li>
-                {
-                    !props.reload &&
-                    <li className='collection-item'>
-                        <div className="col s12">
-                            <ul ref={substepTabsUl} id="substep-tabs-swipe" className="tabs">
+
+            <div className='row'>
+                <ul ref={collapsibleProject} className='collapsible expandable z-depth-0'>
+                    <li
+                        id={props.userPlans[props.selectedPlanIndex].id}
+                        className='collection-header indigo-text center'
+                    >
+                        <b>{props.userPlans[props.selectedPlanIndex].title}</b>
+                    </li>
+                    <li className="active">
+                        <h6 className="collapsible-header">Videos</h6>
+                        <div className="collapsible-body">
+                            <div className='row'>
+                                {props.userPlans[props.selectedPlanIndex].video_urls.length > 0 &&
+                                    videoDisplays}
+                            </div>
+                            <UrlLinks
+                                planId={props.userPlans[props.selectedPlanIndex].id}
+                                savePlanChanges = {props.savePlanChanges}
+                                videoUrls = {props.userPlans[props.selectedPlanIndex].video_urls}
+                            />
+                        </div>
+                    </li>
+                    <li className="active">
+                        <div className="collapsible-header">
+                            <h6>Notes</h6>
+                        </div>
+                        <div className="collapsible-body">
+                            <NotesSection
+                                updateNotes={updateNotes}
+                                notes={props.userPlans[props.selectedPlanIndex].notes}
+                                deleteItemInPlan={props.deleteItemInPlan}
+                            />
+                        </div>
+                    </li>
+                    <li className="active">
+                        <div className="collapsible-header">
+                            <h6>Checklists</h6>
+                        </div>
+                        <div className='collapsible-body'>
+                            {props.userPlans[props.selectedPlanIndex].checks.length > 0 && checksSections}
+                        </div>
+                    </li>
+                    <li  className="active">
+                        <div className="collapsible-header">
+                            <h6>Steps</h6>
+                        </div>
+                        <div className="collapsible-body">
+                            {!props.reload &&
+                            (<><ul ref={substepTabsUl} id="substep-tabs-swipe" className="tabs">
                                 {substepTabs}
                             </ul>
+                            {substepSections}</>)
+                            }
                         </div>
-                        {substepSections}
                     </li>
-                }
-            </ul>
-          </div>
+                </ul>
+            </div>
+
         </div>
     );
 }
 
 export default ProjectLevel;
+// <ul>
+//     <li>
+//       <div className="collapsible-header"><i className="material-icons">filter_drama</i>First</div>
+//       <div className="collapsible-body"><span>Lorem ipsum dolor sit amet.</span></div>
+//     </li>
+//     <li>
+//       <div className="collapsible-header"><i className="material-icons">place</i>Second</div>
+//       <div className="collapsible-body"><span>Lorem ipsum dolor sit amet.</span></div>
+//     </li>
+//     <li>
+//       <div className="collapsible-header"><i className="material-icons">whatshot</i>Third</div>
+//       <div className="collapsible-body"><span>Lorem ipsum dolor sit amet.</span></div>
+//     </li>
+// </ul>
