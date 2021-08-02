@@ -1,14 +1,18 @@
+//Import React and hooks used
 import React, { useState, useEffect } from 'react';
-//Project Components
+//Import Project Components
 import HomePage from './main_views/HomePage.js';
 import SearchResults from './main_views/SearchResults.js';
 import ProjectDetails from './main_views/ProjectDetails.js';
 import NewProject from './main_views/NewProject.js';
-//Project API Calls
+//Import Functions
 import {getUserPlans, putPlanUpdate, deletePlan, postPlan} from './api/projectsApi';
 
+//Functional Component
+    //Handles the view within the App's <main> html tag
+    //"Source of truth" for plan info and handling
 function AppBody(props) {
-//State Hooks for Components in the <main> tag
+//State Hooks
     const [mainAppView, setMainAppView] = useState('HomePage');
     const [userPlans, setUserPlans] = useState([]);
     const [selectedPlanIndex, setSelectedPlanIndex] = useState(null);
@@ -27,9 +31,7 @@ function AppBody(props) {
     function handleMainAppView(view) {
         setMainAppView(view);
     }
-    function updateSearchResults(resultsArr) {
-        setResults(resultsArr);
-    }
+    //Changes which of the user's plans are displayed
     function updateSelectedPlan(selectedPlanId) {
         const selectedPlanIndex = userPlans.findIndex(
             (plan) => plan.id === selectedPlanId
@@ -39,7 +41,8 @@ function AppBody(props) {
             handleMainAppView('ProjectDetails');
         }
     }
-    //Updating database plans and this components state
+
+    //Updating database plans and this component's state
     function addUserPlan(plan) {
         console.log(plan);
         postPlan(plan)
@@ -108,7 +111,7 @@ function AppBody(props) {
             }
         });
     }
-//Return view to render
+//Return view to render based on state of main app view
     return (
         <main id='main-app-container' className='row'>
             {mainAppView === 'HomePage' && (

@@ -1,10 +1,15 @@
+//Import React and hooks used
 import React, { useState, useEffect, useRef } from 'react';
+//Import Materialize functionality
 import M from 'materialize-css';
 import 'materialize-css/dist/css/materialize.min.css';
 import PlanDetailsMenu from './notebook/PlanDetailsMenu.js';
 import ProjectLevel from './notebook/ProjectLevel.js';
-
+//Functional Component
+    //Handles viewing and editing of project details
+    //"Source of truth" for editing values of the selected plan
 function ProjectDetails(props) {
+//State Hooks
     const [addModalTitle, setAddModalTitle] = useState('');
     const [addModalType, setAddModalType] = useState('');
     const [addModalValue, setAddModalValue] = useState('');
@@ -12,15 +17,22 @@ function ProjectDetails(props) {
     const [addModalCheckTypeValue, setAddModalCheckTypeValue] = useState('tools');
     const [selectedLevel, setSelectedLevel] = useState('');
     const [reload, setReload] = useState(false);
+
+//Ref Hooks
+    //Materialize functionality
+        //Add Modal
+    const addModal = useRef(null);
+        //Material <select> fields
     const addModalSelect = useRef(null);
     const addModalChecksSelect = useRef(null);
-    const addModal = useRef(null);
 
+//Effect Hooks
+    //Intitialzes Materialize form select
     useEffect(() => {
         M.FormSelect.init(addModalSelect.current);
         M.FormSelect.init(addModalChecksSelect.current);
     });
-
+    //Intitialzes Materialize modal
     useEffect(() => {
         const addModalOptions = {
             opacity: 0,
@@ -29,7 +41,8 @@ function ProjectDetails(props) {
         };
         M.Modal.init(addModal.current, addModalOptions);
     }, []);
-
+    //Resets reload to false on a re-render do to a change in the selected plan
+        //Avoids conflict between the DOM and Virtual DOM with the Materialize Tabs
     useEffect(() => {
         setSelectedLevel(props.userPlans[props.selectedPlanIndex].id);
         // if (props.userPlans[props.selectedPlanIndex].sub_plans.length === 0) {
@@ -39,6 +52,8 @@ function ProjectDetails(props) {
         // }
     }, [props.userPlans, props.selectedPlanIndex]);
 
+//Component Functionality
+    //Sets state values for various inputs on add modal
     function handleChange(event) {
         const eventId = event.target.id;
         switch (eventId) {
@@ -55,7 +70,7 @@ function ProjectDetails(props) {
                 return;
         }
     }
-//Delete function for fields directly under a plan object: sub_plans, notes, checks
+    //Delete function for fields directly under a plan object: sub_plans, notes, checks
     function deleteItemInPlan (itemFieldName, itemIndex) {
         const currentPlan = props.userPlans[props.selectedPlanIndex]
         const newItemFieldList = currentPlan[itemFieldName].reduce(
@@ -72,7 +87,7 @@ function ProjectDetails(props) {
         props.savePlanChanges(currentPlan.id, updateObj);
         setReload(true);
     }
-
+    //Processes and updates the plan field corresponding to the submission on the add modal
     function addNewSection() {
         const planId = props.userPlans[props.selectedPlanIndex].id;
         const parentId = addModalSelectValue;
@@ -107,6 +122,7 @@ function ProjectDetails(props) {
             props.savePlanChanges(planId, updatedFieldObj);
         }
     }
+    //Sets the state and info to render the add modal for the desired section
     function openAddModal(e) {
         console.log(e.target.id);
         setAddModalSelectValue(selectedLevel);
@@ -126,7 +142,8 @@ function ProjectDetails(props) {
         }
         addModalInstance.open();
     }
-
+//Return view of this component:
+    //Includes the ProjectLevel, opening the modal to add plan sections
     return (
         <div>
             <div className='col s12'>

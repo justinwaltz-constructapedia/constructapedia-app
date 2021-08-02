@@ -33,23 +33,23 @@ function NewProject(props){
 
     return(
         <div>
-            <div className="row blue-grey darken-4 blue-grey-text text-lighten-5">
-                <button type="button" className="waves-effect waves-blue btn-flat blue-grey darken-4 blue-grey-text text-lighten-5 " onClick={()=>{props.handleMainAppView('HomePage')}}><i className="material-icons left">arrow_back</i></button>
+            <div className="row">
+                <button type="button" className="waves-effect waves-light btn-flat indigo white-text" onClick={()=>{props.handleMainAppView('HomePage')}}><i className="material-icons left">arrow_back</i></button>
             </div>
-            <div className="row blue-grey darken-4 blue-grey-text text-lighten-5">
-                <h5 className="center-align blue-grey darken-4 blue-grey-text text-lighten-5">Hold My Beer</h5>
-                <div className="input-field col s12 blue-grey darken-4 blue-grey-text text-lighten-5" >
-                    <input className="blue-grey darken-4 blue-grey-text text-lighten-5" id="new_title_input" type="text" value={planTitleValue} onChange={(e)=> setPlanTitleValue(e.target.value)} />
+            <div className="row">
+                <h5 className="center-align">Hold My Beer</h5>
+                <div className="input-field col s12" >
+                    <input className="" id="new_title_input" type="text" value={planTitleValue} onChange={(e)=> setPlanTitleValue(e.target.value)} />
                     <label htmlFor="new_title_input">Project Title</label>
                 </div>
             </div>
-            <div className="section center-align blue-grey darken-4 blue-grey-text text-lighten-5">
-                <button onClick={createBlankPlan} className="btn-small waves-effect waves-light blue-grey darken-3 blue-grey-text text-lighten-5" type="button">Create A Project<i className="material-icons left">add</i></button>
+            <div className="section center-align">
+                <button onClick={createBlankPlan} className="btn-small waves-effect waves-light indigo" type="button">Create A Project<i className="material-icons left">add</i></button>
             </div>
-            <h6 className="center-align blue-grey darken-4 blue-grey-text text-lighten-5">OR</h6>
+            <h6 className="center-align">OR</h6>
             <div/>
-            <h5 className="center-align blue-grey darken-4 blue-grey-text text-lighten-5">Do a Little Research</h5>
-            <div className="row blue-grey darken-4 blue-grey-text text-lighten-5">
+            <h5 className="center-align">Do a Little Research</h5>
+            <div className="row">
                 <SearchBar handleSearch={searchForPlans} placeholder="Constructapedia"/>
             </div>
                 {resultsToogle &&

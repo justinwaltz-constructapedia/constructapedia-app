@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 
 //Props: A function passed as handleSearch that takes the user's search terms as its parameter
 function SearchBar (props) {
+//Use State variables
     const [searchValue, setSearchValue] = useState('');
 
     return (
@@ -21,7 +22,7 @@ function SearchBar (props) {
 
                     </div>
                     <button
-                        className="btn-small waves-effect waves-light"
+                        className="btn-small waves-effect waves-light indigo"
                         type="submit"
                         name="action"
                     >
@@ -33,6 +34,3 @@ function SearchBar (props) {
 }
 
 export default SearchBar;
-/*
-<label className="active" htmlFor="search_input"></label>
- */

@@ -1,4 +1,5 @@
 import React from 'react';
+//Preloader from materialze
 function Preloader() {
     return(
         <div className="preloader-wrapper big active">
@@ -8,7 +9,7 @@ function Preloader() {
                 </div>
                 <div className="gap-patch">
                     <div className="circle"></div>
-                  </div>
+                </div>
                 <div className="circle-clipper right">
                     <div className="circle"></div>
                 </div>
