@@ -1,31 +1,18 @@
 import React from 'react';
+//Import Project Components
 import Authorization from './Authorization.js';
 import UserAccount from './UserAccount.js';
 
-
+//Renders what should be showing up in the sidenav
 function Sidenav(props) {
-    const isLoggedIn = props.isLoggedIn;
-
+//Return view of this component:
+    //Includes sign in/up or account info based on state of App
     return (
         <div>
-            {(isLoggedIn)
+            {(props.isLoggedIn)
                 ? <UserAccount user={props.user} handleLogout={props.handleLogout}/>
                 : <Authorization handleLogin={props.handleLogin} colorTheme={props.colorTheme}/>}
         </div>
     )
 }
-
 export default Sidenav;
-
-/*
-    let button;
-    if (isLoggedIn){
-        button = <a href="#" data-target="slide-out" className="sidenav-trigger"><i className="material-icons">menu</i></a>
-    } else {
-        button = <a href="#" data-target="slide-out" className="sidenav-trigger btn waves-effect waves-light blue">Get Started</a>
-    }
-
-    useEffect(()=>{
-
-    })
-*/
