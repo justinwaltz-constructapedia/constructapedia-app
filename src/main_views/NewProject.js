@@ -5,19 +5,39 @@ import SearchResults from './SearchResults.js';
 function NewProject(props){
     const [planTitleValue, setPlanTitleValue] = useState('');
 
-
-    function createNewPlan (importedPlan) {
+    async function createNewPlan (importedPlan) {
         let newPlanObj = {}
         if (importedPlan || planTitleValue.trim().length > 0) {
-            if (importedPlan) {
-                newPlanObj = importedPlan
-            }
             if (planTitleValue.trim().length > 0) {
                 newPlanObj.title = planTitleValue;
+            } else {
+                newPlanObj.title = importedPlan.title
             }
-            //set Selected Plan?
-            console.log(newPlanObj);
-            props.addUserPlan(newPlanObj);
+            const newPlanId = await props.addUserPlan(newPlanObj);
+            console.log(`newPlanId: ${newPlanId}
+                        importedPlan: ${importedPlan}
+                        newPlanObj: ${newPlanObj}`)
+            if (importedPlan) {
+                delete importedPlan.title;
+                console.log(`After Delete...
+                            importedPlan: ${importedPlan}
+                            newPlanObj: ${newPlanObj}`)
+                for (let key in importedPlan) {
+                    if (importedPlan.hasOwnProperty(key)) {
+                        const object = importedPlan[key]
+                        for (let objKey in object) {
+                            object[objKey].parent = newPlanId;
+                        }
+                    }
+                }
+                const updatedPlanObj = importedPlan;
+                console.log(updatedPlanObj);
+                const response = await props.savePlanChanges(newPlanId,updatedPlanObj);
+                console.log(response);
+                if (response === 1) {
+                    props.handleMainAppView('ProjectDetails');
+                }
+            }
         } else {
             alert("Enter a title and/or search term");
         }

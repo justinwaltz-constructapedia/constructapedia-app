@@ -44,7 +44,7 @@ function AppBody(props) {
     //Updating database plans and this component's state
     function addUserPlan(plan) {
         console.log(plan);
-        postPlan(plan)
+        return postPlan(plan)
             .then((res) => {
                 console.log(res.id);
                 return res.id;
@@ -63,12 +63,13 @@ function AppBody(props) {
                     setSelectedPlanIndex(selectedPlanIndex);
                     return selectedPlanIndex;
                 })
-                .then((findResult) => {
-                    if (findResult > 0) {
-                        handleMainAppView('ProjectDetails');
-                    }
-                })
+                // .then((findResult) => {
+                //     if (findResult > 0) {
+                //         handleMainAppView('ProjectDetails');
+                //     }
+                // })
                 .catch((err) => console.log(err));
+                return createdPlanId;
             })
             .catch((err) => console.log(err));
     }
@@ -85,26 +86,28 @@ function AppBody(props) {
     }
     function savePlanChanges(planId, planUpdateObj) {
         console.log(planUpdateObj);
-        putPlanUpdate(planId, planUpdateObj).then((res) => {
+        return putPlanUpdate(planId, planUpdateObj).then((res) => {
             console.log("plan update put");
             if (res === 1) {
-                getUserPlans()
+                return getUserPlans()
                     .then((plans) => {
                         console.log("got updated user plans");
                         console.log(plans);
                         setUserPlans(plans);
-                        return;
+                        return plans;
                     })
-                    .then(() => {
+                    .then((returnedPlans) => {
                         //This section is only necessary if an unselected plan can be edited and we want the app to auto select it
                         console.log("searching for updated plan");
                         const searchIndex = (item) => item.id === planId;
-                        const indexOfPlan = userPlans.findIndex(searchIndex);
+                        const indexOfPlan = returnedPlans.findIndex(searchIndex);
                         console.log(indexOfPlan);
                         if (indexOfPlan !== selectedPlanIndex) {
                             setSelectedPlanIndex(indexOfPlan);
                         }
+                        return res;
                     });
+
             } else {
                 console.log('fail');
             }
@@ -149,6 +152,7 @@ function AppBody(props) {
                     updateSelectedPlan={updateSelectedPlan}
                     mainAppView = {mainAppView}
                     handleMainAppView={handleMainAppView}
+                    savePlanChanges={savePlanChanges}
                 />
             )}
             {mainAppView === 'ProjectDetails' && (

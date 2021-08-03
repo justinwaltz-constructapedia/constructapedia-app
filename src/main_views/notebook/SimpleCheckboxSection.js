@@ -131,6 +131,7 @@ function SimpleCheckboxSection(props) {
             return checks;
         }, [])
         console.log(newChecksArr);
+        props.updateChecklist(props.checklistIndex, 'updateItem', newChecksArr)
     }
     function makeListOfCheckboxElements(arr) {
         return arr.map((listItem, i) => {

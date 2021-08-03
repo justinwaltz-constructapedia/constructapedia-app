@@ -32,6 +32,7 @@ function ProjectLevel(props) {
     // }, [props.userPlans, props.selectedPlanIndex]);
 
     function updateChecklist(checklistIndex, action, itemArr, itemIndex) {
+        //NOTE: Change this to a reduce function in the switch?
         const currentChecks = [].concat(props.userPlans[props.selectedPlanIndex].checks)
         console.log(checklistIndex, action, itemArr, itemIndex);
         console.log(currentChecks);
