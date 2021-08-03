@@ -26,6 +26,7 @@ function Authorization(props) {
     const [sidenavIsLoading, setSidenavIsLoading] = useState(false);
 //Effect Hooks
     //Intitialzes Materialize side nav and collapsible
+        //Runs on initial render only
     useEffect(() => {
         const sidenavOptions = {
             inDuration: 250,

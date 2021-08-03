@@ -120,7 +120,6 @@ class App extends React.Component {
                         isLoggedIn={isLoggedIn}
                         handleLogin={this.handleLogin}
                         handleLogout={this.handleLogout}
-                        colorTheme={colorTheme}
                     />
                     <section className='section section-icons grey lighten-4 center'>
                         <div id='app-body-container' className='container'>

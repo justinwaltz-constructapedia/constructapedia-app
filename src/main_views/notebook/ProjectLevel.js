@@ -21,6 +21,7 @@ function ProjectLevel(props) {
             M.Tabs.init(substepTabsUl.current, tabsOptions);
         }
     })
+    //Initialze Materialize collapsible for main plan level
     useEffect(() => {
         const collapsibleOptions = {accordion: false}
         M.Collapsible.init(collapsibleProject.current, collapsibleOptions);

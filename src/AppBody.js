@@ -16,7 +16,6 @@ function AppBody(props) {
     const [mainAppView, setMainAppView] = useState('HomePage');
     const [userPlans, setUserPlans] = useState([]);
     const [selectedPlanIndex, setSelectedPlanIndex] = useState(null);
-    const [results, setResults] = useState([]);
 
 //Effect Hooks
     //Gets user plans only on Mount
@@ -111,6 +110,25 @@ function AppBody(props) {
             }
         });
     }
+    function addScrapedDataToPlan (scrapedData) {
+        console.log(scrapedData);
+        const fieldsToUpdate = Object.keys(scrapedData);
+        const currentPlan = userPlans[selectedPlanIndex];
+        const updatedPlanFields = {};
+        fieldsToUpdate.forEach((fieldName, i) => {
+            console.log(scrapedData[fieldName][0]);
+            if (fieldName !== 'title') {
+                const planField = currentPlan[fieldName].reduce((arr, item) => {
+                    arr.push(item)
+                    return arr;
+                },[scrapedData[fieldName][0]])
+                updatedPlanFields[fieldName] = planField;
+            }
+        });
+        console.log(userPlans[selectedPlanIndex].id, updatedPlanFields.checks[0]);
+        savePlanChanges(userPlans[selectedPlanIndex].id, updatedPlanFields);
+        handleMainAppView("ProjectDetails");
+    }
 //Return view to render based on state of main app view
     return (
         <main id='main-app-container' className='row'>
@@ -122,18 +140,15 @@ function AppBody(props) {
                     addUserPlan={addUserPlan}
                     removeUserPlan={removeUserPlan}
                     savePlanChanges={savePlanChanges}
-                    updateSearchResults={updateSearchResults}
                     handleMainAppView={handleMainAppView}
                 />
             )}
             {mainAppView === 'NewProject' && (
                 <NewProject
                     addUserPlan={addUserPlan}
-                    updateSearchResults={updateSearchResults}
                     updateSelectedPlan={updateSelectedPlan}
                     mainAppView = {mainAppView}
                     handleMainAppView={handleMainAppView}
-                    results={results}
                 />
             )}
             {mainAppView === 'ProjectDetails' && (
@@ -144,17 +159,15 @@ function AppBody(props) {
                     addUserPlan={addUserPlan}
                     removeUserPlan={removeUserPlan}
                     savePlanChanges={savePlanChanges}
-                    updateSearchResults={updateSearchResults}
                     handleMainAppView={handleMainAppView}
                 />
             )}
             {mainAppView === 'SearchResults' && (
                 <SearchResults
                     mainAppView={mainAppView}
-                    results={results}
-                    updateSearchResults={updateSearchResults}
                     handleMainAppView={handleMainAppView}
                     placeholder="Constructapedia"
+                    handleScrapedData={addScrapedDataToPlan}
                 />
             )}
         </main>

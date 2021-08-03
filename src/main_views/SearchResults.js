@@ -20,6 +20,7 @@ function SearchResults(props) {
     const [urlToView, setUrlToView] = useState("");
     const [urlToViewHeading, setUrlToViewHeading] = useState("");
     const [results, setResults] = useState([]);
+    const [resultsToogle, setResultsToogle] = useState(false);
 //Effect Hooks
     //Intitialzes Materialize side nav and collapsible
     useEffect(()=>{
@@ -41,12 +42,20 @@ function SearchResults(props) {
     }
     //Passes user query to the function for google search api
     function searchForProjects(userInput) {
-        googleSearch(userInput).then((res) => {
-            console.log(res);
-            //Populates the results list for display
-            setResults(res.items);
-        })
+        if (userInput.trim().length > 0) {
+            googleSearch(userInput).then((res) => {
+                console.log(res);
+                //Populates the results list for display
+                setResults(res.items);
+                if (!resultsToogle) {
+                    setResultsToogle((prev)=> !prev);
+                }
+            })
+        } else {
+            alert("Enter a search term");
+        }
     }
+
     //Maps out the display for each google result in the results array
     const resultsList = results.map((result, index) => {
         if (results.length > 0) {
@@ -57,7 +66,9 @@ function SearchResults(props) {
                         link={result.link}
                         updateUrlToView={updateUrlToView}
                         updateProjectDraft={props.updateProjectDraft}
-                        addUserPlan={props.addUserPlan}
+                        handleScrapedData={props.handleScrapedData}
+                        selectedPlan={props.selectedPlan}
+                        placeholder={props.placeholder}
                     />;
         } else {
             return null;
@@ -70,26 +81,35 @@ function SearchResults(props) {
             <div className="app-column">
                 { props.mainAppView === "SearchResults" &&
                     <div className = "row">
-                        <button type="button" className="waves-effect waves-blue btn-flat blue-grey darken-4 blue-grey-text text-lighten-5 " onClick={()=>{props.handleMainAppView('ProjectDetails')}}><i className="material-icons left blue-grey-text text-lighten-5">arrow_back</i>Back to Project</button>
+                        <button
+                            type="button"
+                            className="waves-effect waves-blue btn-flat"
+                            onClick={()=>{props.handleMainAppView('ProjectDetails')}}
+                        >
+                            <i className="material-icons left">arrow_back</i>
+                            Back to Project
+                        </button>
                     </div>
                 }
                 <div className="row">
                     <div className="col s12">
-                        {props.mainAppView === "SearchResults" && <SearchBar handleSearch={searchForProjects}/>}
-                        <div className="container">
-                            <div className="row">
-                                {resultsList}
-                            </div>
-                            <ul className="pagination">
-                                <li className="disabled"><a href="#prevpage"><i className="material-icons">chevron_left</i></a></li>
-                                <li className="active"><a href="#1">1</a></li>
-                                <li className="waves-effect"><a href="#2">2</a></li>
-                                <li className="waves-effect"><a href="#3">3</a></li>
-                                <li className="waves-effect"><a href="#4">4</a></li>
-                                <li className="waves-effect"><a href="#5">5</a></li>
-                                <li className="waves-effect"><a href="#nextpage"><i className="material-icons">chevron_right</i></a></li>
-                            </ul>
-                        </div>
+                        <SearchBar handleSearch={searchForProjects} placeholder={props.placeholder}/>
+                        {resultsToogle &&
+                            (<div className="container">
+                                <div className="row">
+                                    {resultsList}
+                                </div>
+                                <ul className="pagination">
+                                    <li className="disabled"><a href="#prevpage"><i className="material-icons">chevron_left</i></a></li>
+                                    <li className="active"><a href="#1">1</a></li>
+                                    <li className="waves-effect"><a href="#2">2</a></li>
+                                    <li className="waves-effect"><a href="#3">3</a></li>
+                                    <li className="waves-effect"><a href="#4">4</a></li>
+                                    <li className="waves-effect"><a href="#5">5</a></li>
+                                    <li className="waves-effect"><a href="#nextpage"><i className="material-icons">chevron_right</i></a></li>
+                                </ul>
+                            </div>)
+                        }
                         <div ref={modal} id="search-modal" className="modal bottom-sheet blue-grey darken-4 blue-grey-text text-lighten-5">
                             <BottomModalContent modalType="search" heading={urlToViewHeading} urlToView={urlToView}/>
                         </div>
@@ -100,6 +120,7 @@ function SearchResults(props) {
     );
 }
 
+//Functional Component
 //Handles the view for each indivdual result from google programatic search stored in the results array
 function ResultListItem(props) {
 //Component functionality
@@ -107,7 +128,7 @@ function ResultListItem(props) {
     //NOTE: Needs to handle adding to existing plan if SearchResults was rendered from PlanDetails
     async function scrapePage (url){
         const scrapedData = await scrapper(url);
-        props.addUserPlan({
+        props.handleScrapedData({
             title: scrapedData.title,
             checks: [
                 {
@@ -145,7 +166,7 @@ function ResultListItem(props) {
                         className="waves-effect waves-light btn indigo"
                         onClick={()=>scrapePage(props.link)}
                     >
-                        {(props.mainAppView === "SearchResults")?'Auto Import':'Create Project'}
+                        {(props.placeholder === "Constructapedia")?'Auto Import':'Create Project'}
                     </button>
                 </div>
             </div>
