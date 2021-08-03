@@ -1,31 +1,23 @@
 import React, {useState} from 'react';
-import SearchBar from '../utility_components/SearchBar.js'
 import SearchResults from './SearchResults.js';
 //import {getSearchResults} from '../api/searchApi.js';
-import {googleSearch} from '../api/searchApi.js';
+//import {googleSearch} from '../api/searchApi.js';
 function NewProject(props){
     const [planTitleValue, setPlanTitleValue] = useState('');
-    const [resultsToogle, setResultsToogle] = useState(false);
 
-    function createBlankPlan (searchString) {
-            props.addUserPlan({title:planTitleValue})
-            if (!searchString.trim().length > 0) {
-                props.handleMainAppView('HomePage');
+
+    function createNewPlan (importedPlan) {
+        let newPlanObj = {}
+        if (importedPlan || planTitleValue.trim().length > 0) {
+            if (importedPlan) {
+                newPlanObj = importedPlan
             }
-    }
-    function searchForPlans(userInput) {
-        if (planTitleValue.trim().length > 0 || userInput.trim().length > 0) {
             if (planTitleValue.trim().length > 0) {
-                createBlankPlan(userInput);
+                newPlanObj.title = planTitleValue;
             }
-            if (userInput.trim().length > 0) {
-                googleSearch(userInput).then((res) => {
-                    console.log(res);
-                    props.updateSearchResults(res.items);
-                    //props.handleMainAppView('SearchResults');
-                    setResultsToogle(true);
-                })
-            }
+            //set Selected Plan?
+            console.log(newPlanObj);
+            props.addUserPlan(newPlanObj);
         } else {
             alert("Enter a title and/or search term");
         }
@@ -44,23 +36,17 @@ function NewProject(props){
                 </div>
             </div>
             <div className="section center-align">
-                <button onClick={createBlankPlan} className="btn-small waves-effect waves-light indigo" type="button">Create A Project<i className="material-icons left">add</i></button>
+                <button onClick={()=> createNewPlan(false)} className="btn-small waves-effect waves-light indigo" type="button">Create A Project<i className="material-icons left">add</i></button>
             </div>
             <h6 className="center-align">OR</h6>
             <div/>
             <h5 className="center-align">Do a Little Research</h5>
-            <div className="row">
-                <SearchBar handleSearch={searchForPlans} placeholder="Constructapedia"/>
-            </div>
-                {resultsToogle &&
-                    <SearchResults
-                        mainAppView={props.mainAppView}
-                        results={props.results}
-                        updateSearchResults={props.updateSearchResults}
-                        handleMainAppView={props.handleMainAppView}
-                        addUserPlan={props.addUserPlan}
-                    />
-                }
+            <SearchResults
+                mainAppView={props.mainAppView}
+                results={props.results}
+                handleScrapedData={createNewPlan}
+                placeholder={"Find a Project"}
+            />
         </div>
     )
 }

@@ -1,15 +1,27 @@
+//Import React and hooks used
 import React, { useState, useEffect } from 'react';
 
+//Functional Component
+    //Handles the view for each check list
+    //DATABASE NOTE: Plan -> checks -> check_list -> check
 function SimpleCheckboxSection(props) {
+//State Hooks
+    //Holds the text input value for adding a new item to the check list
     const [newItemValue, setNewItemValue] = useState('');
+    //Holds the vaules for each indiviual check within the check list to use in editing properties
     const [checksObjs, setChecksObjs] = useState({});
-
+    //Formats the list_type property for display in html
     const displayListType = props.listType
         .trim()
         .replace(/^\w/, (c) => c.toUpperCase());
 
+//Effect Hooks
+    //Sets the state of the checksObjs
+    //Runs on a change to the checklist passed to the component
     useEffect(() => {
+        //Copies the checklist array prop
         const checksToSet = [].concat(props.checklist);
+        //Sets the state with a reduced array of objects to store relevent values for each check
         setChecksObjs(
             checksToSet.reduce(
                 (options, option) => ({
@@ -24,11 +36,15 @@ function SimpleCheckboxSection(props) {
             )
         );
     }, [props.checklist]);
-
+    //Processes the various changes of input in the component parts
     function handleInputChange(event, index) {
+        //Where the event occured
         const target = event.target;
+        //Info from the event
         const { name, value } = target;
+        //Handle the clicking of a checkbox
         if (target.type === 'checkbox') {
+            //Update the check clicked
             const updatedChecks = (prevChecks) => {
                 const newChecksObjs = {
                     ...prevChecks,
@@ -39,19 +55,23 @@ function SimpleCheckboxSection(props) {
                 };
                 return newChecksObjs;
             };
+            //Set the state of the checksObjs
             setChecksObjs((prevChecksObjs) => updatedChecks(prevChecksObjs));
             console.log(props.checklist);
+            //Send request to update the database
             const newChecks = [].concat(props.checklist);
             console.log(newChecks);
             const checkedAttribute = target.checked;
-            //could be simplified with index parameter now
+            //NOTE: could be simplified with index parameter now?
             const indexOfCheckToChange = newChecks.findIndex(
                 (check) => check.text_value === name
             );
             newChecks[indexOfCheckToChange].is_complete = checkedAttribute;
-            //Needs to be moved so that it make call for unit and quantity
-            //Take out the "action" param and just use index -1 for create
+            //NOTE: Needs to be moved so that it make call for unit and quantity
+            //NOTE: Take out the "action" param and just use index -1 for create
             props.updateChecklist(props.checklistIndex, 'updateItem', newChecks);
+        //Handle changes in the the quantity field
+        //NOTE: Not currently an option
         } else if (target.id.includes('quantity')) {
             const itemToUpdate = props.checklist[index];
             console.log(itemToUpdate, value);
@@ -66,7 +86,9 @@ function SimpleCheckboxSection(props) {
                 };
                 return newChecksObjs;
             };
-        setChecksObjs((prevChecksObjs) => updatedChecks(prevChecksObjs));
+            setChecksObjs((prevChecksObjs) => updatedChecks(prevChecksObjs));
+        //Handle changes in the the unit field
+        //NOTE: Not currently an option
         } else if (target.id.includes('unit')) {
             const itemToUpdate = props.checklist[index];
             console.log(itemToUpdate, value);
@@ -82,12 +104,13 @@ function SimpleCheckboxSection(props) {
                 return newChecksObjs;
             };
             setChecksObjs((prevChecksObjs) => updatedChecks(prevChecksObjs));
+        //Handle changes in new item input
         } else {
             setNewItemValue(value);
         }
     }
 
-    //Make part of the props.addNewItem
+    //NOTE: Make part of the props.addNewItem?
     function addNewChecklistItem(e) {
         if (newItemValue.trim().length > 0) {
             const newCheck = {
@@ -100,7 +123,15 @@ function SimpleCheckboxSection(props) {
             setNewItemValue('');
         }
     }
-
+    function removeChecklistItem (indexOfCheckToRemove) {
+        const newChecksArr = props.checklist.reduce((checks,check,i) => {
+            if (i !== indexOfCheckToRemove) {
+                checks.push(check);
+            }
+            return checks;
+        }, [])
+        console.log(newChecksArr);
+    }
     function makeListOfCheckboxElements(arr) {
         return arr.map((listItem, i) => {
             if (checksObjs[listItem.text_value]) {
@@ -112,6 +143,7 @@ function SimpleCheckboxSection(props) {
                         checked={checksObjs[listItem.text_value].is_complete}
                         handleInputChange={handleInputChange}
                         itemIndex={i}
+                        removeChecklistItem={removeChecklistItem}
                     />
                 );
             } else {
@@ -119,7 +151,6 @@ function SimpleCheckboxSection(props) {
             }
         });
     }
-
     const checkboxElements = makeListOfCheckboxElements(props.checklist);
 
     return (
@@ -171,49 +202,61 @@ function SimpleCheckboxSection(props) {
 }
 
 function CheckListItem(props) {
-  if (props.listType === 'materials') {
-    //console.log(props.listItem);
-    return (
-        <div
-            key={props.listType + props.itemIndex}
-            className='row valign-wrapper'
-        >
-            <div className='col s12 left-align'>
-                <label className='left-align active'>
-                    <input
-                        type='checkbox'
-                        name={props.listItem.text_value}
-                        checked={props.checked}
-                        onChange={(e) => props.handleInputChange(e, props.itemIndex)}
-                        className='filled-in'
-                    />
-                    <span>{props.listItem.text_value}</span>
-                </label>
+    if (props.listType === 'materials') {
+        return (
+            <div
+                key={props.listType + props.itemIndex}
+                className='row valign-wrapper'
+            >
+                <div className='col s12 left-align'>
+                    <label className='left-align active'>
+                        <input
+                            type='checkbox'
+                            name={props.listItem.text_value}
+                            checked={props.checked}
+                            onChange={(e) => props.handleInputChange(e, props.itemIndex)}
+                            className='filled-in'
+                        />
+                        <span>{props.listItem.text_value}</span>
+                    </label>
+                    <button
+                        className='btn-flat right waves-effect waves-light'
+                        type='button'
+                        onClick={()=>props.removeChecklistItem(props.itemIndex)}
+                    >
+                        <i className='material-icons'>delete_forever</i>
+                    </button>
+                </div>
             </div>
-        </div>
-    );
-  } else if (props.listType === 'tools') {
-    //console.log(props.listItem);
-    return (
-        <div
-            key={props.listType + props.itemIndex}
-            className='row valign-wrapper'
-        >
-            <div className='col s12 left-align'>
-                <label className='left-align active'>
-                    <input
-                        type='checkbox'
-                        className='filled-in'
-                        name={props.listItem.text_value}
-                        checked={props.checked}
-                        onChange={(e) => props.handleInputChange(e, props.itemIndex)}
-                    />
-                    <span>{props.listItem.text_value}</span>
-                </label>
+        );
+    } else if (props.listType === 'tools') {
+        return (
+            <div
+                key={props.listType + props.itemIndex}
+                className='row valign-wrapper'
+            >
+                <div className='col s12 left-align'>
+                    <label className='left-align active'>
+                        <input
+                            type='checkbox'
+                            className='filled-in'
+                            name={props.listItem.text_value}
+                            checked={props.checked}
+                            onChange={(e) => props.handleInputChange(e, props.itemIndex)}
+                        />
+                        <span>{props.listItem.text_value}</span>
+                    </label>
+                    <button
+                        className='btn-flat right waves-effect waves-light'
+                        type='button'
+                        onClick={()=>props.removeChecklistItem(props.itemIndex)}
+                    >
+                        <i className='material-icons'>delete_forever</i>
+                    </button>
+                </div>
             </div>
-        </div>
-    );
-  }
+        );
+    }
 }
 
 export default SimpleCheckboxSection;

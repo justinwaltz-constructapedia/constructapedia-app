@@ -7,7 +7,7 @@ import PlanDetailsMenu from './notebook/PlanDetailsMenu.js';
 import ProjectLevel from './notebook/ProjectLevel.js';
 //Functional Component
     //Handles viewing and editing of project details
-    //"Source of truth" for editing values of the selected plan
+    //"Source of truth" for add modal values of the selected plan
 function ProjectDetails(props) {
 //State Hooks
     const [addModalTitle, setAddModalTitle] = useState('');
@@ -28,11 +28,13 @@ function ProjectDetails(props) {
 
 //Effect Hooks
     //Intitialzes Materialize form select
+        //Runs on every render
     useEffect(() => {
         M.FormSelect.init(addModalSelect.current);
         M.FormSelect.init(addModalChecksSelect.current);
     });
     //Intitialzes Materialize modal
+        //Runs on initial render only
     useEffect(() => {
         const addModalOptions = {
             opacity: 0,
@@ -189,7 +191,6 @@ function ProjectDetails(props) {
                         addUserPlan={props.addUserPlan}
                         removeUserPlan={props.removeUserPlan}
                         savePlanChanges={props.savePlanChanges}
-                        updateSearchResults={props.updateSearchResults}
                         handleMainAppView={props.handleMainAppView}
                         openAddModal={openAddModal}
                     />
