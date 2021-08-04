@@ -6,6 +6,7 @@ import NotesSection from './NotesSection.js';
 import ProjectStepsSection from './ProjectStepsSection.js';
 import UrlLinks from './UrlLinks.js';
 import './ProjectLevel.css';
+import SearchResults from '../SearchResults';
 
 function ProjectLevel(props) {
   //Ref hook for the substep tabs directly under the project
@@ -180,6 +181,8 @@ function ProjectLevel(props) {
                         >
                           Content Viewer - Why Can't I Stack Quick Notes Next to
                           it?
+                          {props.userPlans[props.selectedPlanIndex].video_urls
+                            .length > 0 && videoDisplays}
                         </div>
                       </div>
                     </div>
@@ -202,15 +205,130 @@ function ProjectLevel(props) {
               <b>Research</b>
             </div>
             <div className='collapsible-body'>
-              <div className='row'>
-                {props.userPlans[props.selectedPlanIndex].video_urls.length >
-                  0 && videoDisplays}
-              </div>
-              <UrlLinks
-                planId={props.userPlans[props.selectedPlanIndex].id}
-                savePlanChanges={props.savePlanChanges}
-                videoUrls={props.userPlans[props.selectedPlanIndex].video_urls}
-              />
+              <section>
+                <button
+                  className='btn-small waves-effect waves-light indigo'
+                  type='submit'
+                  name='action'
+                >
+                  <i className='material-icons'>search</i>
+                </button>
+                <div className='row'>
+                  <div className='col s12 l8 m6'>
+                    <div className='card'>
+                      <span className='card-title'>Constructapedia List</span>
+                      <table className='striped'>
+                        <thread>
+                          <tr>
+                            <th>Title</th>
+                            <th>Link</th>
+                            <th></th>
+                          </tr>
+                          <tbody>
+                            <tr>
+                              <td className='red-text'>
+                                Make this interactive Bitches
+                              </td>
+                              <td> www.Justin.com</td>
+                              <td>
+                                <a href='#!' className='btn indigo'>
+                                  Quick Notes
+                                </a>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td className='red-text'>
+                                Make this interactive Bitches Please
+                              </td>
+                              <td> www.JustinYou.com</td>
+                              <td>
+                                <a href='#!' className='btn indigo'>
+                                  Quick Notes
+                                </a>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td className='red-text'>
+                                Make this interactive Bitches, Pretty Please
+                              </td>
+                              <td> www.JustinYouAmazeMe.com</td>
+                              <td>
+                                <a href='#!' className='btn indigo'>
+                                  Quick Notes
+                                </a>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </thread>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </section>
+              <section className='section section-videoUrls'>
+                <div className='row'>
+                  <div className='col s12 l4 m6'>
+                    <UrlLinks
+                      planId={props.userPlans[props.selectedPlanIndex].id}
+                      savePlanChanges={props.savePlanChanges}
+                      videoUrls={
+                        props.userPlans[props.selectedPlanIndex].video_urls
+                      }
+                    />
+                  </div>
+                </div>
+                <div className='row'>
+                  <div className='col s12 l8 m6'>
+                    <div className='card'>
+                      <span className='card-title'>YouTube List</span>
+                      <table className='striped'>
+                        <thread>
+                          <tr>
+                            <th>Title</th>
+                            <th>Link</th>
+                            <th></th>
+                          </tr>
+                          <tbody>
+                            <tr>
+                              <td className='red-text'>
+                                Make this interactive Bitches
+                              </td>
+                              <td> www.Justin.com</td>
+                              <td>
+                                <a href='#!' className='btn indigo'>
+                                  Quick Notes
+                                </a>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td className='red-text'>
+                                Make this interactive Bitches Please
+                              </td>
+                              <td> www.JustinYou.com</td>
+                              <td>
+                                <a href='#!' className='btn indigo'>
+                                  Quick Notes
+                                </a>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td className='red-text'>
+                                Make this interactive Bitches, Pretty Please
+                              </td>
+                              <td> www.JustinYouAmazeMe.com</td>
+                              <td>
+                                <a href='#!' className='btn indigo'>
+                                  Quick Notes
+                                </a>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </thread>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </section>
             </div>
           </li>
           <li className='active'>
@@ -247,12 +365,12 @@ function ProjectLevel(props) {
             </div>
             <div className='collapsible-body'></div>
           </li>
-          <li>
+          {/*<li>
             <div className='collapsible-header'>
               <b>Lessons Learned</b>
             </div>
             <div className='collapsible-body'></div>
-          </li>
+          </li>*/}
         </ul>
       </div>
     </div>
