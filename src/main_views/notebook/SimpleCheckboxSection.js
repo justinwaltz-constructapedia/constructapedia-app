@@ -2,10 +2,10 @@
 import React, { useState, useEffect } from 'react';
 
 //Functional Component
-    //Handles the view for each check list
-    //DATABASE NOTE: Plan -> checks -> check_list -> check
+//Handles the view for each check list
+//DATABASE NOTE: Plan -> checks -> check_list -> check
 function SimpleCheckboxSection(props) {
-//State Hooks
+    //State Hooks
     //Holds the text input value for adding a new item to the check list
     const [newItemValue, setNewItemValue] = useState('');
     //Holds the vaules for each indiviual check within the check list to use in editing properties
@@ -15,7 +15,7 @@ function SimpleCheckboxSection(props) {
         .trim()
         .replace(/^\w/, (c) => c.toUpperCase());
 
-//Effect Hooks
+    //Effect Hooks
     //Sets the state of the checksObjs
     //Runs on a change to the checklist passed to the component
     useEffect(() => {
@@ -69,9 +69,13 @@ function SimpleCheckboxSection(props) {
             newChecks[indexOfCheckToChange].is_complete = checkedAttribute;
             //NOTE: Needs to be moved so that it make call for unit and quantity
             //NOTE: Take out the "action" param and just use index -1 for create
-            props.updateChecklist(props.checklistIndex, 'updateItem', newChecks);
-        //Handle changes in the the quantity field
-        //NOTE: Not currently an option
+            props.updateChecklist(
+                props.checklistIndex,
+                'updateItem',
+                newChecks
+            );
+            //Handle changes in the the quantity field
+            //NOTE: Not currently an option
         } else if (target.id.includes('quantity')) {
             const itemToUpdate = props.checklist[index];
             console.log(itemToUpdate, value);
@@ -87,8 +91,8 @@ function SimpleCheckboxSection(props) {
                 return newChecksObjs;
             };
             setChecksObjs((prevChecksObjs) => updatedChecks(prevChecksObjs));
-        //Handle changes in the the unit field
-        //NOTE: Not currently an option
+            //Handle changes in the the unit field
+            //NOTE: Not currently an option
         } else if (target.id.includes('unit')) {
             const itemToUpdate = props.checklist[index];
             console.log(itemToUpdate, value);
@@ -104,7 +108,7 @@ function SimpleCheckboxSection(props) {
                 return newChecksObjs;
             };
             setChecksObjs((prevChecksObjs) => updatedChecks(prevChecksObjs));
-        //Handle changes in new item input
+            //Handle changes in new item input
         } else {
             setNewItemValue(value);
         }
@@ -123,15 +127,15 @@ function SimpleCheckboxSection(props) {
             setNewItemValue('');
         }
     }
-    function removeChecklistItem (indexOfCheckToRemove) {
-        const newChecksArr = props.checklist.reduce((checks,check,i) => {
+    function removeChecklistItem(indexOfCheckToRemove) {
+        const newChecksArr = props.checklist.reduce((checks, check, i) => {
             if (i !== indexOfCheckToRemove) {
                 checks.push(check);
             }
             return checks;
-        }, [])
+        }, []);
         console.log(newChecksArr);
-        props.updateChecklist(props.checklistIndex, 'updateItem', newChecksArr)
+        props.updateChecklist(props.checklistIndex, 'updateItem', newChecksArr);
     }
     function makeListOfCheckboxElements(arr) {
         return arr.map((listItem, i) => {
@@ -160,7 +164,12 @@ function SimpleCheckboxSection(props) {
                 <div className='col s8'>
                     <div className='input-field inline'>
                         <input
-                            id={'new-' + props.listType + '-' + props.checklistIndex}
+                            id={
+                                'new-' +
+                                props.listType +
+                                '-' +
+                                props.checklistIndex
+                            }
                             type='text'
                             className='validate'
                             value={newItemValue}
@@ -174,7 +183,12 @@ function SimpleCheckboxSection(props) {
                         />
                     </div>
                     <button
-                        id={'add-' + props.listType + '-btn-' + props.checklistIndex}
+                        id={
+                            'add-' +
+                            props.listType +
+                            '-btn-' +
+                            props.checklistIndex
+                        }
                         className='btn-floating waves-effect waves-light indigo'
                         type='button'
                         onClick={(e) => addNewChecklistItem(e)}
@@ -184,11 +198,16 @@ function SimpleCheckboxSection(props) {
                 </div>
                 <div className='col s2'>
                     <button
-                        className='btn-flat right waves-effect waves-light'
+                        className='btn-flat right waves-effect waves-light grey-text text-lighten-3'
                         type='button'
-                        onClick={()=>props.deleteItemInPlan('checks', props.checklistIndex)}
+                        onClick={() =>
+                            props.deleteItemInPlan(
+                                'checks',
+                                props.checklistIndex
+                            )
+                        }
                     >
-                        <i className='material-icons'>delete_forever</i>
+                        <i className='material-icons '>delete_forever</i>
                     </button>
                 </div>
             </div>
@@ -215,17 +234,21 @@ function CheckListItem(props) {
                             type='checkbox'
                             name={props.listItem.text_value}
                             checked={props.checked}
-                            onChange={(e) => props.handleInputChange(e, props.itemIndex)}
+                            onChange={(e) =>
+                                props.handleInputChange(e, props.itemIndex)
+                            }
                             className='filled-in'
                         />
                         <span>{props.listItem.text_value}</span>
                     </label>
                     <button
-                        className='btn-flat right waves-effect waves-light'
+                        className='btn-flat right waves-effect waves-light grey-text text-lighten-3'
                         type='button'
-                        onClick={()=>props.removeChecklistItem(props.itemIndex)}
+                        onClick={() =>
+                            props.removeChecklistItem(props.itemIndex)
+                        }
                     >
-                        <i className='material-icons'>delete_forever</i>
+                        <i className='material-icons'>close</i>
                     </button>
                 </div>
             </div>
@@ -243,16 +266,20 @@ function CheckListItem(props) {
                             className='filled-in'
                             name={props.listItem.text_value}
                             checked={props.checked}
-                            onChange={(e) => props.handleInputChange(e, props.itemIndex)}
+                            onChange={(e) =>
+                                props.handleInputChange(e, props.itemIndex)
+                            }
                         />
                         <span>{props.listItem.text_value}</span>
                     </label>
                     <button
-                        className='btn-flat right waves-effect waves-light'
+                        className='btn-flat right waves-effect waves-light grey-text text-lighten-3'
                         type='button'
-                        onClick={()=>props.removeChecklistItem(props.itemIndex)}
+                        onClick={() =>
+                            props.removeChecklistItem(props.itemIndex)
+                        }
                     >
-                        <i className='material-icons'>delete_forever</i>
+                        <i className='material-icons '>close</i>
                     </button>
                 </div>
             </div>

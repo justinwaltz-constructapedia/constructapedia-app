@@ -6,35 +6,36 @@ import 'materialize-css/dist/css/materialize.min.css';
 import PlanDetailsMenu from './notebook/PlanDetailsMenu.js';
 import ProjectLevel from './notebook/ProjectLevel.js';
 //Functional Component
-    //Handles viewing and editing of project details
-    //"Source of truth" for add modal values of the selected plan
+//Handles viewing and editing of project details
+//"Source of truth" for add modal values of the selected plan
 function ProjectDetails(props) {
-//State Hooks
+    //State Hooks
     const [addModalTitle, setAddModalTitle] = useState('');
     const [addModalType, setAddModalType] = useState('');
     const [addModalValue, setAddModalValue] = useState('');
     const [addModalSelectValue, setAddModalSelectValue] = useState('');
-    const [addModalCheckTypeValue, setAddModalCheckTypeValue] = useState('tools');
+    const [addModalCheckTypeValue, setAddModalCheckTypeValue] =
+        useState('tools');
     const [selectedLevel, setSelectedLevel] = useState('');
     const [reload, setReload] = useState(false);
 
-//Ref Hooks
+    //Ref Hooks
     //Materialize functionality
-        //Add Modal
+    //Add Modal
     const addModal = useRef(null);
-        //Material <select> fields
+    //Material <select> fields
     const addModalSelect = useRef(null);
     const addModalChecksSelect = useRef(null);
 
-//Effect Hooks
+    //Effect Hooks
     //Intitialzes Materialize form select
-        //Runs on every render
+    //Runs on every render
     useEffect(() => {
         M.FormSelect.init(addModalSelect.current);
         M.FormSelect.init(addModalChecksSelect.current);
     });
     //Intitialzes Materialize modal
-        //Runs on initial render only
+    //Runs on initial render only
     useEffect(() => {
         const addModalOptions = {
             opacity: 0,
@@ -44,17 +45,17 @@ function ProjectDetails(props) {
         M.Modal.init(addModal.current, addModalOptions);
     }, []);
     //Resets reload to false on a re-render do to a change in the selected plan
-        //Avoids conflict between the DOM and Virtual DOM with the Materialize Tabs
+    //Avoids conflict between the DOM and Virtual DOM with the Materialize Tabs
     useEffect(() => {
         setSelectedLevel(props.userPlans[props.selectedPlanIndex].id);
         // if (props.userPlans[props.selectedPlanIndex].sub_plans.length === 0) {
         //     setReload(true);
         // } else {
-            setReload(false);
+        setReload(false);
         // }
     }, [props.userPlans, props.selectedPlanIndex]);
 
-//Component Functionality
+    //Component Functionality
     //Sets state values for various inputs on add modal
     function handleChange(event) {
         const eventId = event.target.id;
@@ -73,16 +74,17 @@ function ProjectDetails(props) {
         }
     }
     //Delete function for fields directly under a plan object: sub_plans, notes, checks
-    function deleteItemInPlan (itemFieldName, itemIndex) {
-        const currentPlan = props.userPlans[props.selectedPlanIndex]
+    function deleteItemInPlan(itemFieldName, itemIndex) {
+        const currentPlan = props.userPlans[props.selectedPlanIndex];
         const newItemFieldList = currentPlan[itemFieldName].reduce(
             (itemFieldList, item, i) => {
                 if (itemIndex !== i) {
                     itemFieldList.push(item);
                 }
-                return itemFieldList
-            },[]
-        )
+                return itemFieldList;
+            },
+            []
+        );
         const updateObj = {};
         updateObj[itemFieldName] = newItemFieldList;
         console.log(updateObj);
@@ -103,7 +105,10 @@ function ProjectDetails(props) {
                     const prevSubplans = newArr.concat(
                         props.userPlans[props.selectedPlanIndex].sub_plans
                     );
-                    prevSubplans.push({ title: addModalValue, parent: parentId });
+                    prevSubplans.push({
+                        title: addModalValue,
+                        parent: parentId,
+                    });
                     updatedFieldObj = { sub_plans: prevSubplans };
                     break;
                 case 'checklist':
@@ -144,7 +149,7 @@ function ProjectDetails(props) {
         }
         addModalInstance.open();
     }
-//Return view of this component:
+    //Return view of this component:
     //Includes the ProjectLevel, opening the modal to add plan sections
     return (
         <div>
@@ -158,13 +163,17 @@ function ProjectDetails(props) {
                                 props.handleMainAppView('HomePage');
                             }}
                         >
-                            <i className='material-icons left indigo-text'>arrow_back</i>
+                            <i className='material-icons left indigo-text'>
+                                arrow_back
+                            </i>
                         </button>
                         <button
                             className='btn waves-effect waves-light indigo'
                             type='button'
                             name='action'
-                            onClick={() => props.handleMainAppView('SearchResults')}
+                            onClick={() =>
+                                props.handleMainAppView('SearchResults')
+                            }
                         >
                             <i className='material-icons left tiny'>search</i>
                             Constructapedia
@@ -177,7 +186,9 @@ function ProjectDetails(props) {
                             <ProjectLevel
                                 userPlans={props.userPlans}
                                 selectedPlanIndex={props.selectedPlanIndex}
-                                changeOrUpdatePlanDraft={props.changeOrUpdatePlanDraft}
+                                changeOrUpdatePlanDraft={
+                                    props.changeOrUpdatePlanDraft
+                                }
                                 savePlanChanges={props.savePlanChanges}
                                 deleteItemInPlan={deleteItemInPlan}
                                 reload={reload}
@@ -197,7 +208,10 @@ function ProjectDetails(props) {
                 </div>
                 <div
                     ref={addModal}
-                    id={'add-modal' + props.userPlans[props.selectedPlanIndex].title}
+                    id={
+                        'add-modal' +
+                        props.userPlans[props.selectedPlanIndex].title
+                    }
                     className='modal'
                 >
                     <div className='modal-content'>
@@ -223,7 +237,9 @@ function ProjectDetails(props) {
                                         onChange={handleChange}
                                     >
                                         <option value='tools'>Tools</option>
-                                        <option value='materials'>Materials</option>
+                                        <option value='materials'>
+                                            Materials
+                                        </option>
                                     </select>
                                     <label>Checklist Type</label>
                                 </div>
@@ -235,18 +251,27 @@ function ProjectDetails(props) {
                                     value={addModalSelectValue}
                                     onChange={handleChange}
                                 >
-                                    <option value={props.userPlans[props.selectedPlanIndex].id}>
+                                    <option
+                                        value={
+                                            props.userPlans[
+                                                props.selectedPlanIndex
+                                            ].id
+                                        }
+                                    >
                                         Plan Overview
                                     </option>
-                                    {props.userPlans[props.selectedPlanIndex].sub_plans.map(
-                                        (subPlan, i) => {
-                                            return (
-                                                <option key={subPlan.title + i} value={subPlan.id}>
-                                                    {subPlan.title}
-                                                </option>
-                                            );
-                                        }
-                                    )}
+                                    {props.userPlans[
+                                        props.selectedPlanIndex
+                                    ].sub_plans.map((subPlan, i) => {
+                                        return (
+                                            <option
+                                                key={subPlan.title + i}
+                                                value={subPlan.id}
+                                            >
+                                                {subPlan.title}
+                                            </option>
+                                        );
+                                    })}
                                 </select>
                                 <label>Add to...</label>
                             </div>
@@ -264,7 +289,7 @@ function ProjectDetails(props) {
                     </div>
                 </div>
             </div>
-          {/*<div className='fixed-action-btn toolbar'>
+            {/*<div className='fixed-action-btn toolbar'>
             <a className='btn-floating btn-small'>
               <i className='material-icons'>mode_edit</i>
             </a>
