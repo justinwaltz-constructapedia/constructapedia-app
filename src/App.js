@@ -22,9 +22,10 @@ const API_KEY = process.env.REACT_APP_GOOGLE_DRIVE_API_KEY;
 const DISCOVERY_DOCS = ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'];
 // Authorization scopes required by the API; multiple scopes can be
 // included, separated by spaces.
-const SCOPES = 'https://www.googleapis.com/auth/drive.file';
-//https://accounts.google.com/o/oauth2/iframerpc?action=listSessions&client_id=50139972732-2rf17no6c3aqkeumvuepi94pi32makrv.apps.googleusercontent.com&origin=http%3A%2F%2Flocalhost%3A3000&scope=openid%20profile%20email%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fdrive.files&ss_domain=http%3A%2F%2Flocalhost%3A3000
+const SCOPES = 'https://www.googleapis.com/auth/drive.metadata.readonly';
+// https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/userinfo.profile
 
+var GoogleAuth;
 //Only Class Component in the Application; No Hooks
     //"Source of truth" for user info and handling
 class App extends React.Component {
@@ -33,16 +34,21 @@ class App extends React.Component {
         this.handleLogin = this.handleLogin.bind(this);
         this.handleLogout = this.handleLogout.bind(this);
         this.handleClientLoad = this.handleClientLoad.bind(this);
-        this.updateSigninStatus = this.updateSigninStatus.bind(this);
+        this.setSigninStatus = this.setSigninStatus.bind(this);
         this.handleSignOutClick = this.handleSignOutClick.bind(this);
         this.initClient = this.initClient.bind(this);
+        this.listFiles = this.listFiles.bind(this);
         this.state = {
             isLoggedIn: false,
             isLoading: false,
             user: {},
             selectedColorTheme: getColorTheme('base'),
-            isLoadingGoogleDriveApi: false,
-            googleDriveUser: null
+            isAuthorized: false,
+            googleUser: '',
+            googleAuth: '',
+            isFetchingGoogleDriveFiles: false,
+            signInStatus: '',
+            userDisplay:''
         };
     }
 //Life Cycle Methods
@@ -86,10 +92,13 @@ class App extends React.Component {
     *  Called when the signed in status changes, to update the UI
     *  appropriately. After a sign-in, the API is called.
     */
-    updateSigninStatus (isSignedIn) {
+    setSigninStatus (isSignedIn) {
+        console.log(isSignedIn);
+        console.log(gapi.auth2.getAuthInstance().currentUser);
         if (isSignedIn) {
             // Set the signed in user
-            this.setState({googleDriveUser: gapi.auth2.getAuthInstance().currentUser.je.Qt});
+            this.setState({googleUser: gapi.auth2.getAuthInstance().currentUser.le.wt});
+            this.setState({googleAuth: gapi.auth2.getAuthInstance()})
             this.setState({isLoadingGoogleDriveApi:false});
             // list files if user is authenticated
             // listFiles();
@@ -121,18 +130,33 @@ class App extends React.Component {
              scope: SCOPES,
             })
             .then(() => {
-                    // Listen for sign-in state changes.
-                    gapi.auth2.getAuthInstance().isSignedIn.listen(this.updateSigninStatus());
+                console.log(this.setSigninStatus);
+                // Listen for sign-in state changes.
+                gapi.auth2.getAuthInstance().isSignedIn.listen(this.setSigninStatus);
 
-                    // Handle the initial sign-in state.
-                    this.updateSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
-                },
-                function (error) {}
+                // Handle the initial sign-in state.
+                this.setState({signInStatus:gapi.auth2.getAuthInstance().isSignedIn.get()});
+            },
+            function (error) {}
             );
     };
-
     handleClientLoad () {
         gapi.load('client:auth2', this.initClient);
+    };
+    listFiles (searchTerm = null) {
+        this.setState({isFetchingGoogleDriveFiles:true});
+        //console.log(gapi.client.drive.files);
+        gapi.client.drive.files
+          .list({
+            pageSize: 10,
+            fields: 'nextPageToken, files(id, name, mimeType, modifiedTime)'
+          })
+          .then((response) => {
+            this.setState({isFetchingGoogleDriveFiles:false});
+            //setListDocumentsVisibility(true);
+            const res = JSON.parse(response.body);
+            this.setState({documents:res.files});
+          });
     };
     render() {
         //Render time variables
@@ -156,12 +180,14 @@ class App extends React.Component {
                         handleLogin={this.handleLogin}
                         handleLogout={this.handleLogout}
                     />
-                    <button onClick={this.handleClientLoad}>Link Google Drive</button>
                     <AppBody
                         user={this.state.user}
                         updateUser={this.updateUser}
                         isLoading={this.state.isLoading}
                     />
+                    <button className='btn waves-effect waves-light indigo white-text' onClick={this.handleClientLoad} type='button'>Link Google Drive</button>
+                    <button className='btn waves-effect waves-light indigo white-text' onClick={this.handleSignOutClick} type='button'>Sign Out Google Drive</button>
+                    <button className='btn waves-effect waves-light indigo white-text' onClick={this.listFiles} type='button'>List Files</button>
                     <footer className='section footer-tm left'>
                         <p>Constructapedia &copy; &trade; 2020</p>
                     </footer>
