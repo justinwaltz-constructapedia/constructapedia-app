@@ -1,5 +1,6 @@
 //Import React and hooks used
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+// import { gapi, loadAuth2 } from 'gapi-script';
 //Import Materialize functionality
 import M from 'materialize-css';
 import 'materialize-css/dist/css/materialize.min.css';
@@ -9,6 +10,9 @@ import './side_navs.css';
 //Functional Component
     //Handles the user account view of the side nav menu
 function UserAccount(props) {
+//State Hooks
+    // const [googleUser, setGoogleUser] = useState(null);
+//Ref hook for Materialize Sidenav
   const sidenav = useRef(null);
 //Effect Hooks
     //Intitialzes Materialize side nav
@@ -21,6 +25,57 @@ function UserAccount(props) {
         };
         M.Sidenav.init(sidenav.current, sidenavOptions);
     });
+    // //OAuth for Google Drive API
+    //     //Initial Render
+    // useEffect(() => {
+    //     const setAuth2 = async () => {
+    //       const auth2 = await loadAuth2(gapi, process.env.REACT_APP_GOOGLE_DRIVE_CLIENT_ID, 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email')
+    //       if (auth2.isSignedIn.get()) {
+    //           updateUser(auth2.currentUser.get())
+    //       } else {
+    //           attachSignin(document.getElementById('customBtn'), auth2);
+    //       }
+    //     }
+    //     setAuth2();
+    // }, []);
+    //     //When googleUser changes
+    // useEffect(() => {
+    //     if (!googleUser) {
+    //       const setAuth2 = async () => {
+    //         const auth2 = await loadAuth2(gapi, process.env.REACT_APP_GOOGLE_DRIVE_CLIENT_ID, 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email')
+    //         attachSignin(document.getElementById('customBtn'), auth2);
+    //       }
+    //       setAuth2();
+    //     }
+    // }, [googleUser])
+    // //Google Drive Functions
+    // const updateUser = (currentUser) => {
+    //     console.log(currentUser);
+    //     const name = currentUser.getBasicProfile().getName();
+    //     const profileImg = currentUser.getBasicProfile().getImageUrl();
+    //     setGoogleUser({
+    //         name: name,
+    //         profileImg: profileImg,
+    //     });
+    // };
+    //
+    // const attachSignin = (element, auth2) => {
+    //   auth2.attachClickHandler(element, {},
+    //     (googleDriveUser) => {
+    //       updateUser(googleDriveUser);
+    //     }, (error) => {
+    //     console.log(JSON.stringify(error))
+    //   });
+    // };
+    //
+    // const signOut = () => {
+    //   const auth2 = gapi.auth2.getAuthInstance();
+    //   auth2.signOut().then(() => {
+    //     setGoogleUser(null);
+    //     console.log('User signed out.');
+    //   });
+    // }
+
 //Return view of this component:
     //Includes Account info/settings and log out
     return (
@@ -60,6 +115,21 @@ function UserAccount(props) {
                     <b>Log Out </b>
                   </button>
                 </div>
+                {/*
+                    (googleUser)?
+                    (<div className="container">
+                        <UserCard user={googleUser} />
+                        <div id="" className="btn logout" onClick={signOut}>
+                          Logout
+                        </div>
+                    </div>)
+                    :
+                    (<div className="container">
+                      <div id="customBtn" className="btn login">
+                        Login
+                      </div>
+                    </div>)
+                */}
               </div>
             </div>
           </li>
@@ -67,6 +137,15 @@ function UserAccount(props) {
     );
 }
 
+// const UserCard = (props) => {
+//   return (
+//     <div>
+//       <h2>{props.user.name}</h2>
+//       <img src={props.user.profileImg} alt="user profile" />
+//     </div>
+//   );
+// }
+//
 export default UserAccount;
 /*
 
