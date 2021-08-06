@@ -217,7 +217,6 @@ function ProjectDetails(props) {
                     <div className='modal-content'>
                         <h4>{addModalTitle}</h4>
                         <div className='input-field'>
-                            np
                             <input
                                 type='text'
                                 placeholder='Title'

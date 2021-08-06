@@ -197,7 +197,7 @@ function ProjectLevel(props) {
                             </i>
                         </h6>
                     </li>
-                    <div className=''>
+                    <div className='center-align'>
                         <UrlLinks
                             planId={props.userPlans[props.selectedPlanIndex].id}
                             savePlanChanges={props.savePlanChanges}
@@ -207,54 +207,63 @@ function ProjectLevel(props) {
                             }
                         />
                     </div>
-                    <li className=''>
+                    <li>
                         <div className='collapsible-header indigo-text'>
-                            <i className='material-icons center indigo-text'>
-                                bookmark
-                            </i>
+                            <i className='material-icons center'>create</i>
+                            <b>Quick Notes</b>
+                        </div>
+                        <div className='collapsible-body'>
+                            <NotesSection
+                                updateNotes={updateNotes}
+                                notes={
+                                    props.userPlans[props.selectedPlanIndex]
+                                        .notes
+                                }
+                                deleteItemInPlan={props.deleteItemInPlan}
+                            />
+                        </div>
+                    </li>
+                    <li className=''>
+                        <div className='collapsible-header red-text text-accent-4'>
+                            <i className='material-icons center'>bookmark</i>
                             <b>Bookmarked Sites</b>
                         </div>
                         <div className='collapsible-body'>
                             <section>
-                                <div className='row'>
-                                    <div className='col s12'>
-                                        <div className='card'>
-                                            <span className='card-title'>
-                                                URL List
-                                            </span>
-                                            <table className='striped'>
-                                                <thead>
-                                                    <tr>
-                                                        <th>Title</th>
-                                                        <th>Link</th>
-                                                        <th></th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <tr>
-                                                        <td className='red-text'>
-                                                            Please activate me
-                                                        </td>
-                                                        <td className='red-text'>
-                                                            {' '}
-                                                            www.JustinYourMyHero.com
-                                                        </td>
-                                                        <td>
-                                                            <a
-                                                                href='#!'
-                                                                className='right btn red accent-4'
-                                                            >
-                                                                <i className=' material-icons'>
-                                                                    border_color
-                                                                </i>
-                                                            </a>
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
+                                <table className='striped'>
+                                    <thead>
+                                        <tr>
+                                            <th className='indigo-text'>
+                                                Page Title
+                                            </th>
+                                            <th className='indigo-text'>
+                                                Link
+                                            </th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td className='red-text'>
+                                                Please activate me
+                                            </td>
+                                            <td className='red-text'>
+                                                {' '}
+                                                www.JustinYourMyHero.com
+                                            </td>
+                                            <td>
+                                                <a
+                                                    href='#!'
+                                                    className='right btn red accent-4'
+                                                >
+                                                    <i className=' material-icons'>
+                                                        border_color
+                                                    </i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </section>
                         </div>
                     </li>
@@ -331,21 +340,7 @@ function ProjectLevel(props) {
                     </div>
                         </div>
 
-                                    <div className='col s12 m6'>
-                                        <div className='card-panel'>
-                                            <div className='row center'></div>
-                                            <NotesSection
-                                                updateNotes={updateNotes}
-                                                notes={
-                                                    props.userPlans[
-                                                        props.selectedPlanIndex
-                                                    ].notes
-                                                }
-                                                deleteItemInPlan={
-                                                    props.deleteItemInPlan
-                                                }
-                                            />
-                                        </div>
+                                    
                                     </div>
                                     <div className='col s12 m6'>
                                         <div className='card red-text accent-4 center'>

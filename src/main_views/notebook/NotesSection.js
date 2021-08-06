@@ -89,59 +89,50 @@ function NotesSection(props) {
     const noteElements = makeListOfNoteElements();
 
     return (
-        <section id='input-notes' className='section section-note center row'>
-            <div className='row'>
-                <div className='col s12 left-align'>
-                    <input
-                        type='text'
-                        className='validate'
-                        value={newNoteValue}
-                        onChange={(e) => setNewNoteValue(e.target.value)}
-                        onKeyDown={(e) => {
-                            if (e.keyCode === 13) {
-                                saveNewNote();
-                            }
-                        }}
-                        placeholder={'Add Notes'}
-                    />
-                    <button
-                        id={'add-note-btn-' + props.selectedPlanId}
-                        className='btn-floating left button-margin waves-effect waves-light indigo'
-                        type='button'
-                        onClick={saveNewNote}
-                    >
-                        <i className='material-icons'>create</i>
-                    </button>
-                </div>
-                <div className='col s12'>{noteElements}</div>
-            </div>
-        </section>
+        <div className=''>
+            <input
+                type='text'
+                className=''
+                value={newNoteValue}
+                onChange={(e) => setNewNoteValue(e.target.value)}
+                onKeyDown={(e) => {
+                    if (e.keyCode === 13) {
+                        saveNewNote();
+                    }
+                }}
+                placeholder={'Add a Note'}
+            />
+            <button
+                id={'add-note-btn-' + props.selectedPlanId}
+                className='btn-floating left button-margin waves-effect waves-light indigo'
+                type='button'
+                onClick={saveNewNote}
+            >
+                <i className='material-icons'>create</i>
+            </button>
+
+            <div className=''>{noteElements}</div>
+        </div>
     );
 }
 
 function Note(props) {
     return (
-        <div className='row'>
-            <div className='col s11'>
-                <textarea
-                    className='readonly'
-                    value={props.value}
-                    onChange={(e) =>
-                        props.handleNoteChange(e.target.value, props.noteIndex)
-                    }
-                />
-            </div>
-            <div className='col s1'>
-                <button
-                    className='btn-flat right waves-effect waves-light'
-                    type='button'
-                    onClick={() =>
-                        props.deleteItemInPlan('notes', props.noteIndex)
-                    }
-                >
-                    <i className='material-icons'>delete_forever</i>
-                </button>
-            </div>
+        <div className=''>
+            <textarea
+                className=''
+                value={props.value}
+                onChange={(e) =>
+                    props.handleNoteChange(e.target.value, props.noteIndex)
+                }
+            />
+            <button
+                className='btn-flat right waves-effect waves-light'
+                type='button'
+                onClick={() => props.deleteItemInPlan('notes', props.noteIndex)}
+            >
+                <i className='material-icons grey-text text-lighten-3'>close</i>
+            </button>
         </div>
     );
 }

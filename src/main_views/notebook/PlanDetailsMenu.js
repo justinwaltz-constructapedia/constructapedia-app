@@ -22,32 +22,41 @@ function PlanDetailsMenu(props) {
                 <i className='material-icons'>assignment</i>
             </a>
             <ul>
+                <li className='waves-effect waves-light red accent-4'>
+                    <a
+                        id='add-note-btn'
+                        href='#!'
+                        onClick={(e) => props.openAddModal(e)}
+                    >
+                        <i className='material-icons '>create</i>
+                    </a>
+                </li>
                 <li className='waves-effect waves-light'>
                     <a
                         id='add-checklist-btn'
                         href='#add-modal'
                         onClick={(e) => props.openAddModal(e)}
                     >
-                        Checklist <i className='material-icons left'>add</i>
+                        <i className='material-icons'>offline_pin</i>
                     </a>
                 </li>
-                <li className='waves-effect waves-light'>
+                <li className='waves-effect waves-light indigo lighten-1'>
                     <a
                         id='add-substep-btn'
                         href='#add-modal'
                         onClick={(e) => props.openAddModal(e)}
                     >
-                        Work Steps<i className='material-icons left'>add</i>
+                        <i className='material-icons'>traffic</i>
                     </a>
                 </li>
-                <li className='waves-effect waves-light'>
+                <li className='waves-effect waves-light red accent-4'>
                     <a
                         id='add-folder-btn'
                         href='#add-modal'
-                        className='btn disabled'
+                        className=''
                         onClick={(e) => alert('Not ready yet Zach!')}
                     >
-                        Attach File<i className='material-icons left'>add</i>
+                        <i className='material-icons'>camera</i>
                     </a>
                 </li>
             </ul>
