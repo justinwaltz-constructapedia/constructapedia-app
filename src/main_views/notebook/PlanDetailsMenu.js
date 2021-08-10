@@ -18,7 +18,7 @@ function PlanDetailsMenu(props) {
 
     return (
         <div className='fixed-action-btn toolbar' ref={navBar}>
-            <a className='btn-floating btn-large indigo'>
+            <a href='#addMenu' className='btn-floating btn-large indigo'>
                 <i className='material-icons'>assignment</i>
             </a>
             <ul>

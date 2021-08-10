@@ -134,12 +134,14 @@ function ResultListItem(props) {
                 {
                     title:"Imported Materials",
                     list_type: "materials",
+                    import_url: url,
                     list: scrapedData.Materials.reduce((materials, material) => {
                         materials.push({text_value:material})
                         return materials;
                     },[])
                 }
-            ]
+            ],
+            bookmarks: [url]
         })
     }
 //Return view of this component:
@@ -156,12 +158,12 @@ function ResultListItem(props) {
                     <p>{props.title}</p>
                 </div>
                 <div className="card-action">
-                    <button
+                    <a
                         className="waves-effect waves-light btn indigo"
-                        onClick={()=>props.updateUrlToView(props.link, props.title)}
+                        href={props.link} target="_blank" rel="noreferrer"
                     >
                         View Page
-                    </button>
+                    </a>
                     <button
                         className="waves-effect waves-light btn indigo"
                         onClick={()=>scrapePage(props.link)}

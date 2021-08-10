@@ -25,7 +25,6 @@ const DISCOVERY_DOCS = ['https://www.googleapis.com/discovery/v1/apis/drive/v3/r
 const SCOPES = 'https://www.googleapis.com/auth/drive.metadata.readonly';
 // https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/userinfo.profile
 
-var GoogleAuth;
 //Only Class Component in the Application; No Hooks
     //"Source of truth" for user info and handling
 class App extends React.Component {
@@ -53,7 +52,6 @@ class App extends React.Component {
     }
 //Life Cycle Methods
     componentDidMount() {
-        //this.handleLogout()
         console.log(localStorage);
         const rememberMe = localStorage.getItem('rememberMe') === 'true';
         if (rememberMe) {
@@ -67,6 +65,7 @@ class App extends React.Component {
                 console.log(err);
             });
         }
+        this.handleClientLoad()
     }
 //User account functions passed down as props
     //Changes the state of the App to Logged in
@@ -179,14 +178,15 @@ class App extends React.Component {
                         isLoggedIn={isLoggedIn}
                         handleLogin={this.handleLogin}
                         handleLogout={this.handleLogout}
+                        handleClientLoad={this.handleClientLoad}
+                        handleGoogleSignOutClick={this.handleSignOutClick}
+                        googleUser={this.state.googleUser}
                     />
                     <AppBody
                         user={this.state.user}
                         updateUser={this.updateUser}
                         isLoading={this.state.isLoading}
                     />
-                    <button className='btn waves-effect waves-light indigo white-text' onClick={this.handleClientLoad} type='button'>Link Google Drive</button>
-                    <button className='btn waves-effect waves-light indigo white-text' onClick={this.handleSignOutClick} type='button'>Sign Out Google Drive</button>
                     <button className='btn waves-effect waves-light indigo white-text' onClick={this.listFiles} type='button'>List Files</button>
                     <footer className='section footer-tm left'>
                         <p>Constructapedia &copy; &trade; 2020</p>
