@@ -23,23 +23,25 @@ function NewProject(props) {
                             importedPlan: ${importedPlan}
                             newPlanObj: ${newPlanObj}`);
         for (let key in importedPlan) {
-          if (importedPlan.hasOwnProperty(key)) {
-            const object = importedPlan[key];
-            for (let objKey in object) {
-              object[objKey].parent = newPlanId;
+            if (importedPlan.hasOwnProperty(key)) {
+                const object = importedPlan[key];
+                if (key === 'checks' || key === 'sub_plans') {
+                    for (let objKey in object) {
+                        object[objKey].parent = newPlanId;
+                    }
+                }
             }
-          }
         }
         const updatedPlanObj = importedPlan;
         console.log(updatedPlanObj);
         const response = await props.savePlanChanges(newPlanId, updatedPlanObj);
         console.log(response);
         if (response === 1) {
-          props.handleMainAppView('ProjectDetails');
+            props.handleMainAppView('ProjectDetails');
         }
       }
     } else {
-      alert('Enter a title and/or search term');
+        alert('Enter a title and/or search term');
     }
   }
 

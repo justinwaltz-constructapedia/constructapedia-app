@@ -216,6 +216,11 @@ function SimpleCheckboxSection(props) {
                     {props.listTitle}{' '}
                 </li>
                 <li className='collection-item'>{checkboxElements}</li>
+                {(props.import_url) &&
+                    <li className='collection-item'>
+                        Imported From:
+                        <div className="truncate">{props.import_url}</div>
+                    </li>}
             </ul>
         </div>
     );

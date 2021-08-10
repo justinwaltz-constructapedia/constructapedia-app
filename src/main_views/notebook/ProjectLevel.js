@@ -1,14 +1,17 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import M from 'materialize-css';
 import 'materialize-css/dist/css/materialize.min.css';
 import SimpleCheckboxSection from './SimpleCheckboxSection.js';
-import NotesSection from './NotesSection.js';
+// import NotesSection from './NotesSection.js';
 import ProjectStepsSection from './ProjectStepsSection.js';
 import UrlLinks from './UrlLinks.js';
 import './ProjectLevel.css';
-import SearchResults from '../SearchResults';
+// import SearchResults from '../SearchResults';
 
 function ProjectLevel(props) {
+    //State Hooks
+    const [newBookmarkValue, setNewBookmarkValue] = useState("");
+    const [newBookmarkTitleValue, setNewBookmarkTitleValue] = useState("");
     //Ref hook for the substep tabs directly under the project
     const substepTabsUl = useRef(null);
     const collapsibleProject = useRef(null);
@@ -76,20 +79,20 @@ function ProjectLevel(props) {
         }
     }
 
-    function updateNotes(isNewNote, newNoteObj) {
-        let updatedNotes;
-        if (isNewNote) {
-            updatedNotes = [].concat(
-                props.userPlans[props.selectedPlanIndex].notes
-            );
-            updatedNotes.push(newNoteObj);
-        } else {
-            updatedNotes = newNoteObj;
-        }
-        props.savePlanChanges(props.userPlans[props.selectedPlanIndex].id, {
-            notes: updatedNotes,
-        });
-    }
+    // function updateNotes(isNewNote, newNoteObj) {
+    //     let updatedNotes;
+    //     if (isNewNote) {
+    //         updatedNotes = [].concat(
+    //             props.userPlans[props.selectedPlanIndex].notes
+    //         );
+    //         updatedNotes.push(newNoteObj);
+    //     } else {
+    //         updatedNotes = newNoteObj;
+    //     }
+    //     props.savePlanChanges(props.userPlans[props.selectedPlanIndex].id, {
+    //         notes: updatedNotes,
+    //     });
+    // }
 
     function updateSubPlan(index, newSubPlanObj) {
         const updatedSubPlans = [].concat(
@@ -100,20 +103,20 @@ function ProjectLevel(props) {
             sub_plans: updatedSubPlans,
         });
     }
-    const videoDisplays = props.userPlans[
-        props.selectedPlanIndex
-    ].video_urls.map((url, i) => {
-        return (
-            <div key={i} className='video-container'>
-                <iframe
-                    title='video1'
-                    src={url}
-                    frameBorder='0'
-                    allowFullScreen
-                ></iframe>
-            </div>
-        );
-    });
+    // const videoDisplays = props.userPlans[
+    //     props.selectedPlanIndex
+    // ].video_urls.map((url, i) => {
+    //     return (
+    //         <div key={i} className='video-container'>
+    //             <iframe
+    //                 title='video1'
+    //                 src={url}
+    //                 frameBorder='0'
+    //                 allowFullScreen
+    //             ></iframe>
+    //         </div>
+    //     );
+    // });
     const checksSections = props.userPlans[props.selectedPlanIndex].checks.map(
         (checkObj, i) => {
             return (
@@ -123,6 +126,7 @@ function ProjectLevel(props) {
                         listType={checkObj.list_type}
                         listTitle={checkObj.title}
                         checklistIndex={i}
+                        import_url={checkObj.import_url}
                         updateChecklist={updateChecklist}
                         deleteItemInPlan={props.deleteItemInPlan}
                     />
@@ -130,9 +134,23 @@ function ProjectLevel(props) {
             );
         }
     );
-    // const createSubstepTabs = () => {
-    //
-    // }
+    const addBookmark = () => {
+        const newBookmark = {
+            url:newBookmarkValue,
+            title:newBookmarkTitleValue
+        }
+        let updatedBookmarksObj;
+        if (props.userPlans[props.selectedPlanIndex].bookmarks) {
+            const updatedBookmarksList = [newBookmark].concat(props.userPlans[props.selectedPlanIndex].bookmarks)
+            updatedBookmarksObj = {bookmarks: updatedBookmarksList}
+        } else {
+            updatedBookmarksObj = {bookmarks: [newBookmark]}
+        }
+        console.log(props.userPlans[props.selectedPlanIndex].id, updatedBookmarksObj);
+        props.savePlanChanges(props.userPlans[props.selectedPlanIndex].id, updatedBookmarksObj)
+        setNewBookmarkValue("");
+        setNewBookmarkTitleValue("");
+    }
     const substepTabs = props.userPlans[props.selectedPlanIndex].sub_plans.map(
         (subPlan, i) => {
             return (
@@ -207,7 +225,7 @@ function ProjectLevel(props) {
                             }
                         />
                     </div>
-                    <li className=''>
+                    <li className='active'>
                         <div className='collapsible-header indigo-text'>
                             <i className='material-icons center indigo-text'>
                                 bookmark
@@ -231,25 +249,71 @@ function ProjectLevel(props) {
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <tr>
-                                                        <td className='red-text'>
-                                                            Please activate me
-                                                        </td>
-                                                        <td className='red-text'>
-                                                            {' '}
-                                                            www.JustinYourMyHero.com
-                                                        </td>
-                                                        <td>
-                                                            <a
-                                                                href='#!'
-                                                                className='right btn red accent-4'
-                                                            >
-                                                                <i className=' material-icons'>
-                                                                    border_color
-                                                                </i>
-                                                            </a>
-                                                        </td>
-                                                    </tr>
+                                                    {props.userPlans[props.selectedPlanIndex].bookmarks.length > 0 &&
+                                                        props.userPlans[props.selectedPlanIndex].bookmarks.map((bookmark, i) => {
+                                                            return(
+                                                                <tr key={bookmark.title + i}>
+                                                                    <td className='red-text'>
+                                                                        <p>{bookmark.title}</p>
+                                                                    </td>
+                                                                    <td className='red-text'>
+                                                                        <a href={"http://" + bookmark.url} target="_blank" className="truncate" rel="noreferrer">{bookmark.url}</a>
+                                                                    </td>
+                                                                    <td>
+                                                                        <a
+                                                                            href='#!'
+                                                                            className='right btn red accent-4'
+                                                                        >
+                                                                            <i className=' material-icons'>
+                                                                                border_color
+                                                                            </i>
+                                                                        </a>
+                                                                    </td>
+                                                                </tr>
+                                                            )
+                                                        })
+                                                        }
+                                                        <tr>
+                                                            <td className='red-text'>
+                                                                <button className="right btn indigo accent-4" onClick={addBookmark}>
+                                                                    <i className='material-icons'>add</i>
+                                                                </button>
+                                                            </td>
+                                                            <td>
+                                                                <div className="input-field col s6">
+                                                                    <input
+                                                                        placeholder="New Bookmark URL"
+                                                                        id="add-bookmark-url"
+                                                                        type="text"
+                                                                        className="validate"
+                                                                        value={newBookmarkValue}
+                                                                        onChange={(e)=>setNewBookmarkValue(e.target.value)}
+                                                                        onKeyDown={(e) => {
+                                                                            if (e.keyCode === 13) {
+                                                                                addBookmark();
+                                                                            }
+                                                                        }}
+                                                                    />
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <div className="input-field col s6">
+                                                                    <input
+                                                                        placeholder="New Bookmark Name"
+                                                                        id="add-bookmark-name"
+                                                                        type="text"
+                                                                        className="validate"
+                                                                        value={newBookmarkTitleValue}
+                                                                        onChange={(e)=>setNewBookmarkTitleValue(e.target.value)}
+                                                                        onKeyDown={(e) => {
+                                                                            if (e.keyCode === 13) {
+                                                                                addBookmark();
+                                                                            }
+                                                                        }}
+                                                                    />
+                                                                </div>
+                                                            </td>
+                                                        </tr>
                                                 </tbody>
                                             </table>
                                         </div>

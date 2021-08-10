@@ -186,9 +186,6 @@ function ProjectDetails(props) {
                             <ProjectLevel
                                 userPlans={props.userPlans}
                                 selectedPlanIndex={props.selectedPlanIndex}
-                                changeOrUpdatePlanDraft={
-                                    props.changeOrUpdatePlanDraft
-                                }
                                 savePlanChanges={props.savePlanChanges}
                                 deleteItemInPlan={deleteItemInPlan}
                                 reload={reload}

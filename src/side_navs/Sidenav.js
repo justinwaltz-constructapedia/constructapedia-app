@@ -10,7 +10,13 @@ function Sidenav(props) {
     return (
         <div>
             {(props.isLoggedIn)
-                ? <UserAccount user={props.user} handleLogout={props.handleLogout}/>
+                ? <UserAccount
+                    user={props.user}
+                    handleLogout={props.handleLogout}
+                    handleClientLoad={props.handleClientLoad}
+                    handleGoogleSignOutClick={props.handleGoogleSignOutClick}
+                    googleUser={props.googleUser}
+                    />
                 : <Authorization handleLogin={props.handleLogin} colorTheme={props.colorTheme}/>}
         </div>
     )
