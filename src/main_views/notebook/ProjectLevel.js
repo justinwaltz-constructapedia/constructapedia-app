@@ -261,8 +261,10 @@ function ProjectLevel(props) {
                             <section>
                                 <div className='row'>
                                     <div className='col s12'>
-                                        <div className=''>
-                                            <span className=''>URL List</span>
+                                        <div className='indigo-text'>
+                                            <span className=''>
+                                                <b>URL List</b>
+                                            </span>
                                             <table className='striped'>
                                                 <thead>
                                                     <tr>

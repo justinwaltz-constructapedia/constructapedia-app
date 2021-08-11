@@ -137,7 +137,7 @@ function ProjectDetails(props) {
         console.log(addModalInstance);
         switch (e.target.id) {
             case 'add-substep-btn':
-                setAddModalTitle('Add New Substep');
+                setAddModalTitle('Add New WorkStep');
                 setAddModalType('substep');
                 break;
             case 'add-checklist-btn':
@@ -214,7 +214,6 @@ function ProjectDetails(props) {
                     <div className='modal-content'>
                         <h4>{addModalTitle}</h4>
                         <div className='input-field'>
-                            np
                             <input
                                 type='text'
                                 placeholder='Title'
