@@ -13,6 +13,7 @@ function NewProject(props) {
       } else {
         newPlanObj.title = importedPlan.title;
       }
+      newPlanObj.bookmarks = importedPlan.bookmarks;
       const newPlanId = await props.addUserPlan(newPlanObj);
       console.log(`newPlanId: ${newPlanId}
                         importedPlan: ${importedPlan}
