@@ -161,7 +161,7 @@ function SimpleCheckboxSection(props) {
     return (
         <div className='col s12 l6'>
             <div className='row valign-wrapper'>
-                <div className='col s8'>
+                <div className=''>
                     <div className='input-field inline'>
                         <input
                             id={
@@ -189,7 +189,7 @@ function SimpleCheckboxSection(props) {
                             '-btn-' +
                             props.checklistIndex
                         }
-                        className='btn-floating waves-effect waves-light indigo'
+                        className='btn-small waves-effect waves-light indigo'
                         type='button'
                         onClick={(e) => addNewChecklistItem(e)}
                     >
@@ -216,11 +216,12 @@ function SimpleCheckboxSection(props) {
                     {props.listTitle}{' '}
                 </li>
                 <li className='collection-item'>{checkboxElements}</li>
-                {(props.import_url) &&
+                {props.import_url && (
                     <li className='collection-item'>
                         Imported From:
-                        <div className="truncate">{props.import_url}</div>
-                    </li>}
+                        <div className='truncate'>{props.import_url}</div>
+                    </li>
+                )}
             </ul>
         </div>
     );
