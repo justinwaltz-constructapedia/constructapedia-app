@@ -3,7 +3,7 @@ import React from 'react';
 import './Custom.css';
 
 function Header(props) {
-//Return View for Header
+    //Return View for Header
     //Includes Home and Side nav button with account options
     return (
         <header>
@@ -22,9 +22,11 @@ function Header(props) {
                             <a
                                 href='#slide-out'
                                 data-target='slide-out'
-                                className='sidenav-trigger white-text show-on-large indigo-text text-darken-3'
+                                className='sidenav-trigger white-text indigo-text text-darken-3'
                             >
-                                <i className='material-icons header-icon'>more_horiz</i>
+                                <i className='material-icons header-icon'>
+                                    more_horiz
+                                </i>
                             </a>
                         </div>
                     </div>

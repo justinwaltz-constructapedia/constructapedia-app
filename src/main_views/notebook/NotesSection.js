@@ -89,24 +89,26 @@ function NotesSection(props) {
     const noteElements = makeListOfNoteElements();
 
     return (
-        <section id='input-notes' className='section section-note center row'>
+        <section id='input-notes' className='section section-note row'>
             <div className='row'>
-                <div className='col s12 left-align'>
-                    <input
-                        type='text'
-                        className='validate'
-                        value={newNoteValue}
-                        onChange={(e) => setNewNoteValue(e.target.value)}
-                        onKeyDown={(e) => {
-                            if (e.keyCode === 13) {
-                                saveNewNote();
-                            }
-                        }}
-                        placeholder={'Add Notes'}
-                    />
+                <div className='col s12'>
+                    <div className='input-field inline'>
+                        <input
+                            type='text'
+                            className='validate'
+                            value={newNoteValue}
+                            onChange={(e) => setNewNoteValue(e.target.value)}
+                            onKeyDown={(e) => {
+                                if (e.keyCode === 13) {
+                                    saveNewNote();
+                                }
+                            }}
+                            placeholder={'Quick Note'}
+                        />
+                    </div>
                     <button
                         id={'add-note-btn-' + props.selectedPlanId}
-                        className='btn-floating left button-margin waves-effect waves-light indigo'
+                        className='btn-small waves-effect waves-light indigo'
                         type='button'
                         onClick={saveNewNote}
                     >
@@ -139,7 +141,9 @@ function Note(props) {
                         props.deleteItemInPlan('notes', props.noteIndex)
                     }
                 >
-                    <i className='material-icons'>delete_forever</i>
+                    <i className='material-icons indigo-text text-lighten-5'>
+                        close
+                    </i>
                 </button>
             </div>
         </div>
