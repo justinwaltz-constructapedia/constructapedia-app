@@ -163,24 +163,22 @@ function ResultListItem(props) {
     //NOTE: Needs to handle adding to existing plan if SearchResults was rendered from PlanDetails
     async function scrapePage(url) {
         const scrapedData = await scrapper(url);
+        console.log(scrapedData);
         props.handleScrapedData({
             title: scrapedData.title,
             checks: [
                 {
-                    title: 'Imported Materials',
-                    list_type: 'materials',
+                    title:"Imported Materials",
+                    list_type: "materials",
                     import_url: url,
-                    list: scrapedData.Materials.reduce(
-                        (materials, material) => {
-                            materials.push({ text_value: material });
-                            return materials;
-                        },
-                        []
-                    ),
-                },
+                    list: scrapedData.Materials.reduce((materials, material) => {
+                        materials.push({text_value:material})
+                        return materials;
+                    },[])
+                }
             ],
-            bookmarks: [url],
-        });
+            bookmarks: [{url:url, title: "Initial Import" }]
+        })
     }
     //Return view of this component:
     //Includes result info display, view and scraping button functionality

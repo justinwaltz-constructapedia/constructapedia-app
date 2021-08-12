@@ -5,16 +5,17 @@ import SearchResults from './SearchResults.js';
 function NewProject(props) {
     const [planTitleValue, setPlanTitleValue] = useState('');
 
-    async function createNewPlan(importedPlan) {
-        let newPlanObj = {};
-        if (importedPlan || planTitleValue.trim().length > 0) {
-            if (planTitleValue.trim().length > 0) {
-                newPlanObj.title = planTitleValue;
-            } else {
-                newPlanObj.title = importedPlan.title;
-            }
-            const newPlanId = await props.addUserPlan(newPlanObj);
-            console.log(`newPlanId: ${newPlanId}
+  async function createNewPlan(importedPlan) {
+    let newPlanObj = {};
+    if (importedPlan || planTitleValue.trim().length > 0) {
+        if (planTitleValue.trim().length > 0) {
+            newPlanObj.title = planTitleValue;
+        } else {
+            newPlanObj.title = importedPlan.title;
+        }
+        newPlanObj.bookmarks = importedPlan.bookmarks;
+        const newPlanId = await props.addUserPlan(newPlanObj);
+        console.log(`newPlanId: ${newPlanId}
                         importedPlan: ${importedPlan}
                         newPlanObj: ${newPlanObj}`);
             if (importedPlan) {
