@@ -171,13 +171,22 @@ function ResultListItem(props) {
                     title:"Imported Materials",
                     list_type: "materials",
                     import_url: url,
-                    list: scrapedData.Materials.reduce((materials, material) => {
-                        materials.push({text_value:material})
+                    list: scrapedData.Materials.reduce((materials,material) => {
+                        if (material.quantity) {
+                            material.quantity = parseFloat(material.quantity)
+                        }
+                        materials.push(material);
                         return materials;
                     },[])
+                },
+                {
+                    title:"Imported Tools",
+                    list_type: "tools",
+                    import_url: url,
+                    list: scrapedData.Tools
                 }
             ],
-            bookmarks: [{url:url, title: "Initial Import" }]
+            bookmarks: [{url:url, title: "Imported Data" }]
         })
     }
     //Return view of this component:

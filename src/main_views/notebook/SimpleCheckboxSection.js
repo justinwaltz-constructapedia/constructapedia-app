@@ -159,7 +159,7 @@ function SimpleCheckboxSection(props) {
     const checkboxElements = makeListOfCheckboxElements(props.checklist);
 
     return (
-        <div className='col s12 l6'>
+        <div className='col s11'>
             <div className='row valign-wrapper'>
                 <div className=''>
                     <div className='input-field inline'>
@@ -234,7 +234,7 @@ function CheckListItem(props) {
                 key={props.listType + props.itemIndex}
                 className='row valign-wrapper'
             >
-                <div className='col s12 left-align'>
+                <div className='col s8 left-align'>
                     <label className='left-align active'>
                         <input
                             type='checkbox'
@@ -247,6 +247,20 @@ function CheckListItem(props) {
                         />
                         <span>{props.listItem.text_value}</span>
                     </label>
+                </div>
+                <div className='col s2'>
+                    <div className='input-field no-margin no-padding'>
+                        <input
+                                id={'quantity' + props.itemIndex}
+                                type='number'
+                                className='validate no-margin no-padding'
+                                value={props.listItem.quantity}
+                                placeholder='Need'
+                                onChange={(e) => props.handleInputChange(e, props.itemIndex)}
+                        />
+                    </div>
+                </div>
+                <div className='col s2'>
                     <button
                         className='btn-flat right waves-effect waves-light grey-text text-lighten-3'
                         type='button'
@@ -294,18 +308,7 @@ function CheckListItem(props) {
 }
 
 export default SimpleCheckboxSection;
-/*<div className='col s3'>
-  <div className='input-field no-margin no-padding'>
-    <input
-      id={'quantity' + i}
-      type='number'
-      className='validate no-margin no-padding'
-      value={props.listItem.quantity}
-      placeholder='Need'
-      onChange={(e) => handleInputChange(e, i)}
-    />
-  </div>
-</div>
+/*
 <div className='col s4'>
   <div className='input-field no-margin no-padding'>
     <input
