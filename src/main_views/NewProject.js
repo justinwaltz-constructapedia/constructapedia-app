@@ -24,12 +24,10 @@ function NewProject(props) {
                             importedPlan: ${importedPlan}
                             newPlanObj: ${newPlanObj}`);
                 for (let key in importedPlan) {
-                    if (importedPlan.hasOwnProperty(key)) {
-                        const object = importedPlan[key];
-                        if (key === 'checks' || key === 'sub_plans') {
-                            for (let objKey in object) {
-                                object[objKey].parent = newPlanId;
-                            }
+                    const object = importedPlan[key];
+                    if (key === 'checks' || key === 'sub_plans') {
+                        for (let objKey in object) {
+                            object[objKey].parent = newPlanId;
                         }
                     }
                 }

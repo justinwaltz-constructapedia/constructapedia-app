@@ -198,15 +198,15 @@ class App extends React.Component {
                         updateUser={this.updateUser}
                         isLoading={this.state.isLoading}
                     />
-                    <button
-                        className='btn waves-effect waves-light indigo white-text'
-                        onClick={this.listFiles}
-                        type='button'
-                    >
-                        List Files
-                    </button>
                     <footer className='section footer-tm left'>
                         <p>Constructapedia &copy; &trade; 2020</p>
+                        {/*<button
+                            className='btn waves-effect waves-light indigo white-text'
+                            onClick={this.listFiles}
+                            type='button'
+                        >
+                            List Files
+                        </button>*/}
                     </footer>
                 </div>
             );

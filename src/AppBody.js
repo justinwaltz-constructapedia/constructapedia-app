@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 //Import Project Components
 import HomePage from './main_views/HomePage.js';
 import SearchResults from './main_views/SearchResults.js';
-import ProjectDetails from './main_views/ProjectDetails.js';
+import ProjectLevel from './main_views/ProjectLevel.js';
 import NewProject from './main_views/NewProject.js';
 //Import Functions
 import {getUserPlans, putPlanUpdate, deletePlan, postPlan} from './api/projectsApi';
@@ -16,7 +16,6 @@ function AppBody(props) {
     const [mainAppView, setMainAppView] = useState('HomePage');
     const [userPlans, setUserPlans] = useState([]);
     const [selectedPlanIndex, setSelectedPlanIndex] = useState(null);
-
 //Effect Hooks
     //Gets user plans only on Mount
     useEffect(() => {
@@ -161,7 +160,7 @@ function AppBody(props) {
                 />
             )}
             {mainAppView === 'ProjectDetails' && (
-                <ProjectDetails
+                <ProjectLevel
                     userPlans={userPlans}
                     selectedPlanIndex={selectedPlanIndex}
                     updateSelectedPlan={updateSelectedPlan}
@@ -169,6 +168,7 @@ function AppBody(props) {
                     removeUserPlan={removeUserPlan}
                     savePlanChanges={savePlanChanges}
                     handleMainAppView={handleMainAppView}
+                    plan={userPlans[selectedPlanIndex]}
                 />
             )}
             {mainAppView === 'SearchResults' && (

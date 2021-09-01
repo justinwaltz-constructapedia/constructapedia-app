@@ -27,10 +27,7 @@ function ProjectStepsSection(props) {
                 <button
                     className='btn-flat right waves-effect waves-light grey-text text-lighten-3'
                     type='button'
-                    name='action'
-                    onClick={() =>
-                        props.deleteItemInPlan('sub_plans', props.subPlanIndex)
-                    }
+                    onClick={() => props.deleteItemInPlan('sub_plans', props.subPlanIndex)}
                 >
                     <i className='material-icons right'>delete_forever</i>
                 </button>
