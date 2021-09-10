@@ -1,8 +1,10 @@
 //Import React and hooks used
-import React, { useEffect, useRef, useReducer } from 'react';
+import React, { useEffect, useRef, useReducer, useContext } from 'react';
 //Import Materialize functionality
 import M from 'materialize-css';
 import 'materialize-css/dist/css/materialize.min.css';
+//Import for useContext
+import {PlanContext} from '../PlanContext.js'
 //Import Project Components
 import SimpleCheckboxSection from './notebook/SimpleCheckboxSection.js';
 import NotesSection from './notebook/NotesSection.js';
@@ -14,75 +16,45 @@ import PlanDetailsMenu from './notebook/PlanDetailsMenu.js';
 //Import Styles
 import './ProjectLevel.css';
 //Import api functions for updating database
-import {putPlanUpdate} from '../api/projectsApi';
+// import {putPlanUpdate} from '../api/projectsApi';
 
-function init(initialPlan) {
-    return {
-        plan: initialPlan,
-        newBookmarkValue: '',
-        newBookmarkTitleValue: '',
-        addModalHeader: '',
-        addModalType: '',
-        isSaving: false,
-        error: ''
-    }
-}
 function reducer (state, action) {
     switch (action.type) {
-        case 'saving':
-            return {
-                ...state,
-                error: '',
-                isSaving: true
-            }
         case 'field':
             return {
                 ...state,
                 [action.field]: action.payload
             };
-        case 'addItem':
-            return {
-                ...state,
-                plan: {
-                    ...state.plan,
-                    [action.field]: action.payload[action.field]
-                    //[action.field]: state.plan[action.field].push(action.payload)
-                }
-            }
-        case 'delete':
-            return {
-                ...state,
-                plan:{
-                    ...state.plan,
-                    [action.field]: state.plan[action.field].filter((_, index) => index !== action.payload)
-                }
-            }
-        case 'error':
-            return {
-                ...state,
-                error: action.payload,
-                isSaving: false,
-            }
-
         default:
             return state;
     }
 }
 
 function ProjectLevel(props) {
+    //useContext hook
+    const [contextState, savePlanChanges, addUserPlan, removeUserPlan] = useContext(PlanContext);
     //Reducer Hook
-    const [state, dispatch] = useReducer(reducer, props.plan, init)
+    const initialState = {
+        newBookmarkValue: '',
+        newBookmarkTitleValue: '',
+        addModalHeader: '',
+        addModalType: '',
+    }
+    const [state, dispatch] = useReducer(reducer, initialState)
     //Ref Hooks for Materialize functionality
         //Ref hook for the substep tabs directly under the project
     const substepTabsUl = useRef(null);
     const collapsibleProject = useRef(null);
     const addModal = useRef(null);
-    //Effect hooks
+    /**
+     * Effect hooks
+     *
+     */
         //Initialze Materialize collapsible for main plan level
     useEffect(() => {
         const collapsibleOptions = { accordion: false };
         M.Collapsible.init(collapsibleProject.current, collapsibleOptions);
-    },[state.plan]);
+    },[contextState.plans]);
         //Hook for intializing the substep tab functionality using Materialize
     useEffect(() => {
         // const tabsOptions = {
@@ -90,7 +62,7 @@ function ProjectLevel(props) {
         // };
         // , tabsOptions
         M.Tabs.init(substepTabsUl.current);
-    }, [state.plan]);
+    }, []);
         //Intitialzes Materialize modal; Runs on initial render only
     useEffect(() => {
         const addModalOptions = {
@@ -161,19 +133,17 @@ function ProjectLevel(props) {
             }
             console.log(planId, updatedFieldObj);
             try {
-                props.savePlanChanges(planId, updatedFieldObj);
-                //await putPlanUpdate(state.plan.id, updatedFieldObj)
-                //dispatch({type:'addItem', field: itemFieldName, payload: updatedFieldObj})
+                savePlanChanges(planId, updatedFieldObj);
             } catch (error) {
                 dispatch({type: 'error', payload: error})
             }
-            props.savePlanChanges(planId, updatedFieldObj);
+            savePlanChanges(planId, updatedFieldObj);
         }
     }
     function updateChecklist(checklistIndex, action, itemArr, itemIndex) {
         //NOTE: Change this to a reduce function in the switch?
         const currentChecks = [].concat(
-            props.userPlans[props.selectedPlanIndex].checks
+            contextState.plans[props.selectedPlanIndex].checks
         );
         console.log(checklistIndex, action, itemArr, itemIndex);
         console.log(currentChecks);
@@ -194,8 +164,8 @@ function ProjectLevel(props) {
                     []
                 );
                 console.log(newChecks);
-                props.savePlanChanges(
-                    props.userPlans[props.selectedPlanIndex].id,
+                savePlanChanges(
+                    contextState.plans[props.selectedPlanIndex].id,
                     {
                         checks: newChecks,
                     }
@@ -203,8 +173,8 @@ function ProjectLevel(props) {
                 break;
             case 'updateItem':
                 currentChecks[checklistIndex].list = itemArr;
-                props.savePlanChanges(
-                    props.userPlans[props.selectedPlanIndex].id,
+                savePlanChanges(
+                    contextState.plans[props.selectedPlanIndex].id,
                     {
                         checks: currentChecks,
                     }
@@ -218,29 +188,29 @@ function ProjectLevel(props) {
         let updatedNotes;
         if (isNewNote) {
             updatedNotes = [].concat(
-                props.userPlans[props.selectedPlanIndex].notes
+                contextState.plans[props.selectedPlanIndex].notes
             );
             updatedNotes.push(newNoteObj);
         } else {
             updatedNotes = newNoteObj;
         }
-        props.savePlanChanges(props.userPlans[props.selectedPlanIndex].id, {
+        savePlanChanges(contextState.plans[props.selectedPlanIndex].id, {
             notes: updatedNotes,
         });
     }
 
     function updateSubPlan(index, newSubPlanObj) {
         const updatedSubPlans = [].concat(
-            props.userPlans[props.selectedPlanIndex].sub_plans
+            contextState.plans[props.selectedPlanIndex].sub_plans
         );
         updatedSubPlans[index] = newSubPlanObj;
-        props.savePlanChanges(props.userPlans[props.selectedPlanIndex].id, {
+        savePlanChanges(contextState.plans[props.selectedPlanIndex].id, {
             sub_plans: updatedSubPlans,
         });
     }
     //Delete function for fields directly under a plan object: sub_plans, notes, checks
     async function deleteItemInPlan(itemFieldName, itemIndex) {
-        const currentPlan = state.plan;
+        const currentPlan = contextState.plans[props.selectedPlanIndex];
         const currentPlanList = [].concat(currentPlan[itemFieldName])
         const newItemFieldList = currentPlanList.reduce(
             (itemFieldList, item, i) => {
@@ -256,10 +226,10 @@ function ProjectLevel(props) {
         console.log(updateObj);
         dispatch({type: 'saving'})
         try {
-            await putPlanUpdate(state.plan.id, updateObj)
-            dispatch({type:'delete', field: itemFieldName, payload: itemIndex})
+            await savePlanChanges(currentPlanList.id, updateObj)
+
         } catch (error) {
-            dispatch({type: 'error', payload: error})
+            console.log(error);
         }
         //props.savePlanChanges(currentPlan.id, updateObj);
     }
@@ -270,27 +240,27 @@ function ProjectLevel(props) {
             title: state.newBookmarkTitleValue,
         };
         let updatedBookmarksObj;
-        if (props.userPlans[props.selectedPlanIndex].bookmarks) {
+        if (contextState.plans[props.selectedPlanIndex].bookmarks) {
             const updatedBookmarksList = [newBookmark].concat(
-                props.userPlans[props.selectedPlanIndex].bookmarks
+                contextState.plans[props.selectedPlanIndex].bookmarks
             );
             updatedBookmarksObj = { bookmarks: updatedBookmarksList };
         } else {
             updatedBookmarksObj = { bookmarks: [newBookmark] };
         }
         console.log(
-            props.userPlans[props.selectedPlanIndex].id,
+            contextState.plans[props.selectedPlanIndex].id,
             updatedBookmarksObj
         );
         props.savePlanChanges(
-            props.userPlans[props.selectedPlanIndex].id,
+            contextState.plans[props.selectedPlanIndex].id,
             updatedBookmarksObj
         );
         // setNewBookmarkValue('');
         // setNewBookmarkTitleValue('');
     };
 
-    const checksSections = props.userPlans[props.selectedPlanIndex].checks.map(
+    const checksSections = contextState.plans[props.selectedPlanIndex].checks.map(
         (checkObj, i) => {
             return (
                 <div key={checkObj.title + i} className='col s12 m6'>
@@ -309,7 +279,7 @@ function ProjectLevel(props) {
     );
     function makeListOfSubPlanTabElements (arr) {
         return arr.map((subPlan, i) => {
-            if (state.plan) {
+            if (contextState.plans[props.selectedPlanIndex]) {
                 return (
                     <li key={subPlan.id} className='tab col s3'>
                         <a href={'#' + subPlan.id}>{subPlan.title}</a>
@@ -320,11 +290,11 @@ function ProjectLevel(props) {
             }
         });
     }
-    const substepTabs = (state.plan) ? makeListOfSubPlanTabElements(state.plan.sub_plans) : <li>Add step</li>
+    const substepTabs = (contextState.plans[props.selectedPlanIndex]) ? makeListOfSubPlanTabElements(contextState.plans[props.selectedPlanIndex].sub_plans) : <li className='tab col s3'><a href='#no-sub-plans'>Add step</a></li>
 
     function makeListOfSubPlanDisplayElements (arr) {
         return arr.map((subPlan, i) => {
-            if (state.plan) {
+            if (contextState.plans[props.selectedPlanIndex]) {
                 return (
                     <div key={subPlan.title + i} id={subPlan.id}>
                         <div className='row'>
@@ -352,11 +322,11 @@ function ProjectLevel(props) {
                     </div>
                 )
             } else {
-                return null;
+                return <div key='no-sub-plans' id='no-sub-plans'></div>;
             }
         });
     }
-    const substepSections = makeListOfSubPlanDisplayElements(state.plan.sub_plans);
+    const substepSections = makeListOfSubPlanDisplayElements(contextState.plans[props.selectedPlanIndex].sub_plans);
 
     return (
         <div>
@@ -397,12 +367,12 @@ function ProjectLevel(props) {
                                         className='collapsible expandable z-depth-0'
                                     >
                                         <li
-                                            id={props.userPlans[props.selectedPlanIndex].id}
+                                            id={contextState.plans[props.selectedPlanIndex].id}
                                             className='collection-header indigo-text center'
                                         >
                                             <h6>
                                                 <b>
-                                                    {props.userPlans[props.selectedPlanIndex].title}
+                                                    {contextState.plans[props.selectedPlanIndex].title}
                                                 </b>{' '}
                                                 <i className='tiny material-icons red-text text-accent-4'>
                                                     edit
@@ -419,7 +389,7 @@ function ProjectLevel(props) {
                                                 <NotesSection
                                                     updateNotes={updateNotes}
                                                     notes={
-                                                        props.userPlans[props.selectedPlanIndex]
+                                                        contextState.plans[props.selectedPlanIndex]
                                                             .notes
                                                     }
                                                     deleteItemInPlan={deleteItemInPlan}
@@ -428,10 +398,10 @@ function ProjectLevel(props) {
                                         </li>
                                         <div className='active'>
                                             <UrlLinks
-                                                planId={props.userPlans[props.selectedPlanIndex].id}
-                                                savePlanChanges={props.savePlanChanges}
+                                                planId={contextState.plans[props.selectedPlanIndex].id}
+                                                savePlanChanges={savePlanChanges}
                                                 videoUrls={
-                                                    props.userPlans[props.selectedPlanIndex]
+                                                    contextState.plans[props.selectedPlanIndex]
                                                         .video_urls
                                                 }
                                             />
@@ -445,7 +415,7 @@ function ProjectLevel(props) {
                                             </div>
                                             <div className='collapsible-body'>
                                                 <Bookmarks
-                                                    bookmarks = {props.userPlans[props.selectedPlanIndex].bookmarks}
+                                                    bookmarks = {contextState.plans[props.selectedPlanIndex].bookmarks}
                                                     addBookmark = {addBookmark}
                                                 />
                                             </div>
@@ -460,7 +430,7 @@ function ProjectLevel(props) {
                                             <div className='collapsible-body'>
                                                 <section>
                                                     <div className='row'>
-                                                        {props.userPlans[props.selectedPlanIndex]
+                                                        {contextState.plans[props.selectedPlanIndex]
                                                             .checks.length > 0 && checksSections}
                                                     </div>
                                                 </section>
@@ -625,12 +595,12 @@ function ProjectLevel(props) {
                             </div>
                         </div>
                         <PlanDetailsMenu
-                            userPlans={props.userPlans}
+                            userPlans={contextState.plans}
                             selectedPlanIndex={props.selectedPlanIndex}
                             updateSelectedPlan={props.updateSelectedPlan}
-                            addUserPlan={props.addUserPlan}
-                            removeUserPlan={props.removeUserPlan}
-                            savePlanChanges={props.savePlanChanges}
+                            addUserPlan={addUserPlan}
+                            removeUserPlan={removeUserPlan}
+                            savePlanChanges={savePlanChanges}
                             handleMainAppView={props.handleMainAppView}
                             openAddModal={openAddModal}
                         />
@@ -639,15 +609,15 @@ function ProjectLevel(props) {
                         ref={addModal}
                         id={
                             'add-modal' +
-                            props.userPlans[props.selectedPlanIndex].title
+                            contextState.plans[props.selectedPlanIndex].title
                         }
                         className='modal'
                     >
                         <AddModal
                             addModalHeader={state.addModalHeader}
                             addModalType={state.addModalType}
-                            parentValue={props.userPlans[props.selectedPlanIndex].id}
-                            subPlans={props.userPlans[props.selectedPlanIndex].sub_plans}
+                            parentValue={contextState.plans[props.selectedPlanIndex].id}
+                            subPlans={contextState.plans[props.selectedPlanIndex].sub_plans}
                             addNewSection={addNewSection}
                         />
                     </div>
@@ -657,111 +627,3 @@ function ProjectLevel(props) {
 }
 
 export default ProjectLevel;
-// <ul>
-//     <li>
-//       <div className="collapsible-header"><i className="material-icons">filter_drama</i>First</div>
-//       <div className="collapsible-body"><span>Lorem ipsum dolor sit amet.</span></div>
-//     </li>
-//     <li>
-//       <div className="collapsible-header"><i className="material-icons">place</i>Second</div>
-//       <div className="collapsible-body"><span>Lorem ipsum dolor sit amet.</span></div>
-//     </li>
-//     <li>
-//       <div className="collapsible-header"><i className="material-icons">whatshot</i>Third</div>
-//       <div className="collapsible-body"><span>Lorem ipsum dolor sit amet.</span></div>
-//     </li>
-// </ul>
-
-// <td>
-//     <div className='input-field col s6'>
-//         <input
-//             placeholder='New Bookmark Name'
-//             id='add-bookmark-name'
-//             type='text'
-//             className='validate'
-//             value={
-//                 newBookmarkTitleValue
-//             }
-//             onChange={(
-//                 e
-//             ) =>
-//                 setNewBookmarkTitleValue(
-//                     e
-//                         .target
-//                         .value
-//                 )
-//             }
-//             onKeyDown={(
-//                 e
-//             ) => {
-//                 if (
-//                     e.keyCode ===
-//                     13
-//                 ) {
-//                     addBookmark();
-//                 }
-//             }}
-//         />
-//         </div>
-// </td>
-
-// <li className=''>
-//     <div className='collapsible-header indigo-text'>
-//     <i className='material-icons center indigo-text'>
-//     assignment
-//     </i>
-//     <b>Project Tools</b>
-//     </div>
-//     <div className='collapsible-body'>
-//     <section className='section section-content'>
-//     <div className='row'>
-//     <div className='col s12 m6 l8'>
-//     <div className='card-panel'>
-//     <div
-//     id='contentViewer'
-//     className='content-viewer red-text'
-//     >
-//     Content Viewer
-//     {props.userPlans[props.selectedPlanIndex].video_urls
-//         .length > 0 && videoDisplays}
-//         </div>
-//         </div>
-//         </div>
-//
-//         <div className='col s12 m6'>
-//         <div className='card-panel'>
-//         <div className='row center'></div>
-//         </div>
-//         </div>
-//         <div className='col s12 m6'>
-//         <div className='card red-text accent-4 center'>
-//         <i className='material-icons'>
-//         camera
-//         </i>
-//         <p>Attachments(Camera for Phone)</p>
-//         </div>
-//         </div>
-//         <div className='col s12 m6'>
-//         <div className='card center red-text accent-4'>
-//         <i className='material-icons'>
-//         playlist_add_check
-//         </i>
-//         <p>Check List</p>
-//         </div>
-//         </div>
-//         <div className='col s12 m6'>
-//         <div className='card center red-text accent-4'>
-//         <p>Work Steps</p>
-//         </div>
-//         </div>
-//         </div>
-//         </section>
-//         </div>
-//     </li>
-
-// <li>
-// <div className='collapsible-header'>
-// <b>Lessons Learned</b>
-// </div>
-// <div className='collapsible-body'></div>
-// </li>

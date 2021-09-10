@@ -1,7 +1,9 @@
 //Import React
-import React from 'react';
+import React  from 'react';
 //Import google drive api scripts
 import { gapi } from 'gapi-script';
+// Import for useContext
+import {PlanProvider} from './PlanContext.js';
 //Import Project Components
 import Header from './Header.js';
 import Sidenav from './side_navs/Sidenav.js';
@@ -134,7 +136,7 @@ class App extends React.Component {
             })
             .then(
                 () => {
-                    console.log(this.setSigninStatus);
+                    //console.log(this.setSigninStatus);
                     // Listen for sign-in state changes.
                     gapi.auth2
                         .getAuthInstance()
@@ -178,26 +180,28 @@ class App extends React.Component {
         if (isLoggedIn) {
             return (
                 <div>
-                    <Header
-                        isLoggedIn={isLoggedIn}
-                        handleLoginClick={this.handleLogin}
-                        handleLogoutClick={this.handleLogout}
-                        handleLogout={this.handleLogout}
-                    />
-                    <Sidenav
-                        user={this.state.user}
-                        isLoggedIn={isLoggedIn}
-                        handleLogin={this.handleLogin}
-                        handleLogout={this.handleLogout}
-                        handleClientLoad={this.handleClientLoad}
-                        handleGoogleSignOutClick={this.handleSignOutClick}
-                        googleUser={this.state.googleUser}
-                    />
-                    <AppBody
-                        user={this.state.user}
-                        updateUser={this.updateUser}
-                        isLoading={this.state.isLoading}
-                    />
+                    <PlanProvider>
+                        <Header
+                            isLoggedIn={isLoggedIn}
+                            handleLoginClick={this.handleLogin}
+                            handleLogoutClick={this.handleLogout}
+                            handleLogout={this.handleLogout}
+                        />
+                        <Sidenav
+                            user={this.state.user}
+                            isLoggedIn={isLoggedIn}
+                            handleLogin={this.handleLogin}
+                            handleLogout={this.handleLogout}
+                            handleClientLoad={this.handleClientLoad}
+                            handleGoogleSignOutClick={this.handleSignOutClick}
+                            googleUser={this.state.googleUser}
+                        />
+                        <AppBody
+                            user={this.state.user}
+                            updateUser={this.updateUser}
+                            isLoading={this.state.isLoading}
+                        />
+                    </PlanProvider>
                     <footer className='section footer-tm left'>
                         <p>Constructapedia &copy; &trade; 2020</p>
                         {/*<button
