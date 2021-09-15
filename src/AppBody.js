@@ -19,20 +19,20 @@ function AppBody(props) {
 //State Hooks
     const [mainAppView, setMainAppView] = useState('HomePage');
     // const [userPlans, setUserPlans] = useState([]);
-    const [selectedPlanIndex, setSelectedPlanIndex] = useState(null);
+    // const [selectedPlanIndex, setSelectedPlanIndex] = useState(0);
 /**
  * useEffect Hooks
  */
     // Finds and sets selected plan index
-    useEffect(() => {
-        const selectedPlanIndex = contextState.plans.findIndex(
-            (plan) => plan.id === contextState.selectedPlanId
-        );
-        if (selectedPlanIndex >= 0) {
-            setSelectedPlanIndex(selectedPlanIndex);
-            //handleMainAppView('ProjectDetails');
-        }
-    }, [contextState.selectedPlanId, contextState.plans]);
+    // useEffect(() => {
+    //     const selectedPlanIndex = contextState.plans.findIndex(
+    //         (plan) => plan.id === contextState.selectedPlanId
+    //     );
+    //     if (selectedPlanIndex >= 0) {
+    //         setSelectedPlanIndex(selectedPlanIndex);
+    //         // handleMainAppView('ProjectDetails');
+    //     }
+    // }, [contextState.plans]);
 
 //Functions for props to lift state
     //Handling views of child components
@@ -42,8 +42,16 @@ function AppBody(props) {
     // //Changes which of the user's plans are displayed
     function selectPlan(selectedPlanId) {
         if (selectedPlanId !== contextState.selectedPlanId) {
-            contextDispatch({type:'field',field:'selectedPlanId',payload:selectedPlanId});
+            const selectedPlanIndex = contextState.plans.findIndex(
+                (plan) => plan.id === selectedPlanId
+            );
+            if (selectedPlanIndex >= 0) {
+                contextDispatch({type:'field',field:'selectedPlanIndex',payload:selectedPlanIndex});
+                // handleMainAppView('ProjectDetails');
+            }
+            console.log(selectedPlanIndex);
         }
+        handleMainAppView('ProjectDetails')
     }
     function savePlanChanges(planId, planUpdateObj) {
         console.log(planUpdateObj);
@@ -65,7 +73,7 @@ function AppBody(props) {
     function addScrapedDataToPlan (scrapedData) {
         console.log(scrapedData);
         const fieldsToUpdate = Object.keys(scrapedData);
-        const currentPlan = contextState.plans[selectedPlanIndex];
+        const currentPlan = contextState.plans[contextState.selectedPlanIndex];
         const updatedPlanFields = {};
         fieldsToUpdate.forEach((fieldName, i) => {
             console.log(scrapedData[fieldName][0]);
@@ -82,8 +90,8 @@ function AppBody(props) {
                 updatedPlanFields[fieldName] = planField;
             }
         });
-        console.log(contextState.plans[selectedPlanIndex].id, updatedPlanFields);
-        savePlanChanges(contextState.plans[selectedPlanIndex].id, updatedPlanFields);
+        console.log(contextState.plans[contextState.selectedPlanIndex].id, updatedPlanFields);
+        savePlanChanges(contextState.plans[contextState.selectedPlanIndex].id, updatedPlanFields);
         handleMainAppView("ProjectDetails");
     }
 //Return view to render based on state of main app view
@@ -91,7 +99,7 @@ function AppBody(props) {
         <main id='main-app-container' className='row'>
             {mainAppView === 'HomePage' && (
                 <HomePage
-                    selectedPlanIndex={selectedPlanIndex}
+                    selectedPlanIndex={contextState.selectedPlanIndex}
                     selectPlan={selectPlan}
                     handleMainAppView={handleMainAppView}
                 />
@@ -105,12 +113,10 @@ function AppBody(props) {
                 />
             )}
             {mainAppView === 'ProjectDetails' && (
-                    <ProjectLevel
-                        selectedPlanIndex={selectedPlanIndex}
-                        handleMainAppView={handleMainAppView}
-                        plan={contextState.plans[selectedPlanIndex]}
-                    />
-
+                <ProjectLevel
+                    handleMainAppView={handleMainAppView}
+                    savePlanChanges={savePlanChanges}
+                />
             )}
             {mainAppView === 'SearchResults' && (
                 <SearchResults

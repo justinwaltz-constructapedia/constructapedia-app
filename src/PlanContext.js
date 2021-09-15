@@ -6,7 +6,7 @@ export const PlanContext = createContext();
 function init() {
     return {
         plans: [],
-        selectedPlanId: null,
+        selectedPlanIndex: null,
         isSaving: false,
         error: ''
     }
