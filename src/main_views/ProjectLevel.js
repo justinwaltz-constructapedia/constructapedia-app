@@ -35,15 +35,15 @@ function ProjectLevel({ handleMainAppView, savePlanChanges }) {
     const [contextState, contextDispatch] = useContext(PlanContext);
     //Reducer Hook
     const initialState = {
-        newBookmarkValue: '',
-        newBookmarkTitleValue: '',
         addModalHeader: '',
         addModalType: '',
+        subPlanSelected: false,
+        selectedSubPlanIndex: -1
     }
     const [state, dispatch] = useReducer(reducer, initialState)
     //Ref Hooks for Materialize functionality
         //Ref hook for the substep tabs directly under the project
-    const substepTabsUl = useRef(null);
+    // const substepTabsUl = useRef(null);
     const collapsibleProject = useRef(null);
     const addModal = useRef(null);
     /**
@@ -56,15 +56,15 @@ function ProjectLevel({ handleMainAppView, savePlanChanges }) {
         M.Collapsible.init(collapsibleProject.current, collapsibleOptions);
     },[]);
         //Hook for intializing the substep tab functionality using Materialize
-    useEffect(() => {
-        // const tabsOptions = {
-        //     swipeable: true,
-        // };
-        // , tabsOptions
-        // if (contextState.plans[contextState.selectedPlanIndex]) {
-            M.Tabs.init(substepTabsUl.current);
-        // }
-    }, []);
+    // useEffect(() => {
+    //     // const tabsOptions = {
+    //     //     swipeable: true,
+    //     // };
+    //     // , tabsOptions
+    //     // if (contextState.plans[contextState.selectedPlanIndex]) {
+    //         M.Tabs.init(substepTabsUl.current);
+    //     // }
+    // }, []);
         //Intitialzes Materialize modal; Runs on initial render only
     useEffect(() => {
         const addModalOptions = {
@@ -142,49 +142,6 @@ function ProjectLevel({ handleMainAppView, savePlanChanges }) {
             savePlanChanges(planId, updatedFieldObj);
         }
     }
-    function updateChecklist(checklistIndex, action, itemArr, itemIndex) {
-        //NOTE: Change this to a reduce function in the switch?
-        const currentChecks = [].concat(
-            contextState.plans[contextState.selectedPlanIndex].checks
-        );
-        console.log(checklistIndex, action, itemArr, itemIndex);
-        console.log(currentChecks);
-        switch (action) {
-            case 'addItem':
-                const newChecks = currentChecks.reduce(
-                    (checks, check, index) => {
-                        if (checklistIndex === index) {
-                            const newCheckList =
-                                currentChecks[checklistIndex].list.concat(
-                                    itemArr
-                                );
-                            check.list = newCheckList;
-                        }
-                        checks.push(check);
-                        return checks;
-                    },
-                    []
-                );
-                console.log(newChecks);
-                savePlanChanges(
-                    contextState.plans[contextState.selectedPlanIndex].id,
-                    {
-                        checks: newChecks,
-                    }
-                );
-                break;
-            case 'updateItem':
-                currentChecks[checklistIndex].list = itemArr;
-                savePlanChanges(
-                    contextState.plans[contextState.selectedPlanIndex].id,
-                    {
-                        checks: currentChecks,
-                    }
-                );
-                break;
-            default:
-        }
-    }
 
     function updateNotes(isNewNote, newNoteObj) {
         let updatedNotes;
@@ -201,6 +158,13 @@ function ProjectLevel({ handleMainAppView, savePlanChanges }) {
         });
     }
 
+    function selectSubPlan (i) {
+        console.log("Sub Plan " + i + " selected");
+    }
+
+    function deleteSubPlan (id) {
+        console.log("Sub Plan " + id + " to be deleted");
+    }
     function updateSubPlan(index, newSubPlanObj) {
         const updatedSubPlans = [].concat(
             contextState.plans[contextState.selectedPlanIndex].sub_plans
@@ -236,31 +200,6 @@ function ProjectLevel({ handleMainAppView, savePlanChanges }) {
         //savePlanChanges(currentPlan.id, updateObj);
     }
 
-    const addBookmark = (url, title) => {
-        const newBookmark = {
-            url: state.newBookmarkValue,
-            title: state.newBookmarkTitleValue,
-        };
-        let updatedBookmarksObj;
-        if (contextState.plans[contextState.selectedPlanIndex].bookmarks) {
-            const updatedBookmarksList = [newBookmark].concat(
-                contextState.plans[contextState.selectedPlanIndex].bookmarks
-            );
-            updatedBookmarksObj = { bookmarks: updatedBookmarksList };
-        } else {
-            updatedBookmarksObj = { bookmarks: [newBookmark] };
-        }
-        console.log(
-            contextState.plans[contextState.selectedPlanIndex].id,
-            updatedBookmarksObj
-        );
-        savePlanChanges(
-            contextState.plans[contextState.selectedPlanIndex].id,
-            updatedBookmarksObj
-        );
-        // setNewBookmarkValue('');
-        // setNewBookmarkTitleValue('');
-    };
     function makeChecksSections (arr) {
         return arr.map(
             (checkObj, i) => {
@@ -272,8 +211,7 @@ function ProjectLevel({ handleMainAppView, savePlanChanges }) {
                             listTitle={checkObj.title}
                             checklistIndex={i}
                             import_url={checkObj.import_url}
-                            updateChecklist={updateChecklist}
-                            deleteItemInPlan={deleteItemInPlan}
+                            savePlanChanges = {savePlanChanges}
                         />
                     </div>
                 );
@@ -281,59 +219,54 @@ function ProjectLevel({ handleMainAppView, savePlanChanges }) {
         );
     }
 
-    function makeListOfSubPlanTabElements (arr) {
-        return arr.map((subPlan, i) => {
-                return (
-                    <li key={subPlan.id} className='tab col s3'>
-                        <a href={'#' + subPlan.id}>{subPlan.title}</a>
-                    </li>
-                )
-        });
-    }
+    // function makeListOfSubPlanTabElements (arr) {
+    //     return arr.map((subPlan, i) => {
+    //             return (
+    //                 <li key={subPlan.id} className='tab col s3'>
+    //                     <a href={'#' + subPlan.id}>{subPlan.title}</a>
+    //                 </li>
+    //             )
+    //     });
+    // }
 
-    function makeListOfSubPlanDisplayElements (arr) {
-        return arr.map((subPlan, i) => {
-                return (
-                    <div key={subPlan.title + i} id={subPlan.id}>
-                        <div className='row'>
-                            <div className='col s12'>
-                                <div className='card indigo white-text'>
-                                    <div className='nav-wrapper '>
-                                        <div className='row'>
-                                            <div className='col s12'>
-                                                <h6 className='center-align'>
-                                                    {subPlan.title}
-                                                </h6>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <ProjectStepsSection
-                                        subPlan={subPlan}
-                                        subPlanIndex={i}
-                                        updateSubPlan={updateSubPlan}
-                                        savePlanChanges={savePlanChanges}
-                                        deleteItemInPlan={deleteItemInPlan}
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                )
-        });
-    }
+    // function makeListOfSubPlanDisplayElements (arr) {
+    //     return arr.map((subPlan, i) => {
+    //             return (
+    //                 <div key={subPlan.title + i} id={subPlan.id}>
+    //                     <div className='row'>
+    //                         <div className='col s12'>
+    //                             <div className='card indigo white-text'>
+    //                                 <div className='nav-wrapper '>
+    //                                     <div className='row'>
+    //                                         <div className='col s12'>
+    //                                             <h6 className='center-align'>
+    //                                                 {subPlan.title}
+    //                                             </h6>
+    //                                         </div>
+    //                                     </div>
+    //                                 </div>
+    //                                 <ProjectStepsSection
+    //                                     subPlan={subPlan}
+    //                                     subPlanIndex={i}
+    //                                     updateSubPlan={updateSubPlan}
+    //                                     savePlanChanges={savePlanChanges}
+    //                                     deleteItemInPlan={deleteItemInPlan}
+    //                                 />
+    //                             </div>
+    //                         </div>
+    //                     </div>
+    //                 </div>
+    //             )
+    //     });
+    // }
 
-    let checksSections, substepTabs, substepSections;
-    if (contextState.plans[contextState.selectedPlanIndex]) {
-        checksSections = makeChecksSections(contextState.plans[contextState.selectedPlanIndex].checks)
-        substepSections = makeListOfSubPlanDisplayElements(contextState.plans[contextState.selectedPlanIndex].sub_plans);
-        substepTabs = (contextState.plans[contextState.selectedPlanIndex].sub_plans.length > 0) ? makeListOfSubPlanTabElements(contextState.plans[contextState.selectedPlanIndex].sub_plans) : <li className='tab col s3'><a href='#no-sub-plans'>Add step</a></li>
-    } else {
-        checksSections = <div></div>
-        substepSections = <div></div>
-        substepTabs = <div></div>
-    }
+    const checksSections = makeChecksSections(contextState.plans[contextState.selectedPlanIndex].checks)
+    // const substepSections = makeListOfSubPlanDisplayElements(contextState.plans[contextState.selectedPlanIndex].sub_plans);
+    // const substepTabs = (contextState.plans[contextState.selectedPlanIndex].sub_plans.length > 0) ? makeListOfSubPlanTabElements(contextState.plans[contextState.selectedPlanIndex].sub_plans) : <li className='tab col s3'><a href='#no-sub-plans'>Add step</a></li>
     if (!contextState.plans[contextState.selectedPlanIndex]) {
         return null
+    } else if (state.subPlanSelected){
+        return <ProjectStepsSection />
     }
     return (
         <div>
@@ -422,8 +355,8 @@ function ProjectLevel({ handleMainAppView, savePlanChanges }) {
                                             </div>
                                             <div className='collapsible-body'>
                                                 <Bookmarks
-                                                    bookmarks = {contextState.plans[contextState.selectedPlanIndex].bookmarks}
-                                                    addBookmark = {addBookmark}
+                                                    bookmarksProp = {contextState.plans[contextState.selectedPlanIndex].bookmarks}
+                                                    savePlanChanges={savePlanChanges}
                                                 />
                                             </div>
                                         </li>
@@ -452,13 +385,36 @@ function ProjectLevel({ handleMainAppView, savePlanChanges }) {
                                             </div>
                                             <div className='collapsible-body'>
                                                 <section>
-                                                <ul
-                                                    ref={substepTabsUl}
-                                                    className='tabs'
-                                                >
-                                                    {substepTabs}
-                                                </ul>
-                                                {substepSections}
+                                                {contextState.plans[contextState.selectedPlanIndex].sub_plans
+                                                    .length > 0 &&
+                                                    contextState.plans[contextState.selectedPlanIndex].sub_plans.map((subPlan, i) => {
+                                                        return (
+                                                            <li key={subPlan.id} className='collection-item'>
+                                                                <div className='indigo-text text-darken-3'>
+                                                                    <a
+                                                                        href='#subplannotebook'
+                                                                        className='waves-effect waves-light btn-flat indigo-text text-darken-3'
+                                                                        onClick={() => selectSubPlan(i)}
+                                                                    >
+                                                                        <h6 className='valign-wrapper'>
+                                                                            {subPlan.title}
+                                                                            <i className='material-icons'>chevron_right</i>
+                                                                        </h6>
+                                                                  </a>
+
+                                                                    <button
+                                                                        className='btn-flat center-align right waves-effect waves-light  hide-on-small-and-down '
+                                                                        onClick={() => {
+                                                                            deleteSubPlan(subPlan.id);
+                                                                        }}
+                                                                    >
+                                                                        <i className='material-icons grey-text text-lighten-4'>delete_forever</i>
+                                                                    </button>
+                                                                </div>
+                                                            </li>
+                                                        );
+                                                    })
+                                                }
                                                 </section>
                                             </div>
                                         </li>

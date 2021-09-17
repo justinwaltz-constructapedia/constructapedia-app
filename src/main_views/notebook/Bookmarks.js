@@ -1,13 +1,18 @@
-import React, { useReducer } from 'react';
-//import SearchBar from '../../utility_components/SearchBar.js';
+import React, { useReducer, useContext } from 'react';
+//Import for useContext
+import {PlanContext} from '../../PlanContext.js'
+
 function init(initialBookmarks) {
+    console.log(initialBookmarks);
     return {
-        plan: initialBookmarks,
+        bookmarks: initialBookmarks,
         newBookmarkValue: '',
         newBookmarkTitleValue: '',
-        addModalHeader: '',
-        addModalType: '',
+        editBookmarkValue: '',
+        editBookmarkTitleValue: '',
         isSaving: false,
+        isEditing: false,
+        indexToEdit: -1,
         error: ''
     }
 }
@@ -19,6 +24,12 @@ function reducer (state, action) {
                 error: '',
                 isSaving: true
             }
+        case 'editing':
+            return {
+                ...state,
+                isEditing: action.payload >= 0,
+                indexToEdit: action.payload
+            }
         case 'field':
             return {
                 ...state,
@@ -27,19 +38,15 @@ function reducer (state, action) {
         case 'addItem':
             return {
                 ...state,
-                plan: {
-                    ...state.plan,
+                bookmarks: {
+                    ...state.bookmarks,
                     [action.field]: action.payload[action.field]
-                    //[action.field]: state.plan[action.field].push(action.payload)
                 }
             }
         case 'delete':
             return {
                 ...state,
-                plan:{
-                    ...state.plan,
-                    [action.field]: state.plan[action.field].filter((_, index) => index !== action.payload)
-                }
+                bookmarks: state.bookmarks.filter((_, index) => index !== action.payload)
             }
         case 'error':
             return {
@@ -52,9 +59,68 @@ function reducer (state, action) {
             return state;
     }
 }
-export default function Bookmarks ({bookmarks, addBookmark}) {
-    //Reducer Hook
-    const [state, dispatch] = useReducer(reducer, bookmarks, init)
+export default function Bookmarks ({bookmarksProp, savePlanChanges}) {
+    /**
+     * useReducer Hook
+     */
+    const [state, dispatch] = useReducer(reducer, bookmarksProp, init);
+    const {bookmarks, newBookmarkValue, newBookmarkTitleValue, editBookmarkValue, editBookmarkTitleValue, isSaving, isEditing, indexToEdit, error} = state;
+    /**
+     * useContext Hook
+     */
+    const [contextState, contextDispatch] = useContext(PlanContext);
+
+    const addBookmark = () => {
+        let bookmarkTitle;
+        if (!newBookmarkTitleValue) {
+            let startIndex = newBookmarkValue.indexOf('.')+1;
+            let endIndex = newBookmarkValue.indexOf('.', startIndex)
+            bookmarkTitle = newBookmarkValue.substring(startIndex, endIndex)
+        } else {
+            bookmarkTitle = newBookmarkTitleValue;
+        }
+        const newBookmark = {
+            url: newBookmarkValue,
+            title: bookmarkTitle,
+        };
+        let updatedBookmarksObj;
+        if (contextState.plans[contextState.selectedPlanIndex].bookmarks) {
+            const updatedBookmarksList = [newBookmark].concat(
+                contextState.plans[contextState.selectedPlanIndex].bookmarks
+            );
+            updatedBookmarksObj = { bookmarks: updatedBookmarksList };
+        } else {
+            updatedBookmarksObj = { bookmarks: [newBookmark] };
+        }
+        console.log(
+            contextState.plans[contextState.selectedPlanIndex].id,
+            updatedBookmarksObj
+        );
+        savePlanChanges(
+            contextState.plans[contextState.selectedPlanIndex].id,
+            updatedBookmarksObj
+        );
+        dispatch({type:'field', field:'newBookmarkValue', payload:''});
+        dispatch({type:'field', field:'newBookmarkTitleValue', payload:''});
+    };
+
+    const updateBookmark = () => {
+        const updatedBookmark = {title: editBookmarkTitleValue, url: editBookmarkValue}
+        const updatedBookmarksArr = [].concat(bookmarks);
+        updatedBookmarksArr[indexToEdit] = updatedBookmark;
+        savePlanChanges(contextState.plans[contextState.selectedPlanIndex].id,{bookmarks:updatedBookmarksArr})
+        dispatch({type:'field', field: 'bookmarks', payload:updatedBookmarksArr})
+        dispatch({type:'field', field:'editBookmarkValue', payload:''});
+        dispatch({type:'field', field:'editBookmarkTitleValue', payload:''});
+        dispatch({type:'editing',payload:-1});
+    }
+
+    const deleteBookmark = (indexToDelete) => {
+        dispatch({type:'delete', payload:indexToDelete})
+        savePlanChanges(contextState.plans[contextState.selectedPlanIndex].id,{bookmarks:bookmarks})
+        dispatch({type:'editing',payload:-1})
+    }
+
     return (
         <section>
             <div className='row'>
@@ -76,45 +142,137 @@ export default function Bookmarks ({bookmarks, addBookmark}) {
                                     bookmarks.map(
                                         (bookmark, i) => {
                                             return (
-                                                <tr
-                                                    key={
-                                                        bookmark.title +
-                                                        i
-                                                    }
-                                                >
-                                                    <td className='red-text'>
-                                                        <p>
-                                                            {
-                                                                bookmark.title
+                                                    <tr
+                                                        key={
+                                                            bookmark.title +
+                                                            i
+                                                        }
+                                                    >
+                                                        <td className='red-text'>
+                                                            {(indexToEdit === i && isEditing)
+                                                                ? <div className='input-field inline'>
+                                                                    <input
+                                                                        placeholder={bookmark.title}
+                                                                        id={'edit-bookmark-url'+i}
+                                                                        type='text'
+                                                                        className='validate'
+                                                                        value={
+                                                                            state.editBookmarkTitleValue
+                                                                        }
+                                                                        onChange={(e) =>
+                                                                            dispatch({
+                                                                                type: 'field',
+                                                                                field: 'editBookmarkTitleValue',
+                                                                                payload: e.currentTarget.value,
+                                                                            })
+                                                                        }
+                                                                    />
+                                                                </div>
+                                                                :
+                                                                <p>{bookmark.title}</p>
                                                             }
-                                                        </p>
-                                                    </td>
-                                                    <td className='red-text'>
-                                                        <a
-                                                            href={
-                                                                'http://' +
-                                                                bookmark.url
+
+                                                        </td>
+                                                        <td className='red-text'>
+                                                            {(indexToEdit === i && isEditing)
+                                                                ? <div className='input-field inline'>
+                                                                    <input
+                                                                        placeholder={bookmark.url}
+                                                                        id={'edit-bookmark'+i}
+                                                                        type='text'
+                                                                        className='validate'
+                                                                        value={
+                                                                            state.editBookmarkValue
+                                                                        }
+                                                                        onChange={(e) =>
+                                                                            dispatch({
+                                                                                type: 'field',
+                                                                                field: 'editBookmarkValue',
+                                                                                payload: e.currentTarget.value,
+                                                                            })
+                                                                        }
+                                                                    />
+                                                                </div>
+                                                                :
+                                                                <a
+                                                                    href={
+                                                                        'http://' +
+                                                                        bookmark.url
+                                                                    }
+                                                                    target='_blank'
+                                                                    className='truncate'
+                                                                    rel='noreferrer'
+                                                                >
+                                                                    {
+                                                                        bookmark.url
+                                                                    }
+                                                                </a>
                                                             }
-                                                            target='_blank'
-                                                            className='truncate'
-                                                            rel='noreferrer'
-                                                        >
-                                                            {
-                                                                bookmark.url
+
+                                                        </td>
+                                                        <td>
+                                                            {(indexToEdit === i && isEditing)
+                                                                ? <div>
+                                                                    <a
+                                                                        href='#!'
+                                                                        className = 'right btn red accent-4'
+                                                                        onClick = {() => {
+                                                                                dispatch({type:'field', field:'editBookmarkTitleValue', payload:''})
+                                                                                dispatch({type:'field', field:'editBookmarkValue', payload:''})
+                                                                                dispatch({type:'editing',payload:-1})
+                                                                                console.log(indexToEdit === i, isEditing);
+                                                                            }
+                                                                        }
+                                                                    >
+                                                                        <i className = 'material-icons'>
+                                                                            close
+                                                                        </i>
+                                                                    </a>
+                                                                    <a
+                                                                        href='#!'
+                                                                        className = 'right btn red accent-4'
+                                                                        onClick = {() => {
+                                                                                dispatch({type:'field', field:'editBookmarkTitleValue', payload:bookmark.title})
+                                                                                dispatch({type:'field', field:'editBookmarkValue', payload:bookmark.url})
+                                                                                dispatch({type:'editing',payload:i})
+                                                                                updateBookmark();
+                                                                            }
+                                                                        }
+                                                                    >
+                                                                        <i className = 'material-icons'>
+                                                                            save
+                                                                        </i>
+                                                                    </a>
+                                                                    <a
+                                                                        href='#!'
+                                                                        className = 'right btn red accent-4'
+                                                                        onClick = {() => {deleteBookmark(i)}
+                                                                        }
+                                                                    >
+                                                                        <i className = 'material-icons'>
+                                                                            delete_forever
+                                                                        </i>
+                                                                    </a>
+                                                                </div>
+                                                                :
+                                                                <a
+                                                                    href='#!'
+                                                                    className = 'right btn red accent-4'
+                                                                    onClick = {() => {
+                                                                            dispatch({type:'field', field:'editBookmarkTitleValue', payload:bookmark.title})
+                                                                            dispatch({type:'field', field:'editBookmarkValue', payload:bookmark.url})
+                                                                            dispatch({type:'editing',payload:i})
+                                                                            console.log(indexToEdit === i, isEditing);
+                                                                        }
+                                                                    }
+                                                                >
+                                                                    <i className = 'material-icons'>
+                                                                        border_color
+                                                                    </i>
+                                                                </a>
                                                             }
-                                                        </a>
-                                                    </td>
-                                                    <td>
-                                                        <a
-                                                            href='#!'
-                                                            className='right btn red accent-4'
-                                                        >
-                                                            <i className=' material-icons'>
-                                                                border_color
-                                                            </i>
-                                                        </a>
-                                                    </td>
-                                                </tr>
+                                                        </td>
+                                                    </tr>
                                             );
                                         }
                                     )}
