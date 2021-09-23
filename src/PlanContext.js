@@ -16,27 +16,27 @@ function reducer (state, action) {
                 ...state,
                 [action.field]: action.payload
             };
-        case 'addItem':
-            return {
-                ...state,
-                selectedSow: {
-                    ...state.selectedSow,
-                    [action.field]: action.payload[action.field]
-                    //[action.field]: state.plan[action.field].push(action.payload)
-                }
-            }
+        // case 'addItem':
+        //     return {
+        //         ...state,
+        //         selectedSow: {
+        //             ...state.selectedSow,
+        //             [action.field]: action.payload[action.field]
+        //             //[action.field]: state.plan[action.field].push(action.payload)
+        //         }
+        //     }
         // case 'selectProject':
         //     return {
         //
         //     }
-        case 'delete':
-            return {
-                ...state,
-                plans:{
-                    ...state.plans,
-                    [action.field]: state.plans[action.field].filter((_, index) => index !== action.payload)
-                }
-            }
+        // case 'delete':
+        //     return {
+        //         ...state,
+        //         plans:{
+        //             ...state.plans,
+        //             [action.field]: state.plans[action.field].filter((_, index) => index !== action.payload)
+        //         }
+        //     }
         case 'error':
             return {
                 ...state,
@@ -53,8 +53,7 @@ export const PlanProvider = (props) => {
     //Reducer Hook
     const initialState = {
         plans: [],
-        selectedSow: null,
-        selectedStepIndex: -1,
+        selectedSowId: null,
         selectedPlanIndex: -1,
         selectedPlanId: null,
         isSaving: false,

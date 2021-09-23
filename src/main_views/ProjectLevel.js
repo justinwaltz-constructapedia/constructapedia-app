@@ -30,11 +30,12 @@ function reducer (state, action) {
     }
 }
 
-function ProjectLevel({ handleMainAppView, savePlanChanges, levelType }) {
+function ProjectLevel({ handleMainAppView, savePlanChanges }) {
     //useContext hook
     const [contextState, contextDispatch] = useContext(PlanContext);
-    const {plans, selectedPlanIndex} = contextState;
+    const {plans, selectedPlanIndex, selectedSowId} = contextState;
     //Reducer Hook
+
     const initialState = {
         addModalHeader: '',
         addModalType: ''
@@ -42,28 +43,16 @@ function ProjectLevel({ handleMainAppView, savePlanChanges, levelType }) {
     const [state, dispatch] = useReducer(reducer, initialState)
     //Ref Hooks for Materialize functionality
         //Ref hook for the substep tabs directly under the project
-    // const substepTabsUl = useRef(null);
     const collapsibleProject = useRef(null);
     const addModal = useRef(null);
     /**
      * Effect hooks
-     *
      */
         //Initialze Materialize collapsible for main plan level
     useEffect(() => {
         const collapsibleOptions = { accordion: false };
         M.Collapsible.init(collapsibleProject.current, collapsibleOptions);
     },[]);
-        //Hook for intializing the substep tab functionality using Materialize
-    // useEffect(() => {
-    //     // const tabsOptions = {
-    //     //     swipeable: true,
-    //     // };
-    //     // , tabsOptions
-    //     // if (contextState.plans[contextState.selectedPlanIndex]) {
-    //         M.Tabs.init(substepTabsUl.current);
-    //     // }
-    // }, []);
         //Intitialzes Materialize modal; Runs on initial render only
     useEffect(() => {
         const addModalOptions = {
@@ -73,6 +62,7 @@ function ProjectLevel({ handleMainAppView, savePlanChanges, levelType }) {
         };
         M.Modal.init(addModal.current, addModalOptions);
     }, []);
+
     //Sets the state and info to render the add modal for the desired section
     function openAddModal(e) {
         console.log(e.currentTarget);
@@ -94,11 +84,15 @@ function ProjectLevel({ handleMainAppView, savePlanChanges, levelType }) {
     }
 
     //Processes and updates the plan field corresponding to the submission on the add modal
-    async function addNewSection(addModalValue, addModalSelectValue, addModalCheckTypeValue) {
-        console.log("addNewSection params: ",addModalValue, addModalSelectValue, addModalCheckTypeValue);
-        const parentId = plans[selectedPlanIndex].id;
+    async function addNewSection(addModalValue, addModalCheckTypeValue) {
+        const parentId = selectedSowId;
+        let sowObj;
+        if (selectedSowId === plans[selectedPlanIndex].id) {
+            sowObj = plans[selectedPlanIndex]
+        } else {
+            sowObj = getSowObj(plans[selectedPlanIndex].sub_plans)
+        }
         let updatedFieldObj;
-        //dispatch({type: 'saving'})
         //Needs to account for being under different levels
         if (addModalValue.trim().length > 0) {
             switch (state.addModalType) {
@@ -113,7 +107,7 @@ function ProjectLevel({ handleMainAppView, savePlanChanges, levelType }) {
                     break;
                 case 'checklist':
                     const newChecks = [
-                        ...plans[selectedPlanIndex].checks,
+                        ...sowObj.checks,
                         {
                             title: addModalValue,
                             list_type: addModalCheckTypeValue,
@@ -121,7 +115,7 @@ function ProjectLevel({ handleMainAppView, savePlanChanges, levelType }) {
                     ];
                     console.log(newChecks);
                     updatedFieldObj = { checks:newChecks  };
-                    savePlanChanges(plans[selectedPlanIndex].id, updatedFieldObj);
+                    savePlanChanges(parentId, updatedFieldObj);
                     break;
                 default:
             }
@@ -151,8 +145,8 @@ function ProjectLevel({ handleMainAppView, savePlanChanges, levelType }) {
         });
     }
 
-    function selectSubPlan (stepIndex) {
-        contextDispatch({type:'field', field:'selectedStepIndex', payload:stepIndex});
+    function selectSubPlan (stepId) {
+        contextDispatch({type:'field', field:'selectedSowId', payload:stepId});
     }
 
     function backButton () {
@@ -200,11 +194,8 @@ function ProjectLevel({ handleMainAppView, savePlanChanges, levelType }) {
                 return (
                     <div key={checkObj.title + i} className='col s12 m6'>
                         <SimpleCheckboxSection
-                            checklist={checkObj.list}
-                            listType={checkObj.list_type}
-                            listTitle={checkObj.title}
-                            checklistIndex={i}
-                            import_url={checkObj.import_url}
+                            sowChecks={arr}
+                            checkIndex={i}
                             savePlanChanges = {savePlanChanges}
                         />
                     </div>
@@ -212,8 +203,273 @@ function ProjectLevel({ handleMainAppView, savePlanChanges, levelType }) {
             }
         );
     }
+    const makeSelectedProjectUl = (sowObj) => {
+        return (
+            <ul
+                ref={collapsibleProject}
+                className='collapsible expandable z-depth-0'
+            >
+                <li
+                    id={sowObj.id}
+                    className='collection-header indigo-text center'
+                >
+                    <h6>
+                        <b>
+                            {sowObj.title}
+                        </b>{' '}
+                        <i className='tiny material-icons red-text text-accent-4'>
+                            edit
+                        </i>
+                    </h6>
+                </li>
+                <li>
+                    <div className='collapsible-header indigo-text'>
+                        <i className='material-icons center indigo-text'>
+                            edit
+                        </i>
+                    </div>
+                    <div className='collapsible-body indigo-text'>
+                        <NotesSection
+                            updateNotes={updateNotes}
+                            notes={sowObj.notes}
+                            deleteItemInPlan={deleteItemInPlan}
+                        />
+                    </div>
+                </li>
+                <div className='active'>
+                    <UrlLinks
+                        planId={sowObj.id}
+                        savePlanChanges={savePlanChanges}
+                        videoUrls={sowObj.video_urls}
+                    />
+                </div>
+                <li className='active'>
+                    <div className='collapsible-header indigo-text'>
+                        <i className='material-icons center indigo-text'>
+                            bookmark
+                        </i>
+                        <b>Bookmarked Sites</b>
+                    </div>
+                    <div className='collapsible-body'>
+                        <Bookmarks
+                            bookmarks = {sowObj.bookmarks}
+                            savePlanChanges={savePlanChanges}
+                        />
+                    </div>
+                </li>
+                <li className='active'>
+                    <div className='collapsible-header indigo-text'>
+                        <i className='material-icons center indigo-text'>
+                            offline_pin
+                        </i>
+                        <b>Checklists</b> (Planning)
+                    </div>
+                    <div className='collapsible-body'>
+                        <section>
+                            <div className='row'>
+                                {makeChecksSections(sowObj.checks)}
+                            </div>
+                        </section>
+                    </div>
+                </li>
+                <li className='active'>
+                    <div className='collapsible-header indigo-text'>
+                        <i className='material-icons center indigo-text'>
+                            traffic
+                        </i>
+                        <b>Worksteps</b> (Execution)
+                    </div>
+                    <div className='collapsible-body'>
+                        <section>
+                        {sowObj.sub_plans.length > 0 &&
+                            sowObj.sub_plans.map((subPlan, i) => {
+                                return (
+                                    <li key={subPlan.id} className='collection-item'>
+                                        <div className='indigo-text text-darken-3'>
+                                            <a
+                                                href='#subplannotebook'
+                                                className='waves-effect waves-light btn-flat indigo-text text-darken-3'
+                                                onClick={() => selectSubPlan(subPlan.id)}
+                                            >
+                                                <h6 className='valign-wrapper'>
+                                                    {subPlan.title}
+                                                    <i className='material-icons'>chevron_right</i>
+                                                </h6>
+                                            </a>
 
-    // const checksSections = makeChecksSections(contextState.selectedSow.checks)
+                                            <button
+                                                className='btn-flat center-align right waves-effect waves-light  hide-on-small-and-down '
+                                                onClick={() => {
+                                                    deleteSubPlan(subPlan.id);
+                                                }}
+                                            >
+                                                <i className='material-icons grey-text text-lighten-4'>delete_forever</i>
+                                            </button>
+                                        </div>
+                                    </li>
+                                );
+                            })
+                        }
+                        </section>
+                    </div>
+                </li>
+                <li className='active'>
+                    <div className='collapsible-header red-text text-accent-4'>
+                        <i className='material-icons center'>
+                            pregnant_woman
+                        </i>
+                        <b>Project Details</b>
+                    </div>
+                    <div className='collapsible-body'>
+                        <div>
+                            <section className='section section-details'>
+                                <div className='row'>
+                                    <div className='col s12'>
+                                        <div className='card-panel center red-text text-accent-4'>
+                                            <i className='material-icons'>
+                                                description
+                                            </i>
+                                            <p>Project Description</p>
+                                        </div>
+                                    </div>
+                                    <div className='col s12'>
+                                        <div className='card-panel center red-text text-accent-4'>
+                                            <i className='material-icons'>
+                                                photo_library
+                                            </i>
+                                            <p>Project Pictures</p>
+                                            <div className='row'>
+                                                <div className='col s12 m4'>
+                                                    <div className='card'>
+                                                        Existing Conditions
+                                                        and Planning
+                                                    </div>
+                                                </div>
+                                                <div className='col s12 m4'>
+                                                    <div className='card'>
+                                                        Progress Photos
+                                                    </div>
+                                                </div>
+                                                <div className='col s12 m4'>
+                                                    <div className='card'>
+                                                        Finished Photos
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+                    </div>
+                </li>
+                <li className=''>
+                    <div className='collapsible-header red-text text-accent-4'>
+                        <i className='material-icons'>child_friendly</i>
+                        <b> Finished Project Requierements</b>
+                    </div>
+                    <div className='collapsible-body'>
+                        <div>
+                            <section className='section section-details'>
+                                <div className='row'>
+                                    <div className='col s12 m3'>
+                                        <div className='card-panel center red-text text-accent-4'>
+                                            <i className='material-icons'>
+                                                description
+                                            </i>
+                                            <p>Project Description</p>
+                                        </div>
+                                    </div>
+                                    <div className='col s12 m3'>
+                                        <div className='card-panel center red-text text-accent-4'>
+                                            <i className='material-icons'>
+                                                photo_library
+                                            </i>
+                                            <p>Project Pictures</p>
+                                        </div>
+                                    </div>
+                                    <div className='col s12 m3'>
+                                        <div className='card-panel center red-text text-accent-4'>
+                                            <i className='material-icons'>
+                                                playlist_add_check
+                                            </i>
+                                            <p>Check List</p>
+                                        </div>
+                                    </div>
+                                    <div className='col s12 m3'>
+                                        <div className='card-panel center red-text text-accent-4'>
+                                            <i className='material-icons'>
+                                                format_list_numbered
+                                            </i>
+                                            <p>Work Steps</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+                    </div>
+                </li>
+                <li className=''>
+                    <div className='collapsible-header red-text text-accent-4'>
+                        <i className='material-icons'>device_hub</i>
+                        <b> Construct-A-Network</b>
+                    </div>
+                    <div className='collapsible-body'>
+                        <div>
+                            <section className='section section-details'>
+                                <div className='row'>
+                                    <div className='col s12 m4'>
+                                        <div className='card-panel center red-text text-accent-4'>
+                                            <i className='material-icons'>
+                                                screen_share
+                                            </i>
+                                            <p>Share</p>
+                                        </div>
+                                    </div>
+                                    <div className='col s12 m4'>
+                                        <div className='card-panel center red-text text-accent-4'>
+                                            <i className='material-icons'>
+                                                contact_phone
+                                            </i>
+                                            <p>Request Help</p>
+                                        </div>
+                                    </div>
+                                    <div className='col s12 m4'>
+                                        <div className='card-panel center red-text text-accent-4'>
+                                            <i className='material-icons'>
+                                                feedback
+                                            </i>
+                                            <p>Comments</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        )
+    };
+
+    function getSowObj (plansArr, id) {
+        let sowObj;
+        for (var i = 0; i < plansArr.length; i++) {
+            if (plansArr[i].id === selectedSowId){
+                sowObj = plansArr[i]
+                break;
+            } else if (plansArr[i].sub_plans.length > 0) {
+                sowObj = getSowObj(plansArr[i].subplans)
+            }
+        }
+        return sowObj;
+    }
+    let selectedProjectUl;
+    if (selectedSowId === plans[selectedPlanIndex].id) {
+        selectedProjectUl = makeSelectedProjectUl(plans[selectedPlanIndex])
+    } else {
+        selectedProjectUl = makeSelectedProjectUl(getSowObj(plans[selectedPlanIndex].sub_plans))
+    }
+
     return (
         <div>
             <div className='col s12'>
@@ -248,248 +504,7 @@ function ProjectLevel({ handleMainAppView, savePlanChanges, levelType }) {
                         <div>
                             <div className='col s12'>
                                 <div className='row'>
-                                    <ul
-                                        ref={collapsibleProject}
-                                        className='collapsible expandable z-depth-0'
-                                    >
-                                        <li
-                                            id={plans[selectedPlanIndex].id}
-                                            className='collection-header indigo-text center'
-                                        >
-                                            <h6>
-                                                <b>
-                                                    {plans[selectedPlanIndex].title}
-                                                </b>{' '}
-                                                <i className='tiny material-icons red-text text-accent-4'>
-                                                    edit
-                                                </i>
-                                            </h6>
-                                        </li>
-                                        <li>
-                                            <div className='collapsible-header indigo-text'>
-                                                <i className='material-icons center indigo-text'>
-                                                    edit
-                                                </i>
-                                            </div>
-                                            <div className='collapsible-body indigo-text'>
-                                                <NotesSection
-                                                    updateNotes={updateNotes}
-                                                    notes={plans[selectedPlanIndex].notes}
-                                                    deleteItemInPlan={deleteItemInPlan}
-                                                />
-                                            </div>
-                                        </li>
-                                        <div className='active'>
-                                            <UrlLinks
-                                                planId={plans[selectedPlanIndex].id}
-                                                savePlanChanges={savePlanChanges}
-                                                videoUrls={plans[selectedPlanIndex].video_urls}
-                                            />
-                                        </div>
-                                        <li className='active'>
-                                            <div className='collapsible-header indigo-text'>
-                                                <i className='material-icons center indigo-text'>
-                                                    bookmark
-                                                </i>
-                                                <b>Bookmarked Sites</b>
-                                            </div>
-                                            <div className='collapsible-body'>
-                                                <Bookmarks
-                                                    savePlanChanges={savePlanChanges}
-                                                />
-                                            </div>
-                                        </li>
-                                        <li className='active'>
-                                            <div className='collapsible-header indigo-text'>
-                                                <i className='material-icons center indigo-text'>
-                                                    offline_pin
-                                                </i>
-                                                <b>Checklists</b> (Planning)
-                                            </div>
-                                            <div className='collapsible-body'>
-                                                <section>
-                                                    <div className='row'>
-                                                        {makeChecksSections(plans[selectedPlanIndex].checks)}
-                                                    </div>
-                                                </section>
-                                            </div>
-                                        </li>
-                                        <li className='active'>
-                                            <div className='collapsible-header indigo-text'>
-                                                <i className='material-icons center indigo-text'>
-                                                    traffic
-                                                </i>
-                                                <b>Worksteps</b> (Execution)
-                                            </div>
-                                            <div className='collapsible-body'>
-                                                <section>
-                                                {plans[selectedPlanIndex].sub_plans.length > 0 &&
-                                                    plans[selectedPlanIndex].sub_plans.map((subPlan, i) => {
-                                                        return (
-                                                            <li key={subPlan.id} className='collection-item'>
-                                                                <div className='indigo-text text-darken-3'>
-                                                                    <a
-                                                                        href='#subplannotebook'
-                                                                        className='waves-effect waves-light btn-flat indigo-text text-darken-3'
-                                                                        onClick={() => selectSubPlan(subPlan)}
-                                                                    >
-                                                                        <h6 className='valign-wrapper'>
-                                                                            {subPlan.title}
-                                                                            <i className='material-icons'>chevron_right</i>
-                                                                        </h6>
-                                                                    </a>
-
-                                                                    <button
-                                                                        className='btn-flat center-align right waves-effect waves-light  hide-on-small-and-down '
-                                                                        onClick={() => {
-                                                                            deleteSubPlan(subPlan.id);
-                                                                        }}
-                                                                    >
-                                                                        <i className='material-icons grey-text text-lighten-4'>delete_forever</i>
-                                                                    </button>
-                                                                </div>
-                                                            </li>
-                                                        );
-                                                    })
-                                                }
-                                                </section>
-                                            </div>
-                                        </li>
-                                        <li className='active'>
-                                            <div className='collapsible-header red-text text-accent-4'>
-                                                <i className='material-icons center'>
-                                                    pregnant_woman
-                                                </i>
-                                                <b>Project Details</b>
-                                            </div>
-                                            <div className='collapsible-body'>
-                                                <div>
-                                                    <section className='section section-details'>
-                                                        <div className='row'>
-                                                            <div className='col s12'>
-                                                                <div className='card-panel center red-text text-accent-4'>
-                                                                    <i className='material-icons'>
-                                                                        description
-                                                                    </i>
-                                                                    <p>Project Description</p>
-                                                                </div>
-                                                            </div>
-                                                            <div className='col s12'>
-                                                                <div className='card-panel center red-text text-accent-4'>
-                                                                    <i className='material-icons'>
-                                                                        photo_library
-                                                                    </i>
-                                                                    <p>Project Pictures</p>
-                                                                    <div className='row'>
-                                                                        <div className='col s12 m4'>
-                                                                            <div className='card'>
-                                                                                Existing Conditions
-                                                                                and Planning
-                                                                            </div>
-                                                                        </div>
-                                                                        <div className='col s12 m4'>
-                                                                            <div className='card'>
-                                                                                Progress Photos
-                                                                            </div>
-                                                                        </div>
-                                                                        <div className='col s12 m4'>
-                                                                            <div className='card'>
-                                                                                Finished Photos
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </section>
-                                                </div>
-                                            </div>
-                                        </li>
-                                        <li className=''>
-                                            <div className='collapsible-header red-text text-accent-4'>
-                                                <i className='material-icons'>child_friendly</i>
-                                                <b> Finished Project Requierements</b>
-                                            </div>
-                                            <div className='collapsible-body'>
-                                                <div>
-                                                    <section className='section section-details'>
-                                                        <div className='row'>
-                                                            <div className='col s12 m3'>
-                                                                <div className='card-panel center red-text text-accent-4'>
-                                                                    <i className='material-icons'>
-                                                                        description
-                                                                    </i>
-                                                                    <p>Project Description</p>
-                                                                </div>
-                                                            </div>
-                                                            <div className='col s12 m3'>
-                                                                <div className='card-panel center red-text text-accent-4'>
-                                                                    <i className='material-icons'>
-                                                                        photo_library
-                                                                    </i>
-                                                                    <p>Project Pictures</p>
-                                                                </div>
-                                                            </div>
-                                                            <div className='col s12 m3'>
-                                                                <div className='card-panel center red-text text-accent-4'>
-                                                                    <i className='material-icons'>
-                                                                        playlist_add_check
-                                                                    </i>
-                                                                    <p>Check List</p>
-                                                                </div>
-                                                            </div>
-                                                            <div className='col s12 m3'>
-                                                                <div className='card-panel center red-text text-accent-4'>
-                                                                    <i className='material-icons'>
-                                                                        format_list_numbered
-                                                                    </i>
-                                                                    <p>Work Steps</p>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </section>
-                                                </div>
-                                            </div>
-                                        </li>
-                                        <li className=''>
-                                            <div className='collapsible-header red-text text-accent-4'>
-                                                <i className='material-icons'>device_hub</i>
-                                                <b> Construct-A-Network</b>
-                                            </div>
-                                            <div className='collapsible-body'>
-                                                <div>
-                                                    <section className='section section-details'>
-                                                        <div className='row'>
-                                                            <div className='col s12 m4'>
-                                                                <div className='card-panel center red-text text-accent-4'>
-                                                                    <i className='material-icons'>
-                                                                        screen_share
-                                                                    </i>
-                                                                    <p>Share</p>
-                                                                </div>
-                                                            </div>
-                                                            <div className='col s12 m4'>
-                                                                <div className='card-panel center red-text text-accent-4'>
-                                                                    <i className='material-icons'>
-                                                                        contact_phone
-                                                                    </i>
-                                                                    <p>Request Help</p>
-                                                                </div>
-                                                            </div>
-                                                            <div className='col s12 m4'>
-                                                                <div className='card-panel center red-text text-accent-4'>
-                                                                    <i className='material-icons'>
-                                                                        feedback
-                                                                    </i>
-                                                                    <p>Comments</p>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </section>
-                                                </div>
-                                            </div>
-                                        </li>
-                                    </ul>
+                                    {selectedProjectUl}
                                 </div>
                             </div>
                             </div>
@@ -510,8 +525,6 @@ function ProjectLevel({ handleMainAppView, savePlanChanges, levelType }) {
                         <AddModal
                             addModalHeader={state.addModalHeader}
                             addModalType={state.addModalType}
-                            parentValue={plans[selectedPlanIndex].id}
-                            subPlans={plans[selectedPlanIndex].sub_plans}
                             addNewSection={addNewSection}
                         />
                     </div>
@@ -521,3 +534,247 @@ function ProjectLevel({ handleMainAppView, savePlanChanges, levelType }) {
 }
 
 export default ProjectLevel;
+/**
+<ul
+    ref={collapsibleProject}
+    className='collapsible expandable z-depth-0'
+>
+    <li
+        id={plans[selectedPlanIndex].id}
+        className='collection-header indigo-text center'
+    >
+        <h6>
+            <b>
+                {plans[selectedPlanIndex].title}
+            </b>{' '}
+            <i className='tiny material-icons red-text text-accent-4'>
+                edit
+            </i>
+        </h6>
+    </li>
+    <li>
+        <div className='collapsible-header indigo-text'>
+            <i className='material-icons center indigo-text'>
+                edit
+            </i>
+        </div>
+        <div className='collapsible-body indigo-text'>
+            <NotesSection
+                updateNotes={updateNotes}
+                notes={plans[selectedPlanIndex].notes}
+                deleteItemInPlan={deleteItemInPlan}
+            />
+        </div>
+    </li>
+    <div className='active'>
+        <UrlLinks
+            planId={plans[selectedPlanIndex].id}
+            savePlanChanges={savePlanChanges}
+            videoUrls={plans[selectedPlanIndex].video_urls}
+        />
+    </div>
+    <li className='active'>
+        <div className='collapsible-header indigo-text'>
+            <i className='material-icons center indigo-text'>
+                bookmark
+            </i>
+            <b>Bookmarked Sites</b>
+        </div>
+        <div className='collapsible-body'>
+            <Bookmarks
+                savePlanChanges={savePlanChanges}
+            />
+        </div>
+    </li>
+    <li className='active'>
+        <div className='collapsible-header indigo-text'>
+            <i className='material-icons center indigo-text'>
+                offline_pin
+            </i>
+            <b>Checklists</b> (Planning)
+        </div>
+        <div className='collapsible-body'>
+            <section>
+                <div className='row'>
+                    {makeChecksSections(plans[selectedPlanIndex].checks)}
+                </div>
+            </section>
+        </div>
+    </li>
+    <li className='active'>
+        <div className='collapsible-header indigo-text'>
+            <i className='material-icons center indigo-text'>
+                traffic
+            </i>
+            <b>Worksteps</b> (Execution)
+        </div>
+        <div className='collapsible-body'>
+            <section>
+            {plans[selectedPlanIndex].sub_plans.length > 0 &&
+                plans[selectedPlanIndex].sub_plans.map((subPlan, i) => {
+                    return (
+                        <li key={subPlan.id} className='collection-item'>
+                            <div className='indigo-text text-darken-3'>
+                                <a
+                                    href='#subplannotebook'
+                                    className='waves-effect waves-light btn-flat indigo-text text-darken-3'
+                                    onClick={() => selectSubPlan(subPlan)}
+                                >
+                                    <h6 className='valign-wrapper'>
+                                        {subPlan.title}
+                                        <i className='material-icons'>chevron_right</i>
+                                    </h6>
+                                </a>
+
+                                <button
+                                    className='btn-flat center-align right waves-effect waves-light  hide-on-small-and-down '
+                                    onClick={() => {
+                                        deleteSubPlan(subPlan.id);
+                                    }}
+                                >
+                                    <i className='material-icons grey-text text-lighten-4'>delete_forever</i>
+                                </button>
+                            </div>
+                        </li>
+                    );
+                })
+            }
+            </section>
+        </div>
+    </li>
+    <li className='active'>
+        <div className='collapsible-header red-text text-accent-4'>
+            <i className='material-icons center'>
+                pregnant_woman
+            </i>
+            <b>Project Details</b>
+        </div>
+        <div className='collapsible-body'>
+            <div>
+                <section className='section section-details'>
+                    <div className='row'>
+                        <div className='col s12'>
+                            <div className='card-panel center red-text text-accent-4'>
+                                <i className='material-icons'>
+                                    description
+                                </i>
+                                <p>Project Description</p>
+                            </div>
+                        </div>
+                        <div className='col s12'>
+                            <div className='card-panel center red-text text-accent-4'>
+                                <i className='material-icons'>
+                                    photo_library
+                                </i>
+                                <p>Project Pictures</p>
+                                <div className='row'>
+                                    <div className='col s12 m4'>
+                                        <div className='card'>
+                                            Existing Conditions
+                                            and Planning
+                                        </div>
+                                    </div>
+                                    <div className='col s12 m4'>
+                                        <div className='card'>
+                                            Progress Photos
+                                        </div>
+                                    </div>
+                                    <div className='col s12 m4'>
+                                        <div className='card'>
+                                            Finished Photos
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </li>
+    <li className=''>
+        <div className='collapsible-header red-text text-accent-4'>
+            <i className='material-icons'>child_friendly</i>
+            <b> Finished Project Requierements</b>
+        </div>
+        <div className='collapsible-body'>
+            <div>
+                <section className='section section-details'>
+                    <div className='row'>
+                        <div className='col s12 m3'>
+                            <div className='card-panel center red-text text-accent-4'>
+                                <i className='material-icons'>
+                                    description
+                                </i>
+                                <p>Project Description</p>
+                            </div>
+                        </div>
+                        <div className='col s12 m3'>
+                            <div className='card-panel center red-text text-accent-4'>
+                                <i className='material-icons'>
+                                    photo_library
+                                </i>
+                                <p>Project Pictures</p>
+                            </div>
+                        </div>
+                        <div className='col s12 m3'>
+                            <div className='card-panel center red-text text-accent-4'>
+                                <i className='material-icons'>
+                                    playlist_add_check
+                                </i>
+                                <p>Check List</p>
+                            </div>
+                        </div>
+                        <div className='col s12 m3'>
+                            <div className='card-panel center red-text text-accent-4'>
+                                <i className='material-icons'>
+                                    format_list_numbered
+                                </i>
+                                <p>Work Steps</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </li>
+    <li className=''>
+        <div className='collapsible-header red-text text-accent-4'>
+            <i className='material-icons'>device_hub</i>
+            <b> Construct-A-Network</b>
+        </div>
+        <div className='collapsible-body'>
+            <div>
+                <section className='section section-details'>
+                    <div className='row'>
+                        <div className='col s12 m4'>
+                            <div className='card-panel center red-text text-accent-4'>
+                                <i className='material-icons'>
+                                    screen_share
+                                </i>
+                                <p>Share</p>
+                            </div>
+                        </div>
+                        <div className='col s12 m4'>
+                            <div className='card-panel center red-text text-accent-4'>
+                                <i className='material-icons'>
+                                    contact_phone
+                                </i>
+                                <p>Request Help</p>
+                            </div>
+                        </div>
+                        <div className='col s12 m4'>
+                            <div className='card-panel center red-text text-accent-4'>
+                                <i className='material-icons'>
+                                    feedback
+                                </i>
+                                <p>Comments</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </li>
+</ul>
+ */

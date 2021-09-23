@@ -42,10 +42,9 @@ function reducer (state, action) {
     }
 }
 
-function AddModal ({ addModalHeader, addModalType, subPlans, addNewSection, parentValue }) {
+function AddModal ({ addModalHeader, addModalType, addNewSection }) {
     const initialState = {
-        addModalTitleValue: 'Untitled',
-        addModalParentValue: parentValue,
+        addModalTitleValue: 'Untitled ' + addModalType,
         addModalCheckTypeValue: 'tools'
     }
     const [state, dispatch] = useReducer(reducer, initialState);
@@ -97,7 +96,7 @@ function AddModal ({ addModalHeader, addModalType, subPlans, addNewSection, pare
                     id='addModal-add-btn'
                     href='#projectDetails'
                     className='modal-close waves-effect waves-blue btn-flat'
-                    onClick={()=> addNewSection(addModalTitleValue, addModalParentValue,addModalCheckTypeValue)}
+                    onClick={()=> addNewSection(addModalTitleValue, addModalCheckTypeValue)}
                 >
                     Add
                 </a>
