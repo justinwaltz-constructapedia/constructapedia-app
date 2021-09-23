@@ -1,28 +1,61 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import SearchResults from './SearchResults.js';
+//Import for useContext
+import {PlanContext} from '../PlanContext.js'
+//Import DB Api functions
+import { postPlan, getUserPlans, getPlan } from '../api/projectsApi';
 //import {getSearchResults} from '../api/searchApi.js';
 //import {googleSearch} from '../api/searchApi.js';
 function NewProject(props) {
+    //useContext hook
+    const [contextState, contextDispatch] = useContext(PlanContext);
     const [planTitleValue, setPlanTitleValue] = useState('');
 
-  async function createNewPlan(importedPlan) {
-    let newPlanObj = {};
-    if (importedPlan || planTitleValue.trim().length > 0) {
-        if (planTitleValue.trim().length > 0) {
-            newPlanObj.title = planTitleValue;
-        } else {
-            newPlanObj.title = importedPlan.title;
-        }
-        newPlanObj.bookmarks = importedPlan.bookmarks;
-        const newPlanId = await props.addUserPlan(newPlanObj);
-        console.log(`newPlanId: ${newPlanId}
-                        importedPlan: ${importedPlan}
-                        newPlanObj: ${newPlanObj}`);
+    function addUserPlan(plan) {
+        console.log(plan);
+        return postPlan(plan)
+            .then((res) => {
+                console.log(res.id);
+                return res.id;
+            })
+            .then((createdPlanId) => {
+                getUserPlans()
+                    .then((updatedPlans) => {
+                        console.log(updatedPlans);
+                        contextDispatch({type:'field',field:'plans',payload:updatedPlans});
+                        //Maybe find and select the plan here? with a return statement and another .then
+                        return updatedPlans;
+                    })
+                    // .then((updatedPlans) => {
+                    //     props.selectPlan(createdPlanId);
+                    //     return;
+                    // })
+                    .catch((err) => console.log(err));
+                return createdPlanId;
+            })
+            .catch((err) => console.log(err));
+    }
+    async function createNewPlan(importedPlan) {
+        let newPlanObj = {};
+        if (importedPlan || planTitleValue.trim().length > 0) {
+            if (planTitleValue.trim().length > 0) {
+                newPlanObj.title = planTitleValue;
+            } else {
+                newPlanObj.title = importedPlan.title;
+            }
+
+            const newPlanId = await addUserPlan(newPlanObj);
+            // const newPlan = await getPlan(newPlanId);
+            // contextDispatch({type:'field',field:'selectedSow',payload:newPlan});
+            console.log(`newPlanId: ${newPlanId}
+                            importedPlan: ${importedPlan}
+                            newPlanObj: ${newPlanObj}`);
             if (importedPlan) {
                 delete importedPlan.title;
                 console.log(`After Delete...
                             importedPlan: ${importedPlan}
                             newPlanObj: ${newPlanObj}`);
+                newPlanObj.bookmarks = importedPlan.bookmarks;
                 for (let key in importedPlan) {
                     const object = importedPlan[key];
                     if (key === 'checks' || key === 'sub_plans') {
@@ -39,8 +72,12 @@ function NewProject(props) {
                 );
                 console.log(response);
                 if (response === 1) {
-                    props.handleMainAppView('ProjectDetails');
+                    props.handleMainAppView('HomePage');
+                } else {
+                    alert("There was an error saving the imported data.")
                 }
+            } else {
+                props.handleMainAppView('HomePage');
             }
         } else {
             alert('Enter a title and/or search term');
@@ -62,7 +99,7 @@ function NewProject(props) {
             </div>
 
             <li className='collection-header indigo-text'>
-                Start Working Your Project
+                Start Your Project
             </li>
             <li className='collection-item'>
                 <div className='input-field inline'>
@@ -101,29 +138,3 @@ function NewProject(props) {
 }
 
 export default NewProject;
-/*
-const [planGoalValue, setPlanGoalValue] = useState('');
-const [isSubstepsOn, setIsSubStepsOn] = useState(true)
-
-<div className="row">
-    <div className="input-field col s12">
-        <textarea placeholder="(Optional)" id="textarea1" className="materialize-textarea" onChange={(e)=> setPlanGoalValue(e.target.value)}></textarea>
-        <label htmlFor="textarea1" className="active">Project Goal</label>
-    </div>
-</div>
-<div className="row">
-    <div className="container">
-        <p>Will your project have substeps or just a single list of actions? (You can change this later)</p>
-    </div>
-    <div className="switch center-align">
-        {
-            //Add substeps to DB and settings button to plan list to change or delete settings info
-        }
-        <label>
-            Actions
-            <input disabled checked type="checkbox"  onChange={(e)=> setIsSubStepsOn(e.target.value)} />
-            <span className="lever"></span>
-            Substeps
-         </label>
-    </div>
-</div>*/

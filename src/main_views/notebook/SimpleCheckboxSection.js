@@ -1,116 +1,113 @@
 //Import React and hooks used
-import React, { useState, useEffect } from 'react';
+import React, { useContext, useReducer, useEffect } from 'react';
+//Import for useContext
+import {PlanContext} from '../../PlanContext.js'
+
+function reducer (state, action) {
+    switch (action.type) {
+        case 'saving':
+            return {
+                ...state,
+                error: '',
+                isSaving: true
+            }
+        case 'editing':
+            return {
+                ...state,
+                isEditing: action.payload >= 0,
+                indexToEdit: action.payload
+            }
+        case 'field':
+            return {
+                ...state,
+                [action.field]: action.payload
+            };
+        case 'delete':
+            return {
+                ...state
+                //list: state.list.filter((_, index) => index !== action.payload)
+            }
+        case 'error':
+            return {
+                ...state,
+                error: action.payload,
+                isSaving: false,
+            }
+
+        default:
+            return state;
+    }
+}
 
 //Functional Component
 //Handles the view for each check list
 //DATABASE NOTE: Plan -> checks -> check_list -> check
-function SimpleCheckboxSection(props) {
-    //State Hooks
-    //Holds the text input value for adding a new item to the check list
-    const [newItemValue, setNewItemValue] = useState('');
-    //Holds the vaules for each indiviual check within the check list to use in editing properties
-    const [checksObjs, setChecksObjs] = useState({});
+function SimpleCheckboxSection({checklist, listType, listTitle, checklistIndex, import_url, savePlanChanges}) {
     //Formats the list_type property for display in html
-    const displayListType = props.listType
-        .trim()
-        .replace(/^\w/, (c) => c.toUpperCase());
+    const displayListType = listType.trim().replace(/^\w/, (c) => c.toUpperCase());
+    /**
+     * useContext Hook
+     */
+    const [contextState] = useContext(PlanContext);
+    const {plans, selectedPlanIndex, selectedStepIndex} = contextState;
 
-    //Effect Hooks
-    //Sets the state of the checksObjs
-    //Runs on a change to the checklist passed to the component
-    useEffect(() => {
-        //Copies the checklist array prop
-        const checksToSet = [].concat(props.checklist);
-        //Sets the state with a reduced array of objects to store relevent values for each check
-        setChecksObjs(
-            checksToSet.reduce(
-                (options, option) => ({
-                    ...options,
-                    [option.text_value]: {
-                        is_complete: option.is_complete,
-                        quantity: option.quantity,
-                        unit_of_measure: option.unit_of_measure,
-                    },
-                }),
-                {}
-            )
-        );
-    }, [props.checklist]);
+    /**
+     * useReducer Hook
+     */
+    //NOTE: Is State/Reducer needed since savePlanChanges updates context state?
+    const initialState = {
+        newItemValue: '',
+        editItemValue: '',
+        isSaving: false,
+        isEditing: false,
+        indexToEdit: -1,
+        error: ''
+    }
+    const [state, dispatch] = useReducer(reducer, initialState);
+    const { newItemValue, editItemValue, isSaving, isEditing, indexToEdit, error} = state;
+    // useEffect(() => {
+    //     console.log("SimpleCheckboxSection useEffect",list);
+    // })
+    function createAndSaveUpdatedChecks (newList) {
+        const updatedChecks = [...plans[selectedPlanIndex].checks];
+        updatedChecks[checklistIndex].list = newList;
+        savePlanChanges(plans[selectedPlanIndex].id, { checks: updatedChecks });
+    }
     //Processes the various changes of input in the component parts
-    function handleInputChange(event, index) {
+    function handleInputChange(e, index) {
         //Where the event occured
-        const target = event.target;
-        //Info from the event
-        const { name, value } = target;
+        const target = e.target;
         //Handle the clicking of a checkbox
         if (target.type === 'checkbox') {
+            const updatedList = plans[selectedPlanIndex].checks[checklistIndex].list.map((item, i) => {
+                if (i === index) {
+                    const newItem = {...item}
+                    newItem.is_complete = !plans[selectedPlanIndex].checks[checklistIndex].list[index].is_complete
+                    return newItem;
+                } else {
+                    return item;
+                }
+            });
             //Update the check clicked
-            const updatedChecks = (prevChecks) => {
-                const newChecksObjs = {
-                    ...prevChecks,
-                    [name]: {
-                        ...prevChecks[name],
-                        is_complete: !prevChecks[name].is_complete,
-                    },
-                };
-                return newChecksObjs;
-            };
-            //Set the state of the checksObjs
-            setChecksObjs((prevChecksObjs) => updatedChecks(prevChecksObjs));
-            console.log(props.checklist);
+            dispatch({type:'field', field:'list', payload:updatedList})
             //Send request to update the database
-            const newChecks = [].concat(props.checklist);
-            console.log(newChecks);
-            const checkedAttribute = target.checked;
-            //NOTE: could be simplified with index parameter now?
-            const indexOfCheckToChange = newChecks.findIndex(
-                (check) => check.text_value === name
-            );
-            newChecks[indexOfCheckToChange].is_complete = checkedAttribute;
-            //NOTE: Needs to be moved so that it make call for unit and quantity
-            //NOTE: Take out the "action" param and just use index -1 for create
-            props.updateChecklist(
-                props.checklistIndex,
-                'updateItem',
-                newChecks
-            );
-            //Handle changes in the the quantity field
-            //NOTE: Not currently an option
-        } else if (target.id.includes('quantity')) {
-            const itemToUpdate = props.checklist[index];
-            console.log(itemToUpdate, value);
-            const updatedChecks = (prevChecks) => {
-                const newChecksObjs = {
-                    ...prevChecks,
-                    [name]: {
-                        is_complete: prevChecks[name].is_complete,
-                        quantity: value,
-                        unit_of_measure: prevChecks[name].unit_of_measure,
-                    },
-                };
-                return newChecksObjs;
-            };
-            setChecksObjs((prevChecksObjs) => updatedChecks(prevChecksObjs));
-            //Handle changes in the the unit field
-            //NOTE: Not currently an option
-        } else if (target.id.includes('unit')) {
-            const itemToUpdate = props.checklist[index];
-            console.log(itemToUpdate, value);
-            const updatedChecks = (prevChecks) => {
-                const newChecksObjs = {
-                    ...prevChecks,
-                    [name]: {
-                        is_complete: prevChecks[name].is_complete,
-                        quantity: prevChecks[name].quantity,
-                        unit_of_measure: value,
-                    },
-                };
-                return newChecksObjs;
-            };
-            setChecksObjs((prevChecksObjs) => updatedChecks(prevChecksObjs));
-            //Handle changes in new item input
+            createAndSaveUpdatedChecks(updatedList);
+        } else if (target.id.includes('quantity') && Number(target.value)) {
+            const updatedList = plans[selectedPlanIndex].checks[checklistIndex].list.map((item, i) => {
+                if (i === index) {
+                    const newItem = {
+                        ...item,
+                        quantity: target.value
+                    }
+                    return newItem;
+                } else {
+                    return item;
+                }
+            });
+            //Send request to update the database
+            createAndSaveUpdatedChecks(updatedList);
         } else {
-            setNewItemValue(value);
+            dispatch({type:'field', field:'newItemValue', payload: target.value});
         }
     }
 
@@ -121,42 +118,38 @@ function SimpleCheckboxSection(props) {
                 text_value: newItemValue,
                 is_complete: false,
             };
-            console.log(newCheck);
-            console.log(checksObjs);
-            props.updateChecklist(props.checklistIndex, 'addItem', [newCheck]);
-            setNewItemValue('');
+            const updatedList = [...plans[selectedPlanIndex].checks[checklistIndex].list, newCheck];
+            console.log("updated list", updatedList);
+            //Update the check clicked
+            createAndSaveUpdatedChecks(updatedList);
+            dispatch({type:'field', field:'newItemValue', payload:''});
+        } else {
+            alert('Please enter a new checklist item.')
         }
     }
     function removeChecklistItem(indexOfCheckToRemove) {
-        const newChecksArr = props.checklist.reduce((checks, check, i) => {
+        const currentList = [...plans[selectedPlanIndex].checks[checklistIndex].list]
+        const updatedList = currentList.reduce((checks, check, i) => {
             if (i !== indexOfCheckToRemove) {
                 checks.push(check);
             }
             return checks;
         }, []);
-        console.log(newChecksArr);
-        props.updateChecklist(props.checklistIndex, 'updateItem', newChecksArr);
+        createAndSaveUpdatedChecks(updatedList);
     }
     function makeListOfCheckboxElements(arr) {
         return arr.map((listItem, i) => {
-            if (checksObjs[listItem.text_value]) {
-                return (
-                    <CheckListItem
-                        key={i + listItem.text_value}
-                        listType={props.listType}
-                        listItem={listItem}
-                        checked={checksObjs[listItem.text_value].is_complete}
-                        handleInputChange={handleInputChange}
-                        itemIndex={i}
-                        removeChecklistItem={removeChecklistItem}
-                    />
-                );
-            } else {
-                return null;
-            }
+            return <CheckListItem
+                key={i + listItem.text_value}
+                listType={listType}
+                listItem={listItem}
+                handleInputChange={handleInputChange}
+                itemIndex={i}
+                removeChecklistItem={removeChecklistItem}
+            />
         });
     }
-    const checkboxElements = makeListOfCheckboxElements(props.checklist);
+    const checkboxElements = makeListOfCheckboxElements(plans[selectedPlanIndex].checks[checklistIndex].list);
 
     return (
         <div className='col s11'>
@@ -166,9 +159,9 @@ function SimpleCheckboxSection(props) {
                         <input
                             id={
                                 'new-' +
-                                props.listType +
+                                listType +
                                 '-' +
-                                props.checklistIndex
+                                checklistIndex
                             }
                             type='text'
                             className='validate'
@@ -185,9 +178,9 @@ function SimpleCheckboxSection(props) {
                     <button
                         id={
                             'add-' +
-                            props.listType +
+                            listType +
                             '-btn-' +
-                            props.checklistIndex
+                            checklistIndex
                         }
                         className='btn-small waves-effect waves-light indigo'
                         type='button'
@@ -201,10 +194,11 @@ function SimpleCheckboxSection(props) {
                         className='btn-flat right waves-effect waves-light grey-text text-lighten-3'
                         type='button'
                         onClick={() =>
-                            props.deleteItemInPlan(
-                                'checks',
-                                props.checklistIndex
-                            )
+                            console.log('delete')
+                            // props.deleteItemInPlan(
+                            //     'checks',
+                            //     checklistIndex
+                            // )
                         }
                     >
                         <i className='material-icons '>delete_forever</i>
@@ -213,13 +207,13 @@ function SimpleCheckboxSection(props) {
             </div>
             <ul className='collection with-header'>
                 <li className='collection-header indigo-text center'>
-                    {props.listTitle}{' '}
+                    {listTitle}{' '}
                 </li>
                 <li className='collection-item'>{checkboxElements}</li>
-                {props.import_url && (
+                {import_url && (
                     <li className='collection-item'>
                         Imported From:
-                        <div className='truncate'>{props.import_url}</div>
+                        <div className='truncate'>{import_url}</div>
                     </li>
                 )}
             </ul>
@@ -239,7 +233,7 @@ function CheckListItem(props) {
                         <input
                             type='checkbox'
                             name={props.listItem.text_value}
-                            checked={props.checked}
+                            checked={props.listItem.is_complete}
                             onChange={(e) =>
                                 props.handleInputChange(e, props.itemIndex)
                             }
@@ -285,7 +279,7 @@ function CheckListItem(props) {
                             type='checkbox'
                             className='filled-in'
                             name={props.listItem.text_value}
-                            checked={props.checked}
+                            checked={props.listItem.is_complete}
                             onChange={(e) =>
                                 props.handleInputChange(e, props.itemIndex)
                             }
@@ -320,4 +314,5 @@ export default SimpleCheckboxSection;
       onChange={(e) => handleInputChange(e, i)}
     />
   </div>
-</div>*/
+</div>
+*/

@@ -4,13 +4,6 @@ import React, { useEffect, useRef, useReducer } from 'react';
 import M from 'materialize-css';
 import 'materialize-css/dist/css/materialize.min.css';
 
-function init(initialState) {
-    return {
-        addModalTitleValue: 'Untitled',
-        addModalParentValue: initialState.parentValue,
-        addModalCheckTypeValue: 'tools'
-    }
-}
 function reducer (state, action) {
     switch (action.type) {
         case 'field':
@@ -49,18 +42,20 @@ function reducer (state, action) {
     }
 }
 
-function AddModal (props) {
-    const { addModalHeader, addModalType, subPlans, addNewSection } = props;
-    const [state, dispatch] = useReducer(reducer, props, init);
+function AddModal ({ addModalHeader, addModalType, subPlans, addNewSection, parentValue }) {
+    const initialState = {
+        addModalTitleValue: 'Untitled',
+        addModalParentValue: parentValue,
+        addModalCheckTypeValue: 'tools'
+    }
+    const [state, dispatch] = useReducer(reducer, initialState);
     const {addModalTitleValue, addModalParentValue, addModalCheckTypeValue} = state;
     //Material <select> fields
-    const addModalSelect = useRef(null);
     const addModalChecksSelect = useRef(null);
 
     //Intitialzes Materialize form select
     //Runs on every render
     useEffect(() => {
-        M.FormSelect.init(addModalSelect.current);
         M.FormSelect.init(addModalChecksSelect.current);
     });
 
@@ -95,31 +90,6 @@ function AddModal (props) {
                             <label>Checklist Type</label>
                         </div>
                     )}
-                    <div className='input-field col s6'>
-                        <select
-                            id='add-modal-select'
-                            ref={addModalSelect}
-                            value={addModalParentValue}
-                            onChange={(e) => dispatch({type:'field', field:'addModalParentValue', payload: e.currentTarget.value})}
-                        >
-                            <option
-                                value={addModalParentValue}
-                            >
-                                Plan Overview
-                            </option>
-                            {subPlans.map((subPlan, i) => {
-                                return (
-                                    <option
-                                        key={subPlan.title + i}
-                                        value={subPlan.id}
-                                    >
-                                        {subPlan.title}
-                                    </option>
-                                );
-                            })}
-                        </select>
-                        <label>Add to...</label>
-                    </div>
                 </div>
             </div>
             <div className='modal-footer'>

@@ -1,8 +1,10 @@
 //Import React and hooks used
-import React, { useEffect, useRef, useReducer } from 'react';
+import React, { useEffect, useRef, useReducer, useContext } from 'react';
 //Import Materialize functionality
 import M from 'materialize-css';
 import 'materialize-css/dist/css/materialize.min.css';
+//Import for useContext
+import {PlanContext} from '../PlanContext.js'
 //Import Project Components
 import SimpleCheckboxSection from './notebook/SimpleCheckboxSection.js';
 import NotesSection from './notebook/NotesSection.js';
@@ -14,83 +16,54 @@ import PlanDetailsMenu from './notebook/PlanDetailsMenu.js';
 //Import Styles
 import './ProjectLevel.css';
 //Import api functions for updating database
-import {putPlanUpdate} from '../api/projectsApi';
+import {postPlan, getUserPlans} from '../api/projectsApi';
 
-function init(initialPlan) {
-    return {
-        plan: initialPlan,
-        newBookmarkValue: '',
-        newBookmarkTitleValue: '',
-        addModalHeader: '',
-        addModalType: '',
-        isSaving: false,
-        error: ''
-    }
-}
 function reducer (state, action) {
     switch (action.type) {
-        case 'saving':
-            return {
-                ...state,
-                error: '',
-                isSaving: true
-            }
         case 'field':
             return {
                 ...state,
                 [action.field]: action.payload
             };
-        case 'addItem':
-            return {
-                ...state,
-                plan: {
-                    ...state.plan,
-                    [action.field]: action.payload[action.field]
-                    //[action.field]: state.plan[action.field].push(action.payload)
-                }
-            }
-        case 'delete':
-            return {
-                ...state,
-                plan:{
-                    ...state.plan,
-                    [action.field]: state.plan[action.field].filter((_, index) => index !== action.payload)
-                }
-            }
-        case 'error':
-            return {
-                ...state,
-                error: action.payload,
-                isSaving: false,
-            }
-
         default:
             return state;
     }
 }
 
-function ProjectLevel(props) {
+function ProjectLevel({ handleMainAppView, savePlanChanges, levelType }) {
+    //useContext hook
+    const [contextState, contextDispatch] = useContext(PlanContext);
+    const {plans, selectedPlanIndex} = contextState;
     //Reducer Hook
-    const [state, dispatch] = useReducer(reducer, props.plan, init)
+    const initialState = {
+        addModalHeader: '',
+        addModalType: ''
+    }
+    const [state, dispatch] = useReducer(reducer, initialState)
     //Ref Hooks for Materialize functionality
         //Ref hook for the substep tabs directly under the project
-    const substepTabsUl = useRef(null);
+    // const substepTabsUl = useRef(null);
     const collapsibleProject = useRef(null);
     const addModal = useRef(null);
-    //Effect hooks
+    /**
+     * Effect hooks
+     *
+     */
         //Initialze Materialize collapsible for main plan level
     useEffect(() => {
         const collapsibleOptions = { accordion: false };
         M.Collapsible.init(collapsibleProject.current, collapsibleOptions);
-    },[state.plan]);
+    },[]);
         //Hook for intializing the substep tab functionality using Materialize
-    useEffect(() => {
-        // const tabsOptions = {
-        //     swipeable: true,
-        // };
-        // , tabsOptions
-        M.Tabs.init(substepTabsUl.current);
-    }, [state.plan]);
+    // useEffect(() => {
+    //     // const tabsOptions = {
+    //     //     swipeable: true,
+    //     // };
+    //     // , tabsOptions
+    //     // if (contextState.plans[contextState.selectedPlanIndex]) {
+    //         M.Tabs.init(substepTabsUl.current);
+    //     // }
+    // }, []);
         //Intitialzes Materialize modal; Runs on initial render only
     useEffect(() => {
         const addModalOptions = {
@@ -122,95 +95,44 @@ function ProjectLevel(props) {
 
     //Processes and updates the plan field corresponding to the submission on the add modal
     async function addNewSection(addModalValue, addModalSelectValue, addModalCheckTypeValue) {
-        console.log(addModalValue, addModalSelectValue, addModalCheckTypeValue);
-        const planId = props.userPlans[props.selectedPlanIndex].id;
-        const parentId = addModalSelectValue;
-        const newArr = [];
+        console.log("addNewSection params: ",addModalValue, addModalSelectValue, addModalCheckTypeValue);
+        const parentId = plans[selectedPlanIndex].id;
         let updatedFieldObj;
-        let itemFieldName;
         //dispatch({type: 'saving'})
         //Needs to account for being under different levels
         if (addModalValue.trim().length > 0) {
             switch (state.addModalType) {
                 case 'substep':
-                    const prevSubplans = newArr.concat(
-                        props.userPlans[props.selectedPlanIndex].sub_plans
-                    );
-                    prevSubplans.push({
+                    const newSowId = await postPlan({
                         title: addModalValue,
                         parent: parentId,
                         notes: []
-                    });
-                    updatedFieldObj = { sub_plans: prevSubplans };
-                    itemFieldName = 'sub_plans';
+                    })
+                    const updatedUserPlans = await getUserPlans()
+                    contextDispatch({type:'field', field: 'plans', payload: updatedUserPlans})
                     break;
                 case 'checklist':
-                    const currentChecks = props.userPlans[props.selectedPlanIndex].checks;
-                    console.log(currentChecks);
-                    const newChecks = newArr.concat(currentChecks);
-                    newChecks.push({
-                        title: addModalValue,
-                        parent: parentId,
-                        list_type: addModalCheckTypeValue,
-                    });
+                    const newChecks = [
+                        ...plans[selectedPlanIndex].checks,
+                        {
+                            title: addModalValue,
+                            list_type: addModalCheckTypeValue,
+                        }
+                    ];
                     console.log(newChecks);
-                    updatedFieldObj = { checks: newChecks };
-                    itemFieldName = 'checks';
+                    updatedFieldObj = { checks:newChecks  };
+                    savePlanChanges(plans[selectedPlanIndex].id, updatedFieldObj);
                     break;
                 default:
             }
-            console.log(planId, updatedFieldObj);
-            try {
-                props.savePlanChanges(planId, updatedFieldObj);
-                //await putPlanUpdate(state.plan.id, updatedFieldObj)
-                //dispatch({type:'addItem', field: itemFieldName, payload: updatedFieldObj})
-            } catch (error) {
-                dispatch({type: 'error', payload: error})
-            }
-            props.savePlanChanges(planId, updatedFieldObj);
-        }
-    }
-    function updateChecklist(checklistIndex, action, itemArr, itemIndex) {
-        //NOTE: Change this to a reduce function in the switch?
-        const currentChecks = [].concat(
-            props.userPlans[props.selectedPlanIndex].checks
-        );
-        console.log(checklistIndex, action, itemArr, itemIndex);
-        console.log(currentChecks);
-        switch (action) {
-            case 'addItem':
-                const newChecks = currentChecks.reduce(
-                    (checks, check, index) => {
-                        if (checklistIndex === index) {
-                            const newCheckList =
-                                currentChecks[checklistIndex].list.concat(
-                                    itemArr
-                                );
-                            check.list = newCheckList;
-                        }
-                        checks.push(check);
-                        return checks;
-                    },
-                    []
-                );
-                console.log(newChecks);
-                props.savePlanChanges(
-                    props.userPlans[props.selectedPlanIndex].id,
-                    {
-                        checks: newChecks,
-                    }
-                );
-                break;
-            case 'updateItem':
-                currentChecks[checklistIndex].list = itemArr;
-                props.savePlanChanges(
-                    props.userPlans[props.selectedPlanIndex].id,
-                    {
-                        checks: currentChecks,
-                    }
-                );
-                break;
-            default:
+
+            // console.log(contextState.selectedPlanId, updatedFieldObj);
+            // try {
+            //     savePlanChanges(contextState.selectedPlanId, updatedFieldObj);
+            // } catch (error) {
+            //     dispatch({type: 'error', payload: error})
+            // }
+            // savePlanChanges(contextState.selectedPlanId, updatedFieldObj);
         }
     }
 
@@ -218,29 +140,40 @@ function ProjectLevel(props) {
         let updatedNotes;
         if (isNewNote) {
             updatedNotes = [].concat(
-                props.userPlans[props.selectedPlanIndex].notes
+                [...plans[selectedPlanIndex].notes]
             );
             updatedNotes.push(newNoteObj);
         } else {
             updatedNotes = newNoteObj;
         }
-        props.savePlanChanges(props.userPlans[props.selectedPlanIndex].id, {
+        savePlanChanges(contextState.selectedPlanId, {
             notes: updatedNotes,
         });
     }
 
+    function selectSubPlan (stepIndex) {
+        contextDispatch({type:'field', field:'selectedStepIndex', payload:stepIndex});
+    }
+
+    function backButton () {
+        contextDispatch({type:'field', field:'selectedStepIndex', payload:-1});
+    }
+
+    function deleteSubPlan (id) {
+        console.log("Sub Plan " + id + " to be deleted");
+    }
     function updateSubPlan(index, newSubPlanObj) {
         const updatedSubPlans = [].concat(
-            props.userPlans[props.selectedPlanIndex].sub_plans
+            [...plans[selectedPlanIndex].sub_plans]
         );
         updatedSubPlans[index] = newSubPlanObj;
-        props.savePlanChanges(props.userPlans[props.selectedPlanIndex].id, {
+        savePlanChanges(contextState.selectedPlanId, {
             sub_plans: updatedSubPlans,
         });
     }
     //Delete function for fields directly under a plan object: sub_plans, notes, checks
     async function deleteItemInPlan(itemFieldName, itemIndex) {
-        const currentPlan = state.plan;
+        const currentPlan = {...plans[selectedPlanIndex]};
         const currentPlanList = [].concat(currentPlan[itemFieldName])
         const newItemFieldList = currentPlanList.reduce(
             (itemFieldList, item, i) => {
@@ -254,110 +187,33 @@ function ProjectLevel(props) {
         const updateObj = {};
         updateObj[itemFieldName] = newItemFieldList;
         console.log(updateObj);
-        dispatch({type: 'saving'})
         try {
-            await putPlanUpdate(state.plan.id, updateObj)
-            dispatch({type:'delete', field: itemFieldName, payload: itemIndex})
+            await savePlanChanges(contextState.selectedPlanId, updateObj)
         } catch (error) {
-            dispatch({type: 'error', payload: error})
+            console.log(error);
         }
-        //props.savePlanChanges(currentPlan.id, updateObj);
     }
 
-    const addBookmark = (url, title) => {
-        const newBookmark = {
-            url: state.newBookmarkValue,
-            title: state.newBookmarkTitleValue,
-        };
-        let updatedBookmarksObj;
-        if (props.userPlans[props.selectedPlanIndex].bookmarks) {
-            const updatedBookmarksList = [newBookmark].concat(
-                props.userPlans[props.selectedPlanIndex].bookmarks
-            );
-            updatedBookmarksObj = { bookmarks: updatedBookmarksList };
-        } else {
-            updatedBookmarksObj = { bookmarks: [newBookmark] };
-        }
-        console.log(
-            props.userPlans[props.selectedPlanIndex].id,
-            updatedBookmarksObj
-        );
-        props.savePlanChanges(
-            props.userPlans[props.selectedPlanIndex].id,
-            updatedBookmarksObj
-        );
-        // setNewBookmarkValue('');
-        // setNewBookmarkTitleValue('');
-    };
-
-    const checksSections = props.userPlans[props.selectedPlanIndex].checks.map(
-        (checkObj, i) => {
-            return (
-                <div key={checkObj.title + i} className='col s12 m6'>
-                    <SimpleCheckboxSection
-                        checklist={checkObj.list}
-                        listType={checkObj.list_type}
-                        listTitle={checkObj.title}
-                        checklistIndex={i}
-                        import_url={checkObj.import_url}
-                        updateChecklist={updateChecklist}
-                        deleteItemInPlan={deleteItemInPlan}
-                    />
-                </div>
-            );
-        }
-    );
-    function makeListOfSubPlanTabElements (arr) {
-        return arr.map((subPlan, i) => {
-            if (state.plan) {
+    function makeChecksSections (arr) {
+        return arr.map(
+            (checkObj, i) => {
                 return (
-                    <li key={subPlan.id} className='tab col s3'>
-                        <a href={'#' + subPlan.id}>{subPlan.title}</a>
-                    </li>
-                )
-            } else {
-                return null;
-            }
-        });
-    }
-    const substepTabs = (state.plan) ? makeListOfSubPlanTabElements(state.plan.sub_plans) : <li>Add step</li>
-
-    function makeListOfSubPlanDisplayElements (arr) {
-        return arr.map((subPlan, i) => {
-            if (state.plan) {
-                return (
-                    <div key={subPlan.title + i} id={subPlan.id}>
-                        <div className='row'>
-                            <div className='col s12'>
-                                <div className='card indigo white-text'>
-                                    <div className='nav-wrapper '>
-                                        <div className='row'>
-                                            <div className='col s12'>
-                                                <h6 className='center-align'>
-                                                    {subPlan.title}
-                                                </h6>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <ProjectStepsSection
-                                        subPlan={subPlan}
-                                        subPlanIndex={i}
-                                        updateSubPlan={updateSubPlan}
-                                        savePlanChanges={props.savePlanChanges}
-                                        deleteItemInPlan={deleteItemInPlan}
-                                    />
-                                </div>
-                            </div>
-                        </div>
+                    <div key={checkObj.title + i} className='col s12 m6'>
+                        <SimpleCheckboxSection
+                            checklist={checkObj.list}
+                            listType={checkObj.list_type}
+                            listTitle={checkObj.title}
+                            checklistIndex={i}
+                            import_url={checkObj.import_url}
+                            savePlanChanges = {savePlanChanges}
+                        />
                     </div>
-                )
-            } else {
-                return null;
+                );
             }
-        });
+        );
     }
-    const substepSections = makeListOfSubPlanDisplayElements(state.plan.sub_plans);
 
+    // const checksSections = makeChecksSections(contextState.selectedSow.checks)
     return (
         <div>
             <div className='col s12'>
@@ -367,7 +223,7 @@ function ProjectLevel(props) {
                             type='button'
                             className='waves-effect waves-blue btn-flat '
                             onClick={() => {
-                                props.handleMainAppView('HomePage');
+                                handleMainAppView('HomePage');
                             }}
                         >
                             <i className='material-icons left indigo-text'>
@@ -379,7 +235,7 @@ function ProjectLevel(props) {
                             type='button'
                             name='action'
                             onClick={() =>
-                                props.handleMainAppView('SearchResults')
+                                handleMainAppView('SearchResults')
                             }
                         >
                             <i className='material-icons left tiny'>search</i>
@@ -397,12 +253,12 @@ function ProjectLevel(props) {
                                         className='collapsible expandable z-depth-0'
                                     >
                                         <li
-                                            id={props.userPlans[props.selectedPlanIndex].id}
+                                            id={plans[selectedPlanIndex].id}
                                             className='collection-header indigo-text center'
                                         >
                                             <h6>
                                                 <b>
-                                                    {props.userPlans[props.selectedPlanIndex].title}
+                                                    {plans[selectedPlanIndex].title}
                                                 </b>{' '}
                                                 <i className='tiny material-icons red-text text-accent-4'>
                                                     edit
@@ -418,22 +274,16 @@ function ProjectLevel(props) {
                                             <div className='collapsible-body indigo-text'>
                                                 <NotesSection
                                                     updateNotes={updateNotes}
-                                                    notes={
-                                                        props.userPlans[props.selectedPlanIndex]
-                                                            .notes
-                                                    }
+                                                    notes={plans[selectedPlanIndex].notes}
                                                     deleteItemInPlan={deleteItemInPlan}
                                                 />
                                             </div>
                                         </li>
                                         <div className='active'>
                                             <UrlLinks
-                                                planId={props.userPlans[props.selectedPlanIndex].id}
-                                                savePlanChanges={props.savePlanChanges}
-                                                videoUrls={
-                                                    props.userPlans[props.selectedPlanIndex]
-                                                        .video_urls
-                                                }
+                                                planId={plans[selectedPlanIndex].id}
+                                                savePlanChanges={savePlanChanges}
+                                                videoUrls={plans[selectedPlanIndex].video_urls}
                                             />
                                         </div>
                                         <li className='active'>
@@ -445,8 +295,7 @@ function ProjectLevel(props) {
                                             </div>
                                             <div className='collapsible-body'>
                                                 <Bookmarks
-                                                    bookmarks = {props.userPlans[props.selectedPlanIndex].bookmarks}
-                                                    addBookmark = {addBookmark}
+                                                    savePlanChanges={savePlanChanges}
                                                 />
                                             </div>
                                         </li>
@@ -460,8 +309,7 @@ function ProjectLevel(props) {
                                             <div className='collapsible-body'>
                                                 <section>
                                                     <div className='row'>
-                                                        {props.userPlans[props.selectedPlanIndex]
-                                                            .checks.length > 0 && checksSections}
+                                                        {makeChecksSections(plans[selectedPlanIndex].checks)}
                                                     </div>
                                                 </section>
                                             </div>
@@ -475,13 +323,35 @@ function ProjectLevel(props) {
                                             </div>
                                             <div className='collapsible-body'>
                                                 <section>
-                                                <ul
-                                                    ref={substepTabsUl}
-                                                    className='tabs'
-                                                >
-                                                    {substepTabs}
-                                                </ul>
-                                                {substepSections}
+                                                {plans[selectedPlanIndex].sub_plans.length > 0 &&
+                                                    plans[selectedPlanIndex].sub_plans.map((subPlan, i) => {
+                                                        return (
+                                                            <li key={subPlan.id} className='collection-item'>
+                                                                <div className='indigo-text text-darken-3'>
+                                                                    <a
+                                                                        href='#subplannotebook'
+                                                                        className='waves-effect waves-light btn-flat indigo-text text-darken-3'
+                                                                        onClick={() => selectSubPlan(subPlan)}
+                                                                    >
+                                                                        <h6 className='valign-wrapper'>
+                                                                            {subPlan.title}
+                                                                            <i className='material-icons'>chevron_right</i>
+                                                                        </h6>
+                                                                    </a>
+
+                                                                    <button
+                                                                        className='btn-flat center-align right waves-effect waves-light  hide-on-small-and-down '
+                                                                        onClick={() => {
+                                                                            deleteSubPlan(subPlan.id);
+                                                                        }}
+                                                                    >
+                                                                        <i className='material-icons grey-text text-lighten-4'>delete_forever</i>
+                                                                    </button>
+                                                                </div>
+                                                            </li>
+                                                        );
+                                                    })
+                                                }
                                                 </section>
                                             </div>
                                         </li>
@@ -625,29 +495,23 @@ function ProjectLevel(props) {
                             </div>
                         </div>
                         <PlanDetailsMenu
-                            userPlans={props.userPlans}
-                            selectedPlanIndex={props.selectedPlanIndex}
-                            updateSelectedPlan={props.updateSelectedPlan}
-                            addUserPlan={props.addUserPlan}
-                            removeUserPlan={props.removeUserPlan}
-                            savePlanChanges={props.savePlanChanges}
-                            handleMainAppView={props.handleMainAppView}
+                            userPlans={contextState.plans}
+                            selectedPlanIndex={contextState.selectedPlanIndex}
+                            savePlanChanges={savePlanChanges}
+                            handleMainAppView={handleMainAppView}
                             openAddModal={openAddModal}
-                        />
+                        />}
                     </div>
                     <div
                         ref={addModal}
-                        id={
-                            'add-modal' +
-                            props.userPlans[props.selectedPlanIndex].title
-                        }
+                        id={'add-modal' + plans[selectedPlanIndex].title}
                         className='modal'
                     >
                         <AddModal
                             addModalHeader={state.addModalHeader}
                             addModalType={state.addModalType}
-                            parentValue={props.userPlans[props.selectedPlanIndex].id}
-                            subPlans={props.userPlans[props.selectedPlanIndex].sub_plans}
+                            parentValue={plans[selectedPlanIndex].id}
+                            subPlans={plans[selectedPlanIndex].sub_plans}
                             addNewSection={addNewSection}
                         />
                     </div>
@@ -657,111 +521,3 @@ function ProjectLevel(props) {
 }
 
 export default ProjectLevel;
-// <ul>
-//     <li>
-//       <div className="collapsible-header"><i className="material-icons">filter_drama</i>First</div>
-//       <div className="collapsible-body"><span>Lorem ipsum dolor sit amet.</span></div>
-//     </li>
-//     <li>
-//       <div className="collapsible-header"><i className="material-icons">place</i>Second</div>
-//       <div className="collapsible-body"><span>Lorem ipsum dolor sit amet.</span></div>
-//     </li>
-//     <li>
-//       <div className="collapsible-header"><i className="material-icons">whatshot</i>Third</div>
-//       <div className="collapsible-body"><span>Lorem ipsum dolor sit amet.</span></div>
-//     </li>
-// </ul>
-
-// <td>
-//     <div className='input-field col s6'>
-//         <input
-//             placeholder='New Bookmark Name'
-//             id='add-bookmark-name'
-//             type='text'
-//             className='validate'
-//             value={
-//                 newBookmarkTitleValue
-//             }
-//             onChange={(
-//                 e
-//             ) =>
-//                 setNewBookmarkTitleValue(
-//                     e
-//                         .target
-//                         .value
-//                 )
-//             }
-//             onKeyDown={(
-//                 e
-//             ) => {
-//                 if (
-//                     e.keyCode ===
-//                     13
-//                 ) {
-//                     addBookmark();
-//                 }
-//             }}
-//         />
-//         </div>
-// </td>
-
-// <li className=''>
-//     <div className='collapsible-header indigo-text'>
-//     <i className='material-icons center indigo-text'>
-//     assignment
-//     </i>
-//     <b>Project Tools</b>
-//     </div>
-//     <div className='collapsible-body'>
-//     <section className='section section-content'>
-//     <div className='row'>
-//     <div className='col s12 m6 l8'>
-//     <div className='card-panel'>
-//     <div
-//     id='contentViewer'
-//     className='content-viewer red-text'
-//     >
-//     Content Viewer
-//     {props.userPlans[props.selectedPlanIndex].video_urls
-//         .length > 0 && videoDisplays}
-//         </div>
-//         </div>
-//         </div>
-//
-//         <div className='col s12 m6'>
-//         <div className='card-panel'>
-//         <div className='row center'></div>
-//         </div>
-//         </div>
-//         <div className='col s12 m6'>
-//         <div className='card red-text accent-4 center'>
-//         <i className='material-icons'>
-//         camera
-//         </i>
-//         <p>Attachments(Camera for Phone)</p>
-//         </div>
-//         </div>
-//         <div className='col s12 m6'>
-//         <div className='card center red-text accent-4'>
-//         <i className='material-icons'>
-//         playlist_add_check
-//         </i>
-//         <p>Check List</p>
-//         </div>
-//         </div>
-//         <div className='col s12 m6'>
-//         <div className='card center red-text accent-4'>
-//         <p>Work Steps</p>
-//         </div>
-//         </div>
-//         </div>
-//         </section>
-//         </div>
-//     </li>
-
-// <li>
-// <div className='collapsible-header'>
-// <b>Lessons Learned</b>
-// </div>
-// <div className='collapsible-body'></div>
-// </li>

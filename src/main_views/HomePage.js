@@ -1,5 +1,9 @@
 //Import React
-import React from 'react';
+import React, {useContext} from 'react';
+//Import for useContext
+import {PlanContext} from '../PlanContext.js'
+//Import DB Api functions
+import { getUserPlans, deletePlan } from '../api/projectsApi';
 //Import Styles
 import './HomePage.css';
 
@@ -8,102 +12,92 @@ import './HomePage.css';
 function HomePage(props) {
 //Return view of this component:
     //Includes the list of user projects and functionalty assoc. with each
-    return (
-        <div className='row'>
-            <div className='col s12'>
-                <div className='container create-prj-override'>
-                    <button
-                        className='btn waves-effect waves-light indigo white-text'
-                        onClick={() => {
-                            props.handleMainAppView('NewProject');
-                        }}
-                    >
-                        <b>&#123;C&#125; - Construct-A-Project</b>
-                    </button>
-                </div>
-                <ul id='home-page-nav' className='collection with-header'>
-                    <div>
-                        <li className='collection-header center grey lighten-5 indigo-text text-darken-3'>
-                            <b>Projects</b>
-                        </li>
+    //useContext hook
+        const [contextState, contextDispatch] = useContext(PlanContext);
+    //Deletes userplan from db, gets updated plan list then updates context state
+    function removeUserPlan(planId) {
+        console.log('deleting plan with id: ', planId);
+        deletePlan(planId).then((res) => {
+            console.log(res);
+            //Update the list of projects
+            getUserPlans().then((updatedPlans) => {
+                contextDispatch({type:'field',field:'plans',payload:updatedPlans});
+            });
+        });
+    }
+        return (
+            <div className='row'>
+                <div className='col s12'>
+                    <div className='container create-prj-override'>
+                        <button
+                            className='btn waves-effect waves-light indigo white-text'
+                            onClick={() => {
+                                props.handleMainAppView('NewProject');
+                            }}
+                        >
+                            <b>&#123;C&#125; - Construct-A-Project</b>
+                        </button>
                     </div>
-                    <li className='collection-header indigo-text text-darken-3 indigo lighten-5'>
-                        <b>In Progress</b>
-                    </li>
-                    {props.userPlans.length > 0 &&
-                        props.userPlans.map((plan) => {
-                            return (
-                                <li key={plan.id} className='collection-item'>
-                                    <div className='indigo-text text-darken-3'>
-                                        <a
-                                            href='#notebook'
-                                            className='waves-effect waves-light btn-flat indigo-text text-darken-3'
-                                            onClick={() => props.updateSelectedPlan(plan.id)}
-                                        >
-                                            <h6 className='valign-wrapper'>
-                                                {plan.title}
-                                                <i className='material-icons'>chevron_right</i>
-                                            </h6>
-                                      </a>
-
-                                        <button
-                                            className='btn-flat center-align right waves-effect waves-light  hide-on-small-and-down '
-                                            onClick={() => {
-                                                props.removeUserPlan(plan.id);
-                                            }}
-                                        >
-                                            <i className='material-icons grey-text text-lighten-4'>delete_forever</i>
-                                        </button>
-                                    </div>
-                                </li>
-                            );
-                        })
-                    }
-                    <li className='collection-header indigo-text text-darken-3 indigo lighten-5'>
-                        <b>Finished</b>
-                    </li>
-                    <li className='collection-item'>
-                        Coming Soon <i className='material-icons'>share</i>
-                    </li>
-                </ul>
-                <ul id='home-page-nav' className='collection with-header'>
-                    <div>
-                        <li className='collection-header center grey lighten-5 indigo-text text-darken-3'>
-                            <b>Construct-A-Network</b>
+                    <ul id='home-page-nav' className='collection with-header'>
+                        <div>
+                            <li className='collection-header center grey lighten-5 indigo-text text-darken-3'>
+                                <b>Projects</b>
+                            </li>
+                        </div>
+                        <li className='collection-header indigo-text text-darken-3 indigo lighten-5'>
+                            <b>In Progress</b>
                         </li>
-                    </div>
+                        {contextState.plans.length > 0 &&
+                            contextState.plans.map((plan, i) => {
+                                return (
+                                    <li key={plan.id} className='collection-item'>
+                                        <div className='indigo-text text-darken-3'>
+                                            <a
+                                                href='#notebook'
+                                                className='waves-effect waves-light btn-flat indigo-text text-darken-3'
+                                                onClick={() => props.selectPlan(i)}
+                                            >
+                                                <h6 className='valign-wrapper'>
+                                                    {plan.title}
+                                                    <i className='material-icons'>chevron_right</i>
+                                                </h6>
+                                          </a>
 
-                    <li className='collection-header indigo-text text-darken-3 indigo lighten-5'>
-                        <b>
+                                            <button
+                                                className='btn-flat center-align right waves-effect waves-light  hide-on-small-and-down '
+                                                onClick={() => {
+                                                    removeUserPlan(plan.id);
+                                                }}
+                                            >
+                                                <i className='material-icons grey-text text-lighten-4'>delete_forever</i>
+                                            </button>
+                                        </div>
+                                    </li>
+                                );
+                            })
+                        }
+                        <li className='collection-header indigo-text text-darken-3 indigo lighten-5'>
+                            <b>Finished</b>
+                        </li>
+                        <li className='collection-item'>
                             Coming Soon <i className='material-icons'>share</i>
-                        </b>
-                    </li>
-                </ul>
+                        </li>
+                    </ul>
+                    <ul id='home-page-nav' className='collection with-header'>
+                        <div>
+                            <li className='collection-header center grey lighten-5 indigo-text text-darken-3'>
+                                <b>Construct-A-Network</b>
+                            </li>
+                        </div>
+
+                        <li className='collection-header indigo-text text-darken-3 indigo lighten-5'>
+                            <b>
+                                Coming Soon <i className='material-icons'>share</i>
+                            </b>
+                        </li>
+                    </ul>
+                </div>
             </div>
-        </div>
-    );
+        );
 }
 export default HomePage;
-
-/*
-const projectNav = useRef(null);
-ref={projectNav}
-className="sidenav sidenav-fixed z-depth-0
-useEffect(() => {
-    const projectNavOptions = {
-        inDuration: 250,
-        outDuration: 200,
-        draggable: true
-    };
-    M.Sidenav.init(projectNav.current, projectNavOptions);
-},[]);
-<UserProjects
-    userPlans={props.userPlans}
-    selectedPlanIndex={props.selectedPlanIndex}
-    changeView={changeView}
-    handleMainAppView={props.handleMainAppView}
-    updateSelectedPlan={props.updateSelectedPlan}
-    updateUserPlans={props.updateUserPlans}
-    removeUserPlan={props.removeUserPlan}
-    savePlanChanges={props.savePlanChanges}/>
- */
