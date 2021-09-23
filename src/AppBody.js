@@ -7,8 +7,28 @@ import HomePage from './main_views/HomePage.js';
 import SearchResults from './main_views/SearchResults.js';
 import ProjectLevel from './main_views/ProjectLevel.js';
 import NewProject from './main_views/NewProject.js';
+import Preloader from './utility_components/Preloader.js';
 //Import Functions
 import {getUserPlans, putPlanUpdate} from './api/projectsApi';
+
+// function init(initialState) {
+//     return {
+//         plans: initialState,
+//
+//     }
+// }
+//
+// function reducer (state, action) {
+//     switch (action.type) {
+//         case 'field':
+//             return {
+//                 ...state,
+//                 [action.field]: action.payload
+//             };
+//         default:
+//             return state;
+//     }
+// }
 
 //Functional Component
     //Handles the view within the App's <main> html tag
@@ -23,37 +43,27 @@ function AppBody(props) {
 /**
  * useEffect Hooks
  */
-    // Finds and sets selected plan index
-    // useEffect(() => {
-    //     const selectedPlanIndex = contextState.plans.findIndex(
-    //         (plan) => plan.id === contextState.selectedPlanId
-    //     );
-    //     if (selectedPlanIndex >= 0) {
-    //         setSelectedPlanIndex(selectedPlanIndex);
-    //         // handleMainAppView('ProjectDetails');
-    //     }
-    // }, [contextState.plans]);
-
+    useEffect(() => {
+        console.log(contextState.selectedPlanIndex);
+    })
 //Functions for props to lift state
     //Handling views of child components
     function handleMainAppView(view) {
         setMainAppView(view);
     }
     // //Changes which of the user's plans are displayed
-    function selectPlan(selectedPlanId) {
-        if (selectedPlanId !== contextState.selectedPlanId) {
-            const selectedPlanIndex = contextState.plans.findIndex(
-                (plan) => plan.id === selectedPlanId
-            );
-            if (selectedPlanIndex >= 0) {
-                contextDispatch({type:'field',field:'selectedPlanIndex',payload:selectedPlanIndex});
-                // handleMainAppView('ProjectDetails');
-            }
-            console.log(selectedPlanIndex);
-        }
+    function selectPlan(selectedPlanIndex) {
+        contextDispatch({type:'field',field:'selectedPlanIndex',payload:selectedPlanIndex});
         handleMainAppView('ProjectDetails')
     }
-    function savePlanChanges(planId, planUpdateObj) {
+    function savePlanChanges(planId, sowUpdateObj) {
+        let planUpdateObj;
+        if (contextState.selectedStepIndex < 0) {
+            planUpdateObj = sowUpdateObj
+        } else {
+            planUpdateObj = {...contextState.plans[contextState.selectedPlanIndex]}
+            planUpdateObj.subPlans[contextState.selectedStepIndex] = sowUpdateObj
+        }
         console.log(planUpdateObj);
         return putPlanUpdate(planId, planUpdateObj).then((res) => {
             console.log("plan update put");
@@ -95,39 +105,45 @@ function AppBody(props) {
         handleMainAppView("ProjectDetails");
     }
 //Return view to render based on state of main app view
-    return (
-        <main id='main-app-container' className='row'>
-            {mainAppView === 'HomePage' && (
-                <HomePage
-                    selectedPlanIndex={contextState.selectedPlanIndex}
-                    selectPlan={selectPlan}
-                    handleMainAppView={handleMainAppView}
-                />
-            )}
-            {mainAppView === 'NewProject' && (
-                <NewProject
-                    selectPlan={selectPlan}
-                    mainAppView = {mainAppView}
-                    handleMainAppView={handleMainAppView}
-                    savePlanChanges={savePlanChanges}
-                />
-            )}
-            {mainAppView === 'ProjectDetails' && (
-                <ProjectLevel
-                    handleMainAppView={handleMainAppView}
-                    savePlanChanges={savePlanChanges}
-                />
-            )}
-            {mainAppView === 'SearchResults' && (
-                <SearchResults
-                    mainAppView={mainAppView}
-                    handleMainAppView={handleMainAppView}
-                    placeholder="Constructapedia"
-                    handleScrapedData={addScrapedDataToPlan}
-                />
-            )}
-        </main>
-    );
+    if (contextState.plans) {
+        return (
+            <main id='main-app-container' className='row'>
+                {mainAppView === 'HomePage' && (
+                    <HomePage
+                        selectPlan={selectPlan}
+                        handleMainAppView={handleMainAppView}
+                    />
+                )}
+                {mainAppView === 'NewProject' && (
+                    <NewProject
+                        selectPlan={selectPlan}
+                        mainAppView = {mainAppView}
+                        handleMainAppView={handleMainAppView}
+                        savePlanChanges={savePlanChanges}
+                    />
+                )}
+                {mainAppView === 'ProjectDetails' && (
+                    <ProjectLevel
+                        selectPlan={selectPlan}
+                        handleMainAppView={handleMainAppView}
+                        savePlanChanges={savePlanChanges}
+                        //levelType={(contextState.selectedStepIndex < 0)?"project":"step"}
+                    />
+                )}
+                {mainAppView === 'SearchResults' && (
+                    <SearchResults
+                        mainAppView={mainAppView}
+                        handleMainAppView={handleMainAppView}
+                        placeholder="Constructapedia"
+                        handleScrapedData={addScrapedDataToPlan}
+                    />
+                )}
+            </main>
+        );
+    } else {
+        return <Preloader/>;
+    }
+
 }
 
 export default AppBody;

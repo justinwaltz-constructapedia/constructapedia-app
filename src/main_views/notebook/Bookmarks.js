@@ -1,21 +1,21 @@
-import React, { useReducer, useContext } from 'react';
+import React, { useContext, useReducer } from 'react';
 //Import for useContext
 import {PlanContext} from '../../PlanContext.js'
 
-function init(initialBookmarks) {
-    console.log(initialBookmarks);
-    return {
-        bookmarks: initialBookmarks,
-        newBookmarkValue: '',
-        newBookmarkTitleValue: '',
-        editBookmarkValue: '',
-        editBookmarkTitleValue: '',
-        isSaving: false,
-        isEditing: false,
-        indexToEdit: -1,
-        error: ''
-    }
-}
+// function init(initialBookmarks) {
+//     console.log(initialBookmarks);
+//     return {
+//         bookmarks: initialBookmarks,
+//         newBookmarkValue: '',
+//         newBookmarkTitleValue: '',
+//         editBookmarkValue: '',
+//         editBookmarkTitleValue: '',
+//         isSaving: false,
+//         isEditing: false,
+//         indexToEdit: -1,
+//         error: ''
+//     }
+// }
 function reducer (state, action) {
     switch (action.type) {
         case 'saving':
@@ -35,19 +35,19 @@ function reducer (state, action) {
                 ...state,
                 [action.field]: action.payload
             };
-        case 'addItem':
-            return {
-                ...state,
-                bookmarks: {
-                    ...state.bookmarks,
-                    [action.field]: action.payload[action.field]
-                }
-            }
-        case 'delete':
-            return {
-                ...state,
-                bookmarks: state.bookmarks.filter((_, index) => index !== action.payload)
-            }
+        // case 'addItem':
+        //     return {
+        //         ...state,
+        //         bookmarks: {
+        //             ...state.bookmarks,
+        //             [action.field]: action.payload[action.field]
+        //         }
+        //     }
+        // case 'delete':
+        //     return {
+        //         ...state,
+        //         bookmarks: state.bookmarks.filter((_, index) => index !== action.payload)
+        //     }
         case 'error':
             return {
                 ...state,
@@ -59,16 +59,28 @@ function reducer (state, action) {
             return state;
     }
 }
-export default function Bookmarks ({bookmarksProp, savePlanChanges}) {
-    /**
-     * useReducer Hook
-     */
-    const [state, dispatch] = useReducer(reducer, bookmarksProp, init);
-    const {bookmarks, newBookmarkValue, newBookmarkTitleValue, editBookmarkValue, editBookmarkTitleValue, isSaving, isEditing, indexToEdit, error} = state;
+export default function Bookmarks ({ savePlanChanges }) {
     /**
      * useContext Hook
      */
     const [contextState, contextDispatch] = useContext(PlanContext);
+    const {plans, selectedPlanIndex, selectedStepIndex} = contextState;
+    /**
+     * useReducer Hook
+     */
+    const initialState = {
+        newBookmarkValue: '',
+        newBookmarkTitleValue: '',
+        editBookmarkValue: '',
+        editBookmarkTitleValue: '',
+        isSaving: false,
+        isEditing: false,
+        indexToEdit: -1,
+        error: ''
+    }
+    const [state, dispatch] = useReducer(reducer, initialState);
+    const { newBookmarkValue, newBookmarkTitleValue, editBookmarkValue, editBookmarkTitleValue, isSaving, isEditing, indexToEdit, error} = state;
+
 
     const addBookmark = () => {
         let bookmarkTitle;
@@ -84,20 +96,20 @@ export default function Bookmarks ({bookmarksProp, savePlanChanges}) {
             title: bookmarkTitle,
         };
         let updatedBookmarksObj;
-        if (contextState.plans[contextState.selectedPlanIndex].bookmarks) {
+        if (plans[selectedPlanIndex].bookmarks) {
             const updatedBookmarksList = [newBookmark].concat(
-                contextState.plans[contextState.selectedPlanIndex].bookmarks
+                [...plans[selectedPlanIndex].bookmarks]
             );
             updatedBookmarksObj = { bookmarks: updatedBookmarksList };
         } else {
             updatedBookmarksObj = { bookmarks: [newBookmark] };
         }
         console.log(
-            contextState.plans[contextState.selectedPlanIndex].id,
+            plans[selectedPlanIndex].id,
             updatedBookmarksObj
         );
         savePlanChanges(
-            contextState.plans[contextState.selectedPlanIndex].id,
+            plans[selectedPlanIndex].id,
             updatedBookmarksObj
         );
         dispatch({type:'field', field:'newBookmarkValue', payload:''});
@@ -106,9 +118,9 @@ export default function Bookmarks ({bookmarksProp, savePlanChanges}) {
 
     const updateBookmark = () => {
         const updatedBookmark = {title: editBookmarkTitleValue, url: editBookmarkValue}
-        const updatedBookmarksArr = [].concat(bookmarks);
+        const updatedBookmarksArr = [...plans[selectedPlanIndex].bookmarks];
         updatedBookmarksArr[indexToEdit] = updatedBookmark;
-        savePlanChanges(contextState.plans[contextState.selectedPlanIndex].id,{bookmarks:updatedBookmarksArr})
+        savePlanChanges(plans[selectedPlanIndex].id,{bookmarks:updatedBookmarksArr})
         dispatch({type:'field', field: 'bookmarks', payload:updatedBookmarksArr})
         dispatch({type:'field', field:'editBookmarkValue', payload:''});
         dispatch({type:'field', field:'editBookmarkTitleValue', payload:''});
@@ -117,10 +129,10 @@ export default function Bookmarks ({bookmarksProp, savePlanChanges}) {
 
     const deleteBookmark = (indexToDelete) => {
         dispatch({type:'delete', payload:indexToDelete})
-        savePlanChanges(contextState.plans[contextState.selectedPlanIndex].id,{bookmarks:bookmarks})
+        alert("need delete funtion")
+        //savePlanChanges(plans[selectedPlanIndex].id,{bookmarks:bookmarks})
         dispatch({type:'editing',payload:-1})
     }
-
     return (
         <section>
             <div className='row'>
@@ -138,8 +150,8 @@ export default function Bookmarks ({bookmarksProp, savePlanChanges}) {
                                 </tr>
                             </thead>
                             <tbody>
-                                {bookmarks.length > 0 &&
-                                    bookmarks.map(
+                                {plans[selectedPlanIndex].bookmarks.length > 0 &&
+                                    plans[selectedPlanIndex].bookmarks.map(
                                         (bookmark, i) => {
                                             return (
                                                     <tr
@@ -182,7 +194,7 @@ export default function Bookmarks ({bookmarksProp, savePlanChanges}) {
                                                                         type='text'
                                                                         className='validate'
                                                                         value={
-                                                                            state.editBookmarkValue
+                                                                            editBookmarkValue
                                                                         }
                                                                         onChange={(e) =>
                                                                             dispatch({
@@ -285,7 +297,7 @@ export default function Bookmarks ({bookmarksProp, savePlanChanges}) {
                                                 type='text'
                                                 className='validate'
                                                 value={
-                                                    state.newBookmarkValue
+                                                    newBookmarkValue
                                                 }
                                                 onChange={(e) =>
                                                     dispatch({

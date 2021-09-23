@@ -3,17 +3,6 @@ import React, { useContext, useReducer, useEffect } from 'react';
 //Import for useContext
 import {PlanContext} from '../../PlanContext.js'
 
-function init(initialList) {
-    return {
-        list: initialList,
-        newItemValue: '',
-        editItemValue: '',
-        isSaving: false,
-        isEditing: false,
-        indexToEdit: -1,
-        error: ''
-    }
-}
 function reducer (state, action) {
     switch (action.type) {
         case 'saving':
@@ -35,8 +24,8 @@ function reducer (state, action) {
             };
         case 'delete':
             return {
-                ...state,
-                list: state.list.filter((_, index) => index !== action.payload)
+                ...state
+                //list: state.list.filter((_, index) => index !== action.payload)
             }
         case 'error':
             return {
@@ -60,19 +49,29 @@ function SimpleCheckboxSection({checklist, listType, listTitle, checklistIndex, 
      * useContext Hook
      */
     const [contextState] = useContext(PlanContext);
+    const {plans, selectedPlanIndex, selectedStepIndex} = contextState;
+
     /**
      * useReducer Hook
      */
     //NOTE: Is State/Reducer needed since savePlanChanges updates context state?
-    const [state, dispatch] = useReducer(reducer, checklist, init);
-    const {list, newItemValue, editItemValue, isSaving, isEditing, indexToEdit, error} = state;
-    useEffect(() => {
-        console.log("SimpleCheckboxSection useEffect",list);
-    })
+    const initialState = {
+        newItemValue: '',
+        editItemValue: '',
+        isSaving: false,
+        isEditing: false,
+        indexToEdit: -1,
+        error: ''
+    }
+    const [state, dispatch] = useReducer(reducer, initialState);
+    const { newItemValue, editItemValue, isSaving, isEditing, indexToEdit, error} = state;
+    // useEffect(() => {
+    //     console.log("SimpleCheckboxSection useEffect",list);
+    // })
     function createAndSaveUpdatedChecks (newList) {
-        const updatedChecks = [].concat(contextState.plans[contextState.selectedPlanIndex].checks);
+        const updatedChecks = [...plans[selectedPlanIndex].checks];
         updatedChecks[checklistIndex].list = newList;
-        savePlanChanges(contextState.plans[contextState.selectedPlanIndex].id, { checks: updatedChecks });
+        savePlanChanges(plans[selectedPlanIndex].id, { checks: updatedChecks });
     }
     //Processes the various changes of input in the component parts
     function handleInputChange(e, index) {
@@ -80,10 +79,10 @@ function SimpleCheckboxSection({checklist, listType, listTitle, checklistIndex, 
         const target = e.target;
         //Handle the clicking of a checkbox
         if (target.type === 'checkbox') {
-            const updatedList = list.map((item, i) => {
+            const updatedList = plans[selectedPlanIndex].checks[checklistIndex].list.map((item, i) => {
                 if (i === index) {
                     const newItem = {...item}
-                    newItem.is_complete = !list[index].is_complete
+                    newItem.is_complete = !plans[selectedPlanIndex].checks[checklistIndex].list[index].is_complete
                     return newItem;
                 } else {
                     return item;
@@ -94,7 +93,7 @@ function SimpleCheckboxSection({checklist, listType, listTitle, checklistIndex, 
             //Send request to update the database
             createAndSaveUpdatedChecks(updatedList);
         } else if (target.id.includes('quantity') && Number(target.value)) {
-            const updatedList = list.map((item, i) => {
+            const updatedList = plans[selectedPlanIndex].checks[checklistIndex].list.map((item, i) => {
                 if (i === index) {
                     const newItem = {
                         ...item,
@@ -105,8 +104,6 @@ function SimpleCheckboxSection({checklist, listType, listTitle, checklistIndex, 
                     return item;
                 }
             });
-            //Update the item quantity in state
-            dispatch({type:'field', field:'list', payload:updatedList})
             //Send request to update the database
             createAndSaveUpdatedChecks(updatedList);
         } else {
@@ -121,43 +118,38 @@ function SimpleCheckboxSection({checklist, listType, listTitle, checklistIndex, 
                 text_value: newItemValue,
                 is_complete: false,
             };
-            const updatedList = [...list, newCheck];
+            const updatedList = [...plans[selectedPlanIndex].checks[checklistIndex].list, newCheck];
             console.log("updated list", updatedList);
             //Update the check clicked
             createAndSaveUpdatedChecks(updatedList);
-            dispatch({type:'field', field:'list', payload:updatedList})
             dispatch({type:'field', field:'newItemValue', payload:''});
         } else {
             alert('Please enter a new checklist item.')
         }
     }
     function removeChecklistItem(indexOfCheckToRemove) {
-        const updatedList = list.reduce((checks, check, i) => {
+        const currentList = [...plans[selectedPlanIndex].checks[checklistIndex].list]
+        const updatedList = currentList.reduce((checks, check, i) => {
             if (i !== indexOfCheckToRemove) {
                 checks.push(check);
             }
             return checks;
         }, []);
         createAndSaveUpdatedChecks(updatedList);
-        dispatch({type:'field', field:'list', payload:updatedList})
     }
     function makeListOfCheckboxElements(arr) {
         return arr.map((listItem, i) => {
-            if (list[i]) {
-                return <CheckListItem
-                        key={i + listItem.text_value}
-                        listType={listType}
-                        listItem={listItem}
-                        handleInputChange={handleInputChange}
-                        itemIndex={i}
-                        removeChecklistItem={removeChecklistItem}
-                    />
-            } else {
-                return null;
-            }
+            return <CheckListItem
+                key={i + listItem.text_value}
+                listType={listType}
+                listItem={listItem}
+                handleInputChange={handleInputChange}
+                itemIndex={i}
+                removeChecklistItem={removeChecklistItem}
+            />
         });
     }
-    const checkboxElements = makeListOfCheckboxElements(list);
+    const checkboxElements = makeListOfCheckboxElements(plans[selectedPlanIndex].checks[checklistIndex].list);
 
     return (
         <div className='col s11'>
@@ -323,24 +315,4 @@ export default SimpleCheckboxSection;
     />
   </div>
 </div>
-
-
-    //Handle changes in the the unit field
-    //NOTE: Not currently an option
-} else if (target.id.includes('unit')) {
-    const itemToUpdate = props.checklist[index];
-    console.log(itemToUpdate, value);
-    const updatedChecks = (prevChecks) => {
-        const newChecksObjs = {
-            ...prevChecks,
-            [name]: {
-                is_complete: prevChecks[name].is_complete,
-                quantity: prevChecks[name].quantity,
-                unit_of_measure: value,
-            },
-        };
-        return newChecksObjs;
-    };
-    setChecksObjs((prevChecksObjs) => updatedChecks(prevChecksObjs));
-    //Handle changes in new item input
 */

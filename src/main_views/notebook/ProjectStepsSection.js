@@ -17,7 +17,7 @@ function ProjectStepsSection(props) {
         } else {
             changesObj.notes = [{ contents: noteValue }];
         }
-        props.updateSubPlan(props.subPlanIndex, changesObj);
+        props.updateSubPlan(props.selectedSubPlanIndex, changesObj);
     }
 
     return (

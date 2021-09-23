@@ -16,7 +16,7 @@ import PlanDetailsMenu from './notebook/PlanDetailsMenu.js';
 //Import Styles
 import './ProjectLevel.css';
 //Import api functions for updating database
-//import {putPlanUpdate} from '../api/projectsApi';
+import {postPlan, getUserPlans} from '../api/projectsApi';
 
 function reducer (state, action) {
     switch (action.type) {
@@ -30,15 +30,14 @@ function reducer (state, action) {
     }
 }
 
-function ProjectLevel({ handleMainAppView, savePlanChanges }) {
+function ProjectLevel({ handleMainAppView, savePlanChanges, levelType }) {
     //useContext hook
     const [contextState, contextDispatch] = useContext(PlanContext);
+    const {plans, selectedPlanIndex} = contextState;
     //Reducer Hook
     const initialState = {
         addModalHeader: '',
-        addModalType: '',
-        subPlanSelected: false,
-        selectedSubPlanIndex: -1
+        addModalType: ''
     }
     const [state, dispatch] = useReducer(reducer, initialState)
     //Ref Hooks for Materialize functionality
@@ -96,50 +95,44 @@ function ProjectLevel({ handleMainAppView, savePlanChanges }) {
 
     //Processes and updates the plan field corresponding to the submission on the add modal
     async function addNewSection(addModalValue, addModalSelectValue, addModalCheckTypeValue) {
-        console.log(addModalValue, addModalSelectValue, addModalCheckTypeValue);
-        const planId = contextState.plans[contextState.selectedPlanIndex].id;
-        const parentId = addModalSelectValue;
-        const newArr = [];
+        console.log("addNewSection params: ",addModalValue, addModalSelectValue, addModalCheckTypeValue);
+        const parentId = plans[selectedPlanIndex].id;
         let updatedFieldObj;
-        let itemFieldName;
         //dispatch({type: 'saving'})
         //Needs to account for being under different levels
         if (addModalValue.trim().length > 0) {
             switch (state.addModalType) {
                 case 'substep':
-                    const prevSubplans = newArr.concat(
-                        contextState.plans[contextState.selectedPlanIndex].sub_plans
-                    );
-                    prevSubplans.push({
+                    const newSowId = await postPlan({
                         title: addModalValue,
                         parent: parentId,
                         notes: []
-                    });
-                    updatedFieldObj = { sub_plans: prevSubplans };
-                    itemFieldName = 'sub_plans';
+                    })
+                    const updatedUserPlans = await getUserPlans()
+                    contextDispatch({type:'field', field: 'plans', payload: updatedUserPlans})
                     break;
                 case 'checklist':
-                    const currentChecks = contextState.plans[contextState.selectedPlanIndex].checks;
-                    console.log(currentChecks);
-                    const newChecks = newArr.concat(currentChecks);
-                    newChecks.push({
-                        title: addModalValue,
-                        parent: parentId,
-                        list_type: addModalCheckTypeValue,
-                    });
+                    const newChecks = [
+                        ...plans[selectedPlanIndex].checks,
+                        {
+                            title: addModalValue,
+                            list_type: addModalCheckTypeValue,
+                        }
+                    ];
                     console.log(newChecks);
-                    updatedFieldObj = { checks: newChecks };
-                    itemFieldName = 'checks';
+                    updatedFieldObj = { checks:newChecks  };
+                    savePlanChanges(plans[selectedPlanIndex].id, updatedFieldObj);
                     break;
                 default:
             }
-            console.log(planId, updatedFieldObj);
-            try {
-                savePlanChanges(planId, updatedFieldObj);
-            } catch (error) {
-                dispatch({type: 'error', payload: error})
-            }
-            savePlanChanges(planId, updatedFieldObj);
+
+            // console.log(contextState.selectedPlanId, updatedFieldObj);
+            // try {
+            //     savePlanChanges(contextState.selectedPlanId, updatedFieldObj);
+            // } catch (error) {
+            //     dispatch({type: 'error', payload: error})
+            // }
+            // savePlanChanges(contextState.selectedPlanId, updatedFieldObj);
         }
     }
 
@@ -147,19 +140,23 @@ function ProjectLevel({ handleMainAppView, savePlanChanges }) {
         let updatedNotes;
         if (isNewNote) {
             updatedNotes = [].concat(
-                contextState.plans[contextState.selectedPlanIndex].notes
+                [...plans[selectedPlanIndex].notes]
             );
             updatedNotes.push(newNoteObj);
         } else {
             updatedNotes = newNoteObj;
         }
-        savePlanChanges(contextState.plans[contextState.selectedPlanIndex].id, {
+        savePlanChanges(contextState.selectedPlanId, {
             notes: updatedNotes,
         });
     }
 
-    function selectSubPlan (i) {
-        console.log("Sub Plan " + i + " selected");
+    function selectSubPlan (stepIndex) {
+        contextDispatch({type:'field', field:'selectedStepIndex', payload:stepIndex});
+    }
+
+    function backButton () {
+        contextDispatch({type:'field', field:'selectedStepIndex', payload:-1});
     }
 
     function deleteSubPlan (id) {
@@ -167,16 +164,16 @@ function ProjectLevel({ handleMainAppView, savePlanChanges }) {
     }
     function updateSubPlan(index, newSubPlanObj) {
         const updatedSubPlans = [].concat(
-            contextState.plans[contextState.selectedPlanIndex].sub_plans
+            [...plans[selectedPlanIndex].sub_plans]
         );
         updatedSubPlans[index] = newSubPlanObj;
-        savePlanChanges(contextState.plans[contextState.selectedPlanIndex].id, {
+        savePlanChanges(contextState.selectedPlanId, {
             sub_plans: updatedSubPlans,
         });
     }
     //Delete function for fields directly under a plan object: sub_plans, notes, checks
     async function deleteItemInPlan(itemFieldName, itemIndex) {
-        const currentPlan = contextState.plans[contextState.selectedPlanIndex];
+        const currentPlan = {...plans[selectedPlanIndex]};
         const currentPlanList = [].concat(currentPlan[itemFieldName])
         const newItemFieldList = currentPlanList.reduce(
             (itemFieldList, item, i) => {
@@ -190,14 +187,11 @@ function ProjectLevel({ handleMainAppView, savePlanChanges }) {
         const updateObj = {};
         updateObj[itemFieldName] = newItemFieldList;
         console.log(updateObj);
-        dispatch({type: 'saving'})
         try {
-            await savePlanChanges(currentPlanList.id, updateObj)
-
+            await savePlanChanges(contextState.selectedPlanId, updateObj)
         } catch (error) {
             console.log(error);
         }
-        //savePlanChanges(currentPlan.id, updateObj);
     }
 
     function makeChecksSections (arr) {
@@ -219,55 +213,7 @@ function ProjectLevel({ handleMainAppView, savePlanChanges }) {
         );
     }
 
-    // function makeListOfSubPlanTabElements (arr) {
-    //     return arr.map((subPlan, i) => {
-    //             return (
-    //                 <li key={subPlan.id} className='tab col s3'>
-    //                     <a href={'#' + subPlan.id}>{subPlan.title}</a>
-    //                 </li>
-    //             )
-    //     });
-    // }
-
-    // function makeListOfSubPlanDisplayElements (arr) {
-    //     return arr.map((subPlan, i) => {
-    //             return (
-    //                 <div key={subPlan.title + i} id={subPlan.id}>
-    //                     <div className='row'>
-    //                         <div className='col s12'>
-    //                             <div className='card indigo white-text'>
-    //                                 <div className='nav-wrapper '>
-    //                                     <div className='row'>
-    //                                         <div className='col s12'>
-    //                                             <h6 className='center-align'>
-    //                                                 {subPlan.title}
-    //                                             </h6>
-    //                                         </div>
-    //                                     </div>
-    //                                 </div>
-    //                                 <ProjectStepsSection
-    //                                     subPlan={subPlan}
-    //                                     subPlanIndex={i}
-    //                                     updateSubPlan={updateSubPlan}
-    //                                     savePlanChanges={savePlanChanges}
-    //                                     deleteItemInPlan={deleteItemInPlan}
-    //                                 />
-    //                             </div>
-    //                         </div>
-    //                     </div>
-    //                 </div>
-    //             )
-    //     });
-    // }
-
-    const checksSections = makeChecksSections(contextState.plans[contextState.selectedPlanIndex].checks)
-    // const substepSections = makeListOfSubPlanDisplayElements(contextState.plans[contextState.selectedPlanIndex].sub_plans);
-    // const substepTabs = (contextState.plans[contextState.selectedPlanIndex].sub_plans.length > 0) ? makeListOfSubPlanTabElements(contextState.plans[contextState.selectedPlanIndex].sub_plans) : <li className='tab col s3'><a href='#no-sub-plans'>Add step</a></li>
-    if (!contextState.plans[contextState.selectedPlanIndex]) {
-        return null
-    } else if (state.subPlanSelected){
-        return <ProjectStepsSection />
-    }
+    // const checksSections = makeChecksSections(contextState.selectedSow.checks)
     return (
         <div>
             <div className='col s12'>
@@ -307,12 +253,12 @@ function ProjectLevel({ handleMainAppView, savePlanChanges }) {
                                         className='collapsible expandable z-depth-0'
                                     >
                                         <li
-                                            id={contextState.plans[contextState.selectedPlanIndex].id}
+                                            id={plans[selectedPlanIndex].id}
                                             className='collection-header indigo-text center'
                                         >
                                             <h6>
                                                 <b>
-                                                    {contextState.plans[contextState.selectedPlanIndex].title}
+                                                    {plans[selectedPlanIndex].title}
                                                 </b>{' '}
                                                 <i className='tiny material-icons red-text text-accent-4'>
                                                     edit
@@ -328,22 +274,16 @@ function ProjectLevel({ handleMainAppView, savePlanChanges }) {
                                             <div className='collapsible-body indigo-text'>
                                                 <NotesSection
                                                     updateNotes={updateNotes}
-                                                    notes={
-                                                        contextState.plans[contextState.selectedPlanIndex]
-                                                            .notes
-                                                    }
+                                                    notes={plans[selectedPlanIndex].notes}
                                                     deleteItemInPlan={deleteItemInPlan}
                                                 />
                                             </div>
                                         </li>
                                         <div className='active'>
                                             <UrlLinks
-                                                planId={contextState.plans[contextState.selectedPlanIndex].id}
+                                                planId={plans[selectedPlanIndex].id}
                                                 savePlanChanges={savePlanChanges}
-                                                videoUrls={
-                                                    contextState.plans[contextState.selectedPlanIndex]
-                                                        .video_urls
-                                                }
+                                                videoUrls={plans[selectedPlanIndex].video_urls}
                                             />
                                         </div>
                                         <li className='active'>
@@ -355,7 +295,6 @@ function ProjectLevel({ handleMainAppView, savePlanChanges }) {
                                             </div>
                                             <div className='collapsible-body'>
                                                 <Bookmarks
-                                                    bookmarksProp = {contextState.plans[contextState.selectedPlanIndex].bookmarks}
                                                     savePlanChanges={savePlanChanges}
                                                 />
                                             </div>
@@ -370,8 +309,7 @@ function ProjectLevel({ handleMainAppView, savePlanChanges }) {
                                             <div className='collapsible-body'>
                                                 <section>
                                                     <div className='row'>
-                                                        {contextState.plans[contextState.selectedPlanIndex]
-                                                            .checks.length > 0 && checksSections}
+                                                        {makeChecksSections(plans[selectedPlanIndex].checks)}
                                                     </div>
                                                 </section>
                                             </div>
@@ -385,22 +323,21 @@ function ProjectLevel({ handleMainAppView, savePlanChanges }) {
                                             </div>
                                             <div className='collapsible-body'>
                                                 <section>
-                                                {contextState.plans[contextState.selectedPlanIndex].sub_plans
-                                                    .length > 0 &&
-                                                    contextState.plans[contextState.selectedPlanIndex].sub_plans.map((subPlan, i) => {
+                                                {plans[selectedPlanIndex].sub_plans.length > 0 &&
+                                                    plans[selectedPlanIndex].sub_plans.map((subPlan, i) => {
                                                         return (
                                                             <li key={subPlan.id} className='collection-item'>
                                                                 <div className='indigo-text text-darken-3'>
                                                                     <a
                                                                         href='#subplannotebook'
                                                                         className='waves-effect waves-light btn-flat indigo-text text-darken-3'
-                                                                        onClick={() => selectSubPlan(i)}
+                                                                        onClick={() => selectSubPlan(subPlan)}
                                                                     >
                                                                         <h6 className='valign-wrapper'>
                                                                             {subPlan.title}
                                                                             <i className='material-icons'>chevron_right</i>
                                                                         </h6>
-                                                                  </a>
+                                                                    </a>
 
                                                                     <button
                                                                         className='btn-flat center-align right waves-effect waves-light  hide-on-small-and-down '
@@ -567,17 +504,14 @@ function ProjectLevel({ handleMainAppView, savePlanChanges }) {
                     </div>
                     <div
                         ref={addModal}
-                        id={
-                            'add-modal' +
-                            contextState.plans[contextState.selectedPlanIndex].title
-                        }
+                        id={'add-modal' + plans[selectedPlanIndex].title}
                         className='modal'
                     >
                         <AddModal
                             addModalHeader={state.addModalHeader}
                             addModalType={state.addModalType}
-                            parentValue={contextState.plans[contextState.selectedPlanIndex].id}
-                            subPlans={contextState.plans[contextState.selectedPlanIndex].sub_plans}
+                            parentValue={plans[selectedPlanIndex].id}
+                            subPlans={plans[selectedPlanIndex].sub_plans}
                             addNewSection={addNewSection}
                         />
                     </div>

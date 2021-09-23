@@ -3,13 +3,14 @@ import SearchResults from './SearchResults.js';
 //Import for useContext
 import {PlanContext} from '../PlanContext.js'
 //Import DB Api functions
-import { postPlan, getUserPlans } from '../api/projectsApi';
+import { postPlan, getUserPlans, getPlan } from '../api/projectsApi';
 //import {getSearchResults} from '../api/searchApi.js';
 //import {googleSearch} from '../api/searchApi.js';
 function NewProject(props) {
     //useContext hook
     const [contextState, contextDispatch] = useContext(PlanContext);
     const [planTitleValue, setPlanTitleValue] = useState('');
+
     function addUserPlan(plan) {
         console.log(plan);
         return postPlan(plan)
@@ -20,14 +21,15 @@ function NewProject(props) {
             .then((createdPlanId) => {
                 getUserPlans()
                     .then((updatedPlans) => {
+                        console.log(updatedPlans);
                         contextDispatch({type:'field',field:'plans',payload:updatedPlans});
                         //Maybe find and select the plan here? with a return statement and another .then
                         return updatedPlans;
                     })
-                    .then((updatedPlans) => {
-                        props.selectPlan(createdPlanId);
-                        return;
-                    })
+                    // .then((updatedPlans) => {
+                    //     props.selectPlan(createdPlanId);
+                    //     return;
+                    // })
                     .catch((err) => console.log(err));
                 return createdPlanId;
             })
@@ -41,8 +43,10 @@ function NewProject(props) {
             } else {
                 newPlanObj.title = importedPlan.title;
             }
-            newPlanObj.bookmarks = importedPlan.bookmarks;
+
             const newPlanId = await addUserPlan(newPlanObj);
+            // const newPlan = await getPlan(newPlanId);
+            // contextDispatch({type:'field',field:'selectedSow',payload:newPlan});
             console.log(`newPlanId: ${newPlanId}
                             importedPlan: ${importedPlan}
                             newPlanObj: ${newPlanObj}`);
@@ -51,6 +55,7 @@ function NewProject(props) {
                 console.log(`After Delete...
                             importedPlan: ${importedPlan}
                             newPlanObj: ${newPlanObj}`);
+                newPlanObj.bookmarks = importedPlan.bookmarks;
                 for (let key in importedPlan) {
                     const object = importedPlan[key];
                     if (key === 'checks' || key === 'sub_plans') {

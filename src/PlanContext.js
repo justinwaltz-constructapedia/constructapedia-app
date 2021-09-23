@@ -3,14 +3,6 @@ import { getUserPlans } from './api/projectsApi';
 
 export const PlanContext = createContext();
 
-function init() {
-    return {
-        plans: [],
-        selectedPlanIndex: null,
-        isSaving: false,
-        error: ''
-    }
-}
 function reducer (state, action) {
     switch (action.type) {
         case 'saving':
@@ -27,12 +19,16 @@ function reducer (state, action) {
         case 'addItem':
             return {
                 ...state,
-                plan: {
-                    ...state.plan,
+                selectedSow: {
+                    ...state.selectedSow,
                     [action.field]: action.payload[action.field]
                     //[action.field]: state.plan[action.field].push(action.payload)
                 }
             }
+        // case 'selectProject':
+        //     return {
+        //
+        //     }
         case 'delete':
             return {
                 ...state,
@@ -55,7 +51,16 @@ function reducer (state, action) {
 
 export const PlanProvider = (props) => {
     //Reducer Hook
-    const [contextState, contextDispatch] = useReducer(reducer, [], init)
+    const initialState = {
+        plans: [],
+        selectedSow: null,
+        selectedStepIndex: -1,
+        selectedPlanIndex: -1,
+        selectedPlanId: null,
+        isSaving: false,
+        error: ''
+    }
+    const [contextState, contextDispatch] = useReducer(reducer, initialState)
 
     useEffect(() => {
         getUserPlans().then((dbUserPlans) => {
