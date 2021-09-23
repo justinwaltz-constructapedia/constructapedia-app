@@ -1,5 +1,5 @@
 //Import React and hooks used
-import React, { useContext, useReducer, useEffect } from 'react';
+import React, { useState, useContext, useReducer, useEffect } from 'react';
 //Import for useContext
 import {PlanContext} from '../../PlanContext.js'
 
@@ -42,14 +42,14 @@ function reducer (state, action) {
 //Functional Component
 //Handles the view for each check list
 //DATABASE NOTE: Plan -> checks -> check_list -> check
-function SimpleCheckboxSection({checklist, listType, listTitle, checklistIndex, import_url, savePlanChanges}) {
+function SimpleCheckboxSection({sowChecks, checkIndex, savePlanChanges}) {
     //Formats the list_type property for display in html
-    const displayListType = listType.trim().replace(/^\w/, (c) => c.toUpperCase());
+    const displayListType = sowChecks[checkIndex].list_type.trim().replace(/^\w/, (c) => c.toUpperCase());
     /**
      * useContext Hook
      */
     const [contextState] = useContext(PlanContext);
-    const {plans, selectedPlanIndex, selectedStepIndex} = contextState;
+    const {plans, selectedSowId} = contextState;
 
     /**
      * useReducer Hook
@@ -65,47 +65,34 @@ function SimpleCheckboxSection({checklist, listType, listTitle, checklistIndex, 
     }
     const [state, dispatch] = useReducer(reducer, initialState);
     const { newItemValue, editItemValue, isSaving, isEditing, indexToEdit, error} = state;
-    // useEffect(() => {
-    //     console.log("SimpleCheckboxSection useEffect",list);
-    // })
-    function createAndSaveUpdatedChecks (newList) {
-        const updatedChecks = [...plans[selectedPlanIndex].checks];
-        updatedChecks[checklistIndex].list = newList;
-        savePlanChanges(plans[selectedPlanIndex].id, { checks: updatedChecks });
-    }
+
     //Processes the various changes of input in the component parts
-    function handleInputChange(e, index) {
+    function handleInputChange(e, itemIndex) {
         //Where the event occured
         const target = e.target;
+        const currentChecks = [...sowChecks];
         //Handle the clicking of a checkbox
         if (target.type === 'checkbox') {
-            const updatedList = plans[selectedPlanIndex].checks[checklistIndex].list.map((item, i) => {
-                if (i === index) {
-                    const newItem = {...item}
-                    newItem.is_complete = !plans[selectedPlanIndex].checks[checklistIndex].list[index].is_complete
-                    return newItem;
-                } else {
-                    return item;
+            const updatedChecks = currentChecks.map((check, i) => {
+                if (i === checkIndex) {
+                    check.list[itemIndex].is_complete = !check.list[itemIndex].is_complete
+                    console.log(check);
                 }
+                return check;
             });
-            //Update the check clicked
-            dispatch({type:'field', field:'list', payload:updatedList})
             //Send request to update the database
-            createAndSaveUpdatedChecks(updatedList);
+            console.log('checkbox', updatedChecks);
+            savePlanChanges(selectedSowId, { checks: updatedChecks });
         } else if (target.id.includes('quantity') && Number(target.value)) {
-            const updatedList = plans[selectedPlanIndex].checks[checklistIndex].list.map((item, i) => {
-                if (i === index) {
-                    const newItem = {
-                        ...item,
-                        quantity: target.value
-                    }
-                    return newItem;
-                } else {
-                    return item;
+            const updatedChecks = currentChecks.map((check, i) => {
+                if (i === checkIndex) {
+                    check.list[itemIndex].quantity = target.value
+                    console.log(check);
                 }
+                return check;
             });
             //Send request to update the database
-            createAndSaveUpdatedChecks(updatedList);
+            savePlanChanges(selectedSowId, { checks: updatedChecks });
         } else {
             dispatch({type:'field', field:'newItemValue', payload: target.value});
         }
@@ -114,34 +101,42 @@ function SimpleCheckboxSection({checklist, listType, listTitle, checklistIndex, 
     //NOTE: Make part of the props.addNewItem?
     function addNewChecklistItem(e) {
         if (newItemValue.trim().length > 0) {
-            const newCheck = {
+            const newItem = {
                 text_value: newItemValue,
                 is_complete: false,
+                quantity: 1
             };
-            const updatedList = [...plans[selectedPlanIndex].checks[checklistIndex].list, newCheck];
-            console.log("updated list", updatedList);
+            const currentChecks = [...sowChecks]
+            console.log(currentChecks);
+            const updatedChecks = currentChecks.map((check, i) => {
+                if (checkIndex === i) {
+                    check.list.push(newItem)
+                }
+                return check;
+            });
+            console.log("updated list", updatedChecks);
             //Update the check clicked
-            createAndSaveUpdatedChecks(updatedList);
+            savePlanChanges(selectedSowId, { checks: updatedChecks });
             dispatch({type:'field', field:'newItemValue', payload:''});
         } else {
             alert('Please enter a new checklist item.')
         }
     }
+    function deleteCheckList (i) {
+        const currentChecks = [...sowChecks]
+        const updatedChecks = currentChecks.filter((_, index) => index !== i)
+        savePlanChanges(selectedSowId, { checks: updatedChecks });
+    }
     function removeChecklistItem(indexOfCheckToRemove) {
-        const currentList = [...plans[selectedPlanIndex].checks[checklistIndex].list]
-        const updatedList = currentList.reduce((checks, check, i) => {
-            if (i !== indexOfCheckToRemove) {
-                checks.push(check);
-            }
-            return checks;
-        }, []);
-        createAndSaveUpdatedChecks(updatedList);
+        const currentChecks = [...sowChecks]
+        const updatedChecks = currentChecks[checkIndex].list.filter((_, index) => index !== indexOfCheckToRemove)
+        savePlanChanges(selectedSowId, { checks: updatedChecks });
     }
     function makeListOfCheckboxElements(arr) {
         return arr.map((listItem, i) => {
             return <CheckListItem
                 key={i + listItem.text_value}
-                listType={listType}
+                listType={sowChecks[checkIndex].list_type}
                 listItem={listItem}
                 handleInputChange={handleInputChange}
                 itemIndex={i}
@@ -149,7 +144,7 @@ function SimpleCheckboxSection({checklist, listType, listTitle, checklistIndex, 
             />
         });
     }
-    const checkboxElements = makeListOfCheckboxElements(plans[selectedPlanIndex].checks[checklistIndex].list);
+    const checkboxElements = makeListOfCheckboxElements(sowChecks[checkIndex].list);
 
     return (
         <div className='col s11'>
@@ -159,9 +154,9 @@ function SimpleCheckboxSection({checklist, listType, listTitle, checklistIndex, 
                         <input
                             id={
                                 'new-' +
-                                listType +
+                                sowChecks[checkIndex].list_type +
                                 '-' +
-                                checklistIndex
+                                checkIndex
                             }
                             type='text'
                             className='validate'
@@ -178,9 +173,9 @@ function SimpleCheckboxSection({checklist, listType, listTitle, checklistIndex, 
                     <button
                         id={
                             'add-' +
-                            listType +
+                            sowChecks[checkIndex].list_type +
                             '-btn-' +
-                            checklistIndex
+                            checkIndex
                         }
                         className='btn-small waves-effect waves-light indigo'
                         type='button'
@@ -193,13 +188,7 @@ function SimpleCheckboxSection({checklist, listType, listTitle, checklistIndex, 
                     <button
                         className='btn-flat right waves-effect waves-light grey-text text-lighten-3'
                         type='button'
-                        onClick={() =>
-                            console.log('delete')
-                            // props.deleteItemInPlan(
-                            //     'checks',
-                            //     checklistIndex
-                            // )
-                        }
+                        onClick={() => deleteCheckList(checkIndex)}
                     >
                         <i className='material-icons '>delete_forever</i>
                     </button>
@@ -207,13 +196,13 @@ function SimpleCheckboxSection({checklist, listType, listTitle, checklistIndex, 
             </div>
             <ul className='collection with-header'>
                 <li className='collection-header indigo-text center'>
-                    {listTitle}{' '}
+                    {sowChecks[checkIndex].title}{' '}
                 </li>
                 <li className='collection-item'>{checkboxElements}</li>
-                {import_url && (
+                {sowChecks[checkIndex].import_url && (
                     <li className='collection-item'>
                         Imported From:
-                        <div className='truncate'>{import_url}</div>
+                        <div className='truncate'>{sowChecks[checkIndex].import_url}</div>
                     </li>
                 )}
             </ul>
@@ -222,6 +211,9 @@ function SimpleCheckboxSection({checklist, listType, listTitle, checklistIndex, 
 }
 
 function CheckListItem(props) {
+    // const initialQuantity = props.listItem.quantity
+    // const [itemQuantity, setItemQuantity] = useState(initialQuantity)
+    console.log("item", props.listItem.text_value, props.listItem.quantity);
     if (props.listType === 'materials') {
         return (
             <div

@@ -53,19 +53,12 @@ function AppBody(props) {
     }
     // //Changes which of the user's plans are displayed
     function selectPlan(selectedPlanIndex) {
-        contextDispatch({type:'field',field:'selectedPlanIndex',payload:selectedPlanIndex});
+        contextDispatch({type:'field',field:'selectedSowId', payload:contextState.plans[selectedPlanIndex].id});
+        contextDispatch({type:'field',field:'selectedPlanIndex', payload:selectedPlanIndex});
         handleMainAppView('ProjectDetails')
     }
     function savePlanChanges(planId, sowUpdateObj) {
-        let planUpdateObj;
-        if (contextState.selectedStepIndex < 0) {
-            planUpdateObj = sowUpdateObj
-        } else {
-            planUpdateObj = {...contextState.plans[contextState.selectedPlanIndex]}
-            planUpdateObj.subPlans[contextState.selectedStepIndex] = sowUpdateObj
-        }
-        console.log(planUpdateObj);
-        return putPlanUpdate(planId, planUpdateObj).then((res) => {
+        return putPlanUpdate(planId, sowUpdateObj).then((res) => {
             console.log("plan update put");
             if (res === 1) {
                 return getUserPlans()
@@ -127,7 +120,6 @@ function AppBody(props) {
                         selectPlan={selectPlan}
                         handleMainAppView={handleMainAppView}
                         savePlanChanges={savePlanChanges}
-                        //levelType={(contextState.selectedStepIndex < 0)?"project":"step"}
                     />
                 )}
                 {mainAppView === 'SearchResults' && (

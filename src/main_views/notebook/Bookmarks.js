@@ -59,12 +59,12 @@ function reducer (state, action) {
             return state;
     }
 }
-export default function Bookmarks ({ savePlanChanges }) {
+export default function Bookmarks ({ bookmarks, savePlanChanges }) {
     /**
      * useContext Hook
      */
     const [contextState, contextDispatch] = useContext(PlanContext);
-    const {plans, selectedPlanIndex, selectedStepIndex} = contextState;
+    const {plans, selectedSowId, selectedPlanIndex} = contextState;
     /**
      * useReducer Hook
      */
@@ -81,7 +81,6 @@ export default function Bookmarks ({ savePlanChanges }) {
     const [state, dispatch] = useReducer(reducer, initialState);
     const { newBookmarkValue, newBookmarkTitleValue, editBookmarkValue, editBookmarkTitleValue, isSaving, isEditing, indexToEdit, error} = state;
 
-
     const addBookmark = () => {
         let bookmarkTitle;
         if (!newBookmarkTitleValue) {
@@ -96,20 +95,16 @@ export default function Bookmarks ({ savePlanChanges }) {
             title: bookmarkTitle,
         };
         let updatedBookmarksObj;
-        if (plans[selectedPlanIndex].bookmarks) {
+        if (bookmarks.length > 0) {
             const updatedBookmarksList = [newBookmark].concat(
-                [...plans[selectedPlanIndex].bookmarks]
+                [...bookmarks]
             );
             updatedBookmarksObj = { bookmarks: updatedBookmarksList };
         } else {
             updatedBookmarksObj = { bookmarks: [newBookmark] };
         }
-        console.log(
-            plans[selectedPlanIndex].id,
-            updatedBookmarksObj
-        );
         savePlanChanges(
-            plans[selectedPlanIndex].id,
+            selectedSowId,
             updatedBookmarksObj
         );
         dispatch({type:'field', field:'newBookmarkValue', payload:''});
@@ -118,20 +113,21 @@ export default function Bookmarks ({ savePlanChanges }) {
 
     const updateBookmark = () => {
         const updatedBookmark = {title: editBookmarkTitleValue, url: editBookmarkValue}
-        const updatedBookmarksArr = [...plans[selectedPlanIndex].bookmarks];
+        const updatedBookmarksArr = [...bookmarks];
         updatedBookmarksArr[indexToEdit] = updatedBookmark;
-        savePlanChanges(plans[selectedPlanIndex].id,{bookmarks:updatedBookmarksArr})
-        dispatch({type:'field', field: 'bookmarks', payload:updatedBookmarksArr})
+        savePlanChanges(selectedSowId,{bookmarks:updatedBookmarksArr})
         dispatch({type:'field', field:'editBookmarkValue', payload:''});
         dispatch({type:'field', field:'editBookmarkTitleValue', payload:''});
         dispatch({type:'editing',payload:-1});
     }
 
     const deleteBookmark = (indexToDelete) => {
-        dispatch({type:'delete', payload:indexToDelete})
-        alert("need delete funtion")
-        //savePlanChanges(plans[selectedPlanIndex].id,{bookmarks:bookmarks})
-        dispatch({type:'editing',payload:-1})
+        const currentBookmarks = [...bookmarks];
+        const updatedBookmarks = currentBookmarks.filter((_, index) => index !== indexToDelete)
+        savePlanChanges(selectedSowId,{bookmarks:updatedBookmarks});
+        dispatch({type:'field', field:'editBookmarkValue', payload:''});
+        dispatch({type:'field', field:'editBookmarkTitleValue', payload:''});
+        dispatch({type:'editing',payload:-1});
     }
     return (
         <section>
@@ -150,8 +146,8 @@ export default function Bookmarks ({ savePlanChanges }) {
                                 </tr>
                             </thead>
                             <tbody>
-                                {plans[selectedPlanIndex].bookmarks.length > 0 &&
-                                    plans[selectedPlanIndex].bookmarks.map(
+                                {bookmarks.length > 0 &&
+                                    bookmarks.map(
                                         (bookmark, i) => {
                                             return (
                                                     <tr
