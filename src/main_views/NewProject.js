@@ -38,12 +38,7 @@ function NewProject(props) {
     async function createNewPlan(importedPlan) {
         let newPlanObj = {};
         if (importedPlan || planTitleValue.trim().length > 0) {
-            if (planTitleValue.trim().length > 0) {
-                newPlanObj.title = planTitleValue;
-            } else {
-                newPlanObj.title = importedPlan.title;
-            }
-
+            newPlanObj.title = (planTitleValue.trim().length > 0) ? planTitleValue : importedPlan.title;
             const newPlanId = await addUserPlan(newPlanObj);
             // const newPlan = await getPlan(newPlanId);
             // contextDispatch({type:'field',field:'selectedSow',payload:newPlan});
@@ -55,16 +50,18 @@ function NewProject(props) {
                 console.log(`After Delete...
                             importedPlan: ${importedPlan}
                             newPlanObj: ${newPlanObj}`);
-                newPlanObj.bookmarks = importedPlan.bookmarks;
+
                 for (let key in importedPlan) {
                     const object = importedPlan[key];
-                    if (key === 'checks' || key === 'sub_plans') {
+                    if ( key === 'sub_plans') {
                         for (let objKey in object) {
                             object[objKey].parent = newPlanId;
                         }
+                    } else {
+                        newPlanObj[key] = importedPlan[key];
                     }
                 }
-                const updatedPlanObj = importedPlan;
+                const updatedPlanObj = {...importedPlan};
                 console.log(updatedPlanObj);
                 const response = await props.savePlanChanges(
                     newPlanId,

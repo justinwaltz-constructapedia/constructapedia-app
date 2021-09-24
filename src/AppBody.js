@@ -38,19 +38,33 @@ function AppBody(props) {
     const [contextState, contextDispatch] = useContext(PlanContext);
 //State Hooks
     const [mainAppView, setMainAppView] = useState('HomePage');
-    // const [userPlans, setUserPlans] = useState([]);
-    // const [selectedPlanIndex, setSelectedPlanIndex] = useState(0);
 /**
  * useEffect Hooks
  */
-    useEffect(() => {
-        console.log(contextState.selectedPlanIndex);
-    })
+    // useEffect(() => {
+    //     console.log("appBody ln 45 selectedPlanIndex",contextState.selectedPlanIndex);
+    // })
 //Functions for props to lift state
     //Handling views of child components
     function handleMainAppView(view) {
         setMainAppView(view);
     }
+
+    function getSowObj (plansArr) {
+        let sowObj;
+        for (var i = 0; i < plansArr.length; i++) {
+            if (plansArr[i].id === contextState.selectedSowId){
+                sowObj = plansArr[i]
+                break;
+            } else if (plansArr[i].sub_plans && plansArr[i].sub_plans.length > 0) {
+                sowObj = getSowObj(plansArr[i].sub_plans)
+            } else {
+                continue;
+            }
+        }
+        return sowObj;
+    }
+
     // //Changes which of the user's plans are displayed
     function selectPlan(selectedPlanIndex) {
         contextDispatch({type:'field',field:'selectedSowId', payload:contextState.plans[selectedPlanIndex].id});
@@ -73,10 +87,16 @@ function AppBody(props) {
             }
         });
     }
+
     function addScrapedDataToPlan (scrapedData) {
         console.log(scrapedData);
+        let currentPlan;
+        if (contextState.plans[contextState.selectedPlanIndex].id === contextState.selectedSowId) {
+            currentPlan = {...contextState.plans[contextState.selectedPlanIndex]}
+        } else {
+            currentPlan = getSowObj([...contextState.plans[contextState.selectedPlanIndex].sub_plans]);
+        }
         const fieldsToUpdate = Object.keys(scrapedData);
-        const currentPlan = contextState.plans[contextState.selectedPlanIndex];
         const updatedPlanFields = {};
         fieldsToUpdate.forEach((fieldName, i) => {
             console.log(scrapedData[fieldName][0]);
@@ -93,8 +113,8 @@ function AppBody(props) {
                 updatedPlanFields[fieldName] = planField;
             }
         });
-        console.log(contextState.plans[contextState.selectedPlanIndex].id, updatedPlanFields);
-        savePlanChanges(contextState.plans[contextState.selectedPlanIndex].id, updatedPlanFields);
+        console.log('appbody 116 updatedplanfields', updatedPlanFields);
+        savePlanChanges(contextState.selectedSowId, updatedPlanFields);
         handleMainAppView("ProjectDetails");
     }
 //Return view to render based on state of main app view
@@ -120,6 +140,7 @@ function AppBody(props) {
                         selectPlan={selectPlan}
                         handleMainAppView={handleMainAppView}
                         savePlanChanges={savePlanChanges}
+                        getSowObj={getSowObj}
                     />
                 )}
                 {mainAppView === 'SearchResults' && (

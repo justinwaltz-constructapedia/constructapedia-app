@@ -66,9 +66,7 @@ function SearchResults(props) {
                     image={result.pagemap.cse_image[0].src}
                     link={result.link}
                     updateUrlToView={updateUrlToView}
-                    updateProjectDraft={props.updateProjectDraft}
                     handleScrapedData={props.handleScrapedData}
-                    selectedPlan={props.selectedPlan}
                     placeholder={props.placeholder}
                 />
             );

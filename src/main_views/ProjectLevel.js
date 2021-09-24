@@ -46,7 +46,7 @@ function reducer (state, action) {
     }
 }
 
-function ProjectLevel({ handleMainAppView, savePlanChanges }) {
+function ProjectLevel({ handleMainAppView, savePlanChanges, getSowObj }) {
     //useContext hook
     const [contextState, contextDispatch] = useContext(PlanContext);
     const {plans, selectedPlanIndex, selectedSowId} = contextState;
@@ -518,23 +518,11 @@ function ProjectLevel({ handleMainAppView, savePlanChanges }) {
         )
     };
 
-    function getSowObj (plansArr, id) {
-        let sowObj;
-        for (var i = 0; i < plansArr.length; i++) {
-            if (plansArr[i].id === selectedSowId){
-                sowObj = plansArr[i]
-                break;
-            } else if (plansArr[i].sub_plans.length > 0) {
-                sowObj = getSowObj(plansArr[i].subplans)
-            }
-        }
-        return sowObj;
-    }
     let selectedProjectUl;
-    if (selectedSowId === plans[selectedPlanIndex].id) {
-        selectedProjectUl = makeSelectedProjectUl(plans[selectedPlanIndex])
+    if (contextState.selectedSowId === contextState.plans[contextState.selectedPlanIndex].id) {
+        selectedProjectUl = makeSelectedProjectUl(contextState.plans[contextState.selectedPlanIndex])
     } else {
-        selectedProjectUl = makeSelectedProjectUl(getSowObj(plans[selectedPlanIndex].sub_plans))
+        selectedProjectUl = makeSelectedProjectUl(getSowObj(contextState.plans[contextState.selectedPlanIndex].sub_plans))
     }
 
     return (
