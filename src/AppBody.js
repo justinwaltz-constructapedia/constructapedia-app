@@ -99,21 +99,23 @@ function AppBody(props) {
         const fieldsToUpdate = Object.keys(scrapedData);
         const updatedPlanFields = {};
         fieldsToUpdate.forEach((fieldName, i) => {
-            console.log(scrapedData[fieldName][0]);
+            console.log('appBody 102',scrapedData[fieldName]);
             if (fieldName !== 'title') {
                 let planField;
                 if (fieldName === 'checks') {
                     planField = currentPlan[fieldName].reduce((arr, item) => {
                         arr.push(item)
                         return arr;
-                    },[scrapedData[fieldName][0]])
+                    },[...scrapedData[fieldName]])
                 } else {
-                    planField = scrapedData[fieldName];
+                    //planField = scrapedData[fieldName];
+                    planField = scrapedData[fieldName].concat([...currentPlan[fieldName]]);
                 }
+                console.log('appbody ln 114', planField);
                 updatedPlanFields[fieldName] = planField;
             }
         });
-        console.log('appbody 116 updatedplanfields', updatedPlanFields);
+        console.log('appbody 118 updatedplanfields', updatedPlanFields);
         savePlanChanges(contextState.selectedSowId, updatedPlanFields);
         handleMainAppView("ProjectDetails");
     }

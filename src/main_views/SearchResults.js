@@ -152,7 +152,7 @@ function SearchResults(props) {
         </div>
     );
 }
-
+//
 //Functional Component
 //Handles the view for each indivdual result from google programatic search stored in the results array
 function ResultListItem(props) {
