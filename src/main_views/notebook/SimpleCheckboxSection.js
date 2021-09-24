@@ -76,18 +76,15 @@ function SimpleCheckboxSection({sowChecks, checkIndex, savePlanChanges}) {
             const updatedChecks = currentChecks.map((check, i) => {
                 if (i === checkIndex) {
                     check.list[itemIndex].is_complete = !check.list[itemIndex].is_complete
-                    console.log(check);
                 }
                 return check;
             });
             //Send request to update the database
-            console.log('checkbox', updatedChecks);
             savePlanChanges(selectedSowId, { checks: updatedChecks });
         } else if (target.id.includes('quantity') && Number(target.value)) {
             const updatedChecks = currentChecks.map((check, i) => {
                 if (i === checkIndex) {
                     check.list[itemIndex].quantity = target.value
-                    console.log(check);
                 }
                 return check;
             });
@@ -107,14 +104,12 @@ function SimpleCheckboxSection({sowChecks, checkIndex, savePlanChanges}) {
                 quantity: 1
             };
             const currentChecks = [...sowChecks]
-            console.log(currentChecks);
             const updatedChecks = currentChecks.map((check, i) => {
                 if (checkIndex === i) {
                     check.list.push(newItem)
                 }
                 return check;
             });
-            console.log("updated list", updatedChecks);
             //Update the check clicked
             savePlanChanges(selectedSowId, { checks: updatedChecks });
             dispatch({type:'field', field:'newItemValue', payload:''});
@@ -213,7 +208,6 @@ function SimpleCheckboxSection({sowChecks, checkIndex, savePlanChanges}) {
 function CheckListItem(props) {
     // const initialQuantity = props.listItem.quantity
     // const [itemQuantity, setItemQuantity] = useState(initialQuantity)
-    console.log("item", props.listItem.text_value, props.listItem.quantity);
     if (props.listType === 'materials') {
         return (
             <div

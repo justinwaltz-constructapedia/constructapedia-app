@@ -1,7 +1,7 @@
 function scrapper(link) {
   console.log(link);
-  //
   //https://constructapedia-api.herokuapp.com/
+  //
   return fetch(`http://localhost:3001/`, {
     method: 'post',
     // headers: {'Content-Type': 'application/json'},

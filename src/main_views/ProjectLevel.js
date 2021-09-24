@@ -25,12 +25,28 @@ function reducer (state, action) {
                 ...state,
                 [action.field]: action.payload
             };
+        case 'breadcrumb':
+            const newBreadcrumbArr = [...state.sowBreadcrumbsArr];
+            switch (action.field) {
+                case 'back':
+                    newBreadcrumbArr.pop()
+                    break;
+                case 'add':
+                    newBreadcrumbArr.push(action.payload)
+                    break;
+                default:
+                    break;
+            }
+            return {
+                ...state,
+                sowBreadcrumbsArr: newBreadcrumbArr
+            }
         default:
             return state;
     }
 }
 
-function ProjectLevel({ handleMainAppView, savePlanChanges }) {
+function ProjectLevel({ handleMainAppView, savePlanChanges, getSowObj }) {
     //useContext hook
     const [contextState, contextDispatch] = useContext(PlanContext);
     const {plans, selectedPlanIndex, selectedSowId} = contextState;
@@ -38,7 +54,8 @@ function ProjectLevel({ handleMainAppView, savePlanChanges }) {
 
     const initialState = {
         addModalHeader: '',
-        addModalType: ''
+        addModalType: '',
+        sowBreadcrumbsArr: [plans[selectedPlanIndex].title]
     }
     const [state, dispatch] = useReducer(reducer, initialState)
     //Ref Hooks for Materialize functionality
@@ -63,6 +80,9 @@ function ProjectLevel({ handleMainAppView, savePlanChanges }) {
         M.Modal.init(addModal.current, addModalOptions);
     }, []);
 
+    useEffect(() => {
+
+    }, [state.sowBreadcrumbsArr])
     //Sets the state and info to render the add modal for the desired section
     function openAddModal(e) {
         console.log(e.currentTarget);
@@ -119,7 +139,6 @@ function ProjectLevel({ handleMainAppView, savePlanChanges }) {
                     break;
                 default:
             }
-
             // console.log(contextState.selectedPlanId, updatedFieldObj);
             // try {
             //     savePlanChanges(contextState.selectedPlanId, updatedFieldObj);
@@ -145,12 +164,17 @@ function ProjectLevel({ handleMainAppView, savePlanChanges }) {
         });
     }
 
-    function selectSubPlan (stepId) {
-        contextDispatch({type:'field', field:'selectedSowId', payload:stepId});
-    }
+    function selectSubPlan (stepId, stepTitle, e) {
+        console.log(e.currentTarget.id);
+        switch (e.currentTarget.id) {
+            case 'sow-back-btn':
+                dispatch({type:'breadcrumb', field:'back' , payload:stepTitle})
+                break;
+            default:
+                dispatch({type:'breadcrumb', field:'add' , payload:stepTitle})
+        }
 
-    function backButton () {
-        contextDispatch({type:'field', field:'selectedStepIndex', payload:-1});
+        contextDispatch({type:'field', field:'selectedSowId', payload:stepId});
     }
 
     function deleteSubPlan (id) {
@@ -188,6 +212,21 @@ function ProjectLevel({ handleMainAppView, savePlanChanges }) {
         }
     }
 
+    const makeSowNav = () => {
+        return (
+            <nav className="transparent z-depth-0">
+                <div className="nav-wrapper">
+                    <div className="col s12">
+                        {state.sowBreadcrumbsArr.map((breadcrumb, i) => {
+                            return (
+                                <a key={breadcrumb + i} href="#project" className="breadcrumb indigo-text">{breadcrumb}</a>
+                            )
+                        })}
+                    </div>
+                </div>
+            </nav>
+        )
+    }
     function makeChecksSections (arr) {
         return arr.map(
             (checkObj, i) => {
@@ -203,6 +242,7 @@ function ProjectLevel({ handleMainAppView, savePlanChanges }) {
             }
         );
     }
+
     const makeSelectedProjectUl = (sowObj) => {
         return (
             <ul
@@ -211,22 +251,41 @@ function ProjectLevel({ handleMainAppView, savePlanChanges }) {
             >
                 <li
                     id={sowObj.id}
-                    className='collection-header indigo-text center'
+                    className='collection-header indigo-text center row valign-wrapper'
                 >
-                    <h6>
-                        <b>
-                            {sowObj.title}
-                        </b>{' '}
-                        <i className='tiny material-icons red-text text-accent-4'>
+                    <div className='col s1'>
+                        {
+                            (selectedSowId !== plans[selectedPlanIndex].id)
+                            &&
+                            <button
+                                id='sow-back-btn'
+                                type='button'
+                                className='waves-effect waves-blue btn-flat'
+                                onClick={(e) => {
+                                    selectSubPlan(sowObj.parent, sowObj.title, e);
+                                }}
+                            >
+                                <i className='material-icons left indigo-text'>
+                                    arrow_back
+                                </i>
+                            </button>
+                        }
+                    </div>
+                    <div className='col s10'>
+                        {makeSowNav()}
+                    </div>
+                    <div className='col s1'>
+                        <i className='small material-icons red-text text-accent-4'>
                             edit
                         </i>
-                    </h6>
+                    </div>
                 </li>
                 <li>
                     <div className='collapsible-header indigo-text'>
                         <i className='material-icons center indigo-text'>
-                            edit
+                            note
                         </i>
+                        <b>Notes</b>
                     </div>
                     <div className='collapsible-body indigo-text'>
                         <NotesSection
@@ -236,13 +295,21 @@ function ProjectLevel({ handleMainAppView, savePlanChanges }) {
                         />
                     </div>
                 </li>
-                <div className='active'>
-                    <UrlLinks
-                        planId={sowObj.id}
-                        savePlanChanges={savePlanChanges}
-                        videoUrls={sowObj.video_urls}
-                    />
-                </div>
+                <li className='active'>
+                    <div className='collapsible-header indigo-text'>
+                        <i className='material-icons center indigo-text'>
+                            video_library
+                        </i>
+                        <b>Videos</b>
+                    </div>
+                    <div className='collapsible-body'>
+                        <UrlLinks
+                            planId={sowObj.id}
+                            savePlanChanges={savePlanChanges}
+                            videoUrls={sowObj.video_urls}
+                        />
+                    </div>
+                </li>
                 <li className='active'>
                     <div className='collapsible-header indigo-text'>
                         <i className='material-icons center indigo-text'>
@@ -289,7 +356,7 @@ function ProjectLevel({ handleMainAppView, savePlanChanges }) {
                                             <a
                                                 href='#subplannotebook'
                                                 className='waves-effect waves-light btn-flat indigo-text text-darken-3'
-                                                onClick={() => selectSubPlan(subPlan.id)}
+                                                onClick={(e) => selectSubPlan(subPlan.id, subPlan.title, e)}
                                             >
                                                 <h6 className='valign-wrapper'>
                                                     {subPlan.title}
@@ -451,23 +518,11 @@ function ProjectLevel({ handleMainAppView, savePlanChanges }) {
         )
     };
 
-    function getSowObj (plansArr, id) {
-        let sowObj;
-        for (var i = 0; i < plansArr.length; i++) {
-            if (plansArr[i].id === selectedSowId){
-                sowObj = plansArr[i]
-                break;
-            } else if (plansArr[i].sub_plans.length > 0) {
-                sowObj = getSowObj(plansArr[i].subplans)
-            }
-        }
-        return sowObj;
-    }
     let selectedProjectUl;
-    if (selectedSowId === plans[selectedPlanIndex].id) {
-        selectedProjectUl = makeSelectedProjectUl(plans[selectedPlanIndex])
+    if (contextState.selectedSowId === contextState.plans[contextState.selectedPlanIndex].id) {
+        selectedProjectUl = makeSelectedProjectUl(contextState.plans[contextState.selectedPlanIndex])
     } else {
-        selectedProjectUl = makeSelectedProjectUl(getSowObj(plans[selectedPlanIndex].sub_plans))
+        selectedProjectUl = makeSelectedProjectUl(getSowObj(contextState.plans[contextState.selectedPlanIndex].sub_plans))
     }
 
     return (
@@ -477,13 +532,13 @@ function ProjectLevel({ handleMainAppView, savePlanChanges }) {
                     <div className='col s12'>
                         <button
                             type='button'
-                            className='waves-effect waves-blue btn-flat '
+                            className='waves-effect waves-blue btn-flat'
                             onClick={() => {
                                 handleMainAppView('HomePage');
                             }}
                         >
                             <i className='material-icons left indigo-text'>
-                                arrow_back
+                                home
                             </i>
                         </button>
                         <button
