@@ -2,28 +2,14 @@ import React, { useContext, useReducer } from 'react';
 //Import for useContext
 import {PlanContext} from '../../PlanContext.js'
 
-// function init(initialBookmarks) {
-//     console.log(initialBookmarks);
-//     return {
-//         bookmarks: initialBookmarks,
-//         newBookmarkValue: '',
-//         newBookmarkTitleValue: '',
-//         editBookmarkValue: '',
-//         editBookmarkTitleValue: '',
-//         isSaving: false,
-//         isEditing: false,
-//         indexToEdit: -1,
-//         error: ''
-//     }
-// }
 function reducer (state, action) {
     switch (action.type) {
-        case 'saving':
-            return {
-                ...state,
-                error: '',
-                isSaving: true
-            }
+        // case 'saving':
+        //     return {
+        //         ...state,
+        //         error: '',
+        //         isSaving: true
+        //     }
         case 'editing':
             return {
                 ...state,
@@ -48,12 +34,12 @@ function reducer (state, action) {
         //         ...state,
         //         bookmarks: state.bookmarks.filter((_, index) => index !== action.payload)
         //     }
-        case 'error':
-            return {
-                ...state,
-                error: action.payload,
-                isSaving: false,
-            }
+        // case 'error':
+        //     return {
+        //         ...state,
+        //         error: action.payload,
+        //         isSaving: false,
+        //     }
 
         default:
             return state;
@@ -63,8 +49,8 @@ export default function Bookmarks ({ bookmarks, savePlanChanges }) {
     /**
      * useContext Hook
      */
-    const [contextState, contextDispatch] = useContext(PlanContext);
-    const {plans, selectedSowId, selectedPlanIndex} = contextState;
+    const [contextState] = useContext(PlanContext);
+    const {selectedSowId} = contextState;
     /**
      * useReducer Hook
      */
@@ -79,7 +65,7 @@ export default function Bookmarks ({ bookmarks, savePlanChanges }) {
         error: ''
     }
     const [state, dispatch] = useReducer(reducer, initialState);
-    const { newBookmarkValue, newBookmarkTitleValue, editBookmarkValue, editBookmarkTitleValue, isSaving, isEditing, indexToEdit, error} = state;
+    const { newBookmarkValue, newBookmarkTitleValue, editBookmarkValue, editBookmarkTitleValue, isEditing, indexToEdit} = state;
 
     const addBookmark = () => {
         let bookmarkTitle;

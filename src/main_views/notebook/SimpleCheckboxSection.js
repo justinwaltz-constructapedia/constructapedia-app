@@ -1,5 +1,5 @@
 //Import React and hooks used
-import React, { useState, useContext, useReducer, useEffect } from 'react';
+import React, { useContext, useReducer } from 'react';
 //Import for useContext
 import {PlanContext} from '../../PlanContext.js'
 
@@ -49,7 +49,7 @@ function SimpleCheckboxSection({sowChecks, checkIndex, savePlanChanges}) {
      * useContext Hook
      */
     const [contextState] = useContext(PlanContext);
-    const {plans, selectedSowId} = contextState;
+    const { selectedSowId} = contextState;
 
     /**
      * useReducer Hook
@@ -64,7 +64,7 @@ function SimpleCheckboxSection({sowChecks, checkIndex, savePlanChanges}) {
         error: ''
     }
     const [state, dispatch] = useReducer(reducer, initialState);
-    const { newItemValue, editItemValue, isSaving, isEditing, indexToEdit, error} = state;
+    const { newItemValue, editItemValue, isEditing, indexToEdit} = state;
 
     //Processes the various changes of input in the component parts
     function handleInputChange(e, itemIndex) {
@@ -179,19 +179,29 @@ function SimpleCheckboxSection({sowChecks, checkIndex, savePlanChanges}) {
                         <i className='material-icons'>add</i>
                     </button>
                 </div>
-                <div className='col s2'>
-                    <button
-                        className='btn-flat right waves-effect waves-light grey-text text-lighten-3'
-                        type='button'
-                        onClick={() => deleteCheckList(checkIndex)}
-                    >
-                        <i className='material-icons '>delete_forever</i>
-                    </button>
-                </div>
             </div>
             <ul className='collection with-header'>
-                <li className='collection-header indigo-text center'>
-                    {sowChecks[checkIndex].title}{' '}
+                <li className='collection-header indigo-text center row'>
+                    <div className='col s10'>
+                        {sowChecks[checkIndex].title}{' '}
+                    </div>
+                    <div className='col s2'>
+                        { (isEditing) ?
+                            <button
+                                className='btn-flat right waves-effect waves-light grey-text text-lighten-3'
+                                type='button'
+                                onClick={() => deleteCheckList(checkIndex)}
+                            >
+                                <i className='material-icons '>delete_forever</i>
+                            </button>
+                        :
+                            <i className='tiny material-icons red-text text-accent-4'
+                                onClick = {()=>dispatch({type:'field', field:'isEditing', payload: true})}
+                            >
+                                edit
+                            </i>
+                        }
+                    </div>
                 </li>
                 <li className='collection-item'>{checkboxElements}</li>
                 {sowChecks[checkIndex].import_url && (

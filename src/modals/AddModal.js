@@ -48,7 +48,7 @@ function AddModal ({ addModalHeader, addModalType, addNewSection }) {
         addModalCheckTypeValue: 'tools'
     }
     const [state, dispatch] = useReducer(reducer, initialState);
-    const {addModalTitleValue, addModalParentValue, addModalCheckTypeValue} = state;
+    const {addModalTitleValue, addModalCheckTypeValue} = state;
     //Material <select> fields
     const addModalChecksSelect = useRef(null);
 

@@ -8,7 +8,6 @@ import {PlanContext} from '../PlanContext.js'
 //Import Project Components
 import SimpleCheckboxSection from './notebook/SimpleCheckboxSection.js';
 import NotesSection from './notebook/NotesSection.js';
-import ProjectStepsSection from './notebook/ProjectStepsSection.js';
 import Bookmarks from './notebook/Bookmarks.js';
 import UrlLinks from './notebook/UrlLinks.js';
 import AddModal from '../modals/AddModal.js';
@@ -117,7 +116,7 @@ function ProjectLevel({ handleMainAppView, savePlanChanges, getSowObj }) {
         if (addModalValue.trim().length > 0) {
             switch (state.addModalType) {
                 case 'substep':
-                    const newSowId = await postPlan({
+                    await postPlan({
                         title: addModalValue,
                         parent: parentId,
                         notes: []
@@ -139,13 +138,6 @@ function ProjectLevel({ handleMainAppView, savePlanChanges, getSowObj }) {
                     break;
                 default:
             }
-            // console.log(contextState.selectedPlanId, updatedFieldObj);
-            // try {
-            //     savePlanChanges(contextState.selectedPlanId, updatedFieldObj);
-            // } catch (error) {
-            //     dispatch({type: 'error', payload: error})
-            // }
-            // savePlanChanges(contextState.selectedPlanId, updatedFieldObj);
         }
     }
 
@@ -180,15 +172,16 @@ function ProjectLevel({ handleMainAppView, savePlanChanges, getSowObj }) {
     function deleteSubPlan (id) {
         console.log("Sub Plan " + id + " to be deleted");
     }
-    function updateSubPlan(index, newSubPlanObj) {
-        const updatedSubPlans = [].concat(
-            [...plans[selectedPlanIndex].sub_plans]
-        );
-        updatedSubPlans[index] = newSubPlanObj;
-        savePlanChanges(contextState.selectedPlanId, {
-            sub_plans: updatedSubPlans,
-        });
-    }
+    //Not currently implemented - Refactor to change titles or order from the parent display screen
+    // function updateSubPlan(index, newSubPlanObj) {
+    //     const updatedSubPlans = [].concat(
+    //         [...plans[selectedPlanIndex].sub_plans]
+    //     );
+    //     updatedSubPlans[index] = newSubPlanObj;
+    //     savePlanChanges(contextState.selectedPlanId, {
+    //         sub_plans: updatedSubPlans,
+    //     });
+    // }
     //Delete function for fields directly under a plan object: sub_plans, notes, checks
     async function deleteItemInPlan(itemFieldName, itemIndex) {
         const currentPlan = {...plans[selectedPlanIndex]};
@@ -216,7 +209,7 @@ function ProjectLevel({ handleMainAppView, savePlanChanges, getSowObj }) {
         return (
             <nav className="transparent z-depth-0">
                 <div className="nav-wrapper">
-                    <div className="col s12">
+                    <div className="col s12 indigo-text">
                         {state.sowBreadcrumbsArr.map((breadcrumb, i) => {
                             return (
                                 <a key={breadcrumb + i} href="#project" className="breadcrumb indigo-text">{breadcrumb}</a>
@@ -535,6 +528,7 @@ function ProjectLevel({ handleMainAppView, savePlanChanges, getSowObj }) {
                             className='waves-effect waves-blue btn-flat'
                             onClick={() => {
                                 handleMainAppView('HomePage');
+                                contextDispatch({type:'field', field:'selectedSowId', payload:null})
                             }}
                         >
                             <i className='material-icons left indigo-text'>
