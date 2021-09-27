@@ -1,5 +1,5 @@
 //Import React and hooks used
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext } from 'react';
 //Import for useContext
 import {PlanContext} from './PlanContext.js'
 //Import Project Components
@@ -11,45 +11,23 @@ import Preloader from './utility_components/Preloader.js';
 //Import Functions
 import {getUserPlans, putPlanUpdate} from './api/projectsApi';
 
-// function init(initialState) {
-//     return {
-//         plans: initialState,
-//
-//     }
-// }
-//
-// function reducer (state, action) {
-//     switch (action.type) {
-//         case 'field':
-//             return {
-//                 ...state,
-//                 [action.field]: action.payload
-//             };
-//         default:
-//             return state;
-//     }
-// }
-
-//Functional Component
-    //Handles the view within the App's <main> html tag
-    //"Source of truth" for plan info and handling
+/**
+ * [AppBody description]
+ * "Source of truth" for plans/projects info and handling
+ * @param       {[Functional Component]} props [from App.js]
+ */
 function AppBody(props) {
 //useContext hook
     const [contextState, contextDispatch] = useContext(PlanContext);
 //State Hooks
     const [mainAppView, setMainAppView] = useState('HomePage');
-/**
- * useEffect Hooks
- */
-    // useEffect(() => {
-    //     console.log("appBody ln 45 selectedPlanIndex",contextState.selectedPlanIndex);
-    // })
+
 //Functions for props to lift state
     //Handling views of child components
     function handleMainAppView(view) {
         setMainAppView(view);
     }
-
+    //Recursively finds and returns the Scope of work from in the main Projects sub_plans Arr
     function getSowObj (plansArr) {
         let sowObj;
         for (var i = 0; i < plansArr.length; i++) {
@@ -65,7 +43,7 @@ function AppBody(props) {
         return sowObj;
     }
 
-    // //Changes which of the user's plans are displayed
+    //Changes which of the user's plans are displayed
     function selectPlan(selectedPlanIndex) {
         contextDispatch({type:'field',field:'selectedSowId', payload:contextState.plans[selectedPlanIndex].id});
         contextDispatch({type:'field',field:'selectedPlanIndex', payload:selectedPlanIndex});
