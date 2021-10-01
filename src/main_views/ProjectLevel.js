@@ -549,7 +549,7 @@ function ProjectLevel({ handleMainAppView, savePlanChanges, getSowObj, mainDrive
                             savePlanChanges={savePlanChanges}
                             handleMainAppView={handleMainAppView}
                             openAddModal={openAddModal}
-                        />}
+                        />
                     </div>
                     <div
                         ref={addModal}

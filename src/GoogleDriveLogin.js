@@ -58,36 +58,6 @@ function GoogleDriveFiles (props) {
      */
     const [contextState] = useContext(PlanContext);
     const {selectedSowId} = contextState;
-    /**
-   * Print files.
-   */
-    const listFiles = (searchTerm = null) => {
-        dispatch({type:'field', field:'isFetchingGoogleDriveFiles', payload:true});
-        // console.log(gapi.client.drive.files.list({pageSize: 10,fields: 'nextPageToken, files(id, name, mimeType, modifiedTime)',q:''}));
-        let listQueryObj;
-        if (searchTerm) {
-            listQueryObj = {
-              pageSize: 10,
-              fields: 'nextPageToken, files(id, name, mimeType, modifiedTime)',
-              q: `name = '${searchTerm}'`
-            }
-        } else {
-            listQueryObj = {
-              pageSize: 10,
-              fields: 'nextPageToken, files(id, name, mimeType, modifiedTime)'
-            }
-        }
-        gapi.client.drive.files
-          .list(listQueryObj)
-          .then(function (response) {
-            // console.log(response);
-            dispatch({type:'field', field:'isFetchingGoogleDriveFiles', payload:false});
-            dispatch({type:'field', field:'listDocumentsVisibility', payload:true});
-            const res = JSON.parse(response.body);
-            console.log(res);
-            dispatch({type:'field', field:'documents', payload:res.files});
-          });
-    };
 
     /**
        *  Sign in the user upon button click.
@@ -176,7 +146,6 @@ function GoogleDriveFiles (props) {
                         <div className='container'>
                             <p>Signed In as: {`${signedInGoogleUser} `}</p>
                             <div className='row'>
-                                <button className='btn' type='button' onClick={listFiles}>List Files</button>
                                 <button type="button" className='btn' onClick={handleSignOutClick}>Sign Out</button>
                             </div>
                         </div>
@@ -210,4 +179,36 @@ export default GoogleDriveFiles;
     isLoading={isFetchingGoogleDriveFiles}
 />
 <button className='btn' type='button' onClick={()=>createDriveFolder('Constructapedia')}>Create Folder</button>
+<button className='btn' type='button' onClick={listFiles}>List Files</button>
  */
+
+ /**
+ * Print files.
+ */
+ // const listFiles = (searchTerm = null) => {
+ //     dispatch({type:'field', field:'isFetchingGoogleDriveFiles', payload:true});
+ //     // console.log(gapi.client.drive.files.list({pageSize: 10,fields: 'nextPageToken, files(id, name, mimeType, modifiedTime)',q:''}));
+ //     let listQueryObj;
+ //     if (searchTerm) {
+ //         listQueryObj = {
+ //           pageSize: 10,
+ //           fields: 'nextPageToken, files(id, name, mimeType, modifiedTime)',
+ //           q: `name = '${searchTerm}'`
+ //         }
+ //     } else {
+ //         listQueryObj = {
+ //           pageSize: 10,
+ //           fields: 'nextPageToken, files(id, name, mimeType, modifiedTime)'
+ //         }
+ //     }
+ //     gapi.client.drive.files
+ //       .list(listQueryObj)
+ //       .then(function (response) {
+ //         // console.log(response);
+ //         dispatch({type:'field', field:'isFetchingGoogleDriveFiles', payload:false});
+ //         dispatch({type:'field', field:'listDocumentsVisibility', payload:true});
+ //         const res = JSON.parse(response.body);
+ //         console.log(res);
+ //         dispatch({type:'field', field:'documents', payload:res.files});
+ //       });
+ // };

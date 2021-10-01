@@ -10,18 +10,42 @@ function ProjectPictures (props) {
     const [selectedFiles, setSelectedFiles] = useState([]);
     const [selectedFilesInfo, setSelectedFilesInfo] = useState([]);
     const [newPhotoStage, setNewPhotoStage] = useState('existingConditions');
+    const [srcAttrArr, setSrcAttrArr] = useState([])
     //useContext hook
     const [contextState, contextDispatch] = useContext(PlanContext);
     const {plans, selectedPlanIndex, selectedSowId} = contextState;
+    //useRef Hooks
+    // const imgDisplay = useRef(null);
     //Material <select> fields
     const photoCategorySelect = useRef(null);
 
     //Intitialzes Materialize form select
-    //Runs on every render
+    //Runs on initial render
     useEffect(() => {
         M.FormSelect.init(photoCategorySelect.current);
     },[]);
+    useEffect(() => {
+        populateSrcAttrArr(props.photos);
+    },[])
 
+    // useEffect(() => {
+    //     const getFileFromGdrive = (imageId, imageName, imageType) => {
+    //         console.log(imageId);
+    //         const fileId = imageId;
+    //         //const dest = fs.createWriteStream('/tmp/photo.jpg');
+    //         gapi.client.drive.files.get({
+    //           fileId: fileId,
+    //           alt: 'media'
+    //       }).then((response) => {
+    //             const objectUrl = URL.createObjectURL(new Blob([new Uint8Array(response.body.length).map((_, i) => response.body.charCodeAt(i))], {type: 'image/jpeg'}));
+    //             imgDisplay.current.src = objectUrl
+    //
+    //         }).catch((err) => console.log(err))
+    //     }
+    //     for (var i = 0; i < props.photos.length; i++) {
+    //         getFileFromGdrive(props.photos[i].gdriveId, props.photos[i].name, 'image/jpeg');
+    //     }
+    // }, [props.photos])
     const onFileChange = async (event) => {
         let fileReader;
         const filesList = event.target.files
@@ -40,6 +64,7 @@ function ProjectPictures (props) {
             fileReader.readAsDataURL(file);
         };
         for (let i = 0; i < filesList.length; i++) {
+            //console.log('ln 46',filesList[i]);
             handleFileChosen(filesList[i], filesList[i].type)
             selectedFilesInfoArray.push({
                 name: filesList[i].name,
@@ -50,7 +75,6 @@ function ProjectPictures (props) {
         setSelectedFilesInfo(selectedFilesInfoArray);
         //Update State
         setSelectedFiles(selectedFilesArray);
-        console.log('Project Pictures ln 53',selectedFilesArray);
     }
 
     const uploadFileToGdrive = async (event) => {
@@ -62,12 +86,10 @@ function ProjectPictures (props) {
 
         if (selectedProject.google_drive_folder_id == undefined) {
             const folderCreationRes = await props.createDriveFolder(selectedProject.title, props.mainDriveFolderId)
-            console.log('ProjectPictures ln 65', folderCreationRes);
             parentFolderId = folderCreationRes.id
         } else {
             parentFolderId = selectedProject.google_drive_folder_id
         }
-        console.log(parentFolderId);
         var fileData=selectedFiles[0].file;
         const boundary='foo_bar_baz'
         const delimiter = "--" + boundary + "\r\n";
@@ -92,7 +114,6 @@ function ProjectPictures (props) {
             'body': multipartRequestBody
         });
         request.execute(function(file) {
-            console.log('ProjectPictures ln94 returned file',file)
             const newPhotoObj = {
                 name: file.name,
                 gdriveId: file.id,
@@ -110,9 +131,56 @@ function ProjectPictures (props) {
             }
         });
     }
-    const getFileFromGdrive = (imageId) => {
-        console.log(imageId);
+
+    const getFileFromGdrive = (imageId, imageName, imageType) => {
+        const fileId = imageId;
+        //const dest = fs.createWriteStream('/tmp/photo.jpg');
+        return gapi.client.drive.files.get({
+            fileId: fileId,
+            alt: 'media'
+        }).then((response) => {
+            const objectUrl = URL.createObjectURL(new Blob([new Uint8Array(response.body.length).map((_, i) => response.body.charCodeAt(i))], {type: 'image/jpeg'}));
+            return objectUrl
+        }).catch((err) => console.log(err))
     }
+    const populateSrcAttrArr = async (photosArr) => {
+        let isGettingFiles = true
+        let srcArr = [];
+        for (var i = 0; i < photosArr.length; i++) {
+            const objectUrl = await getFileFromGdrive(photosArr[i].gdriveId, photosArr[i].name, 'image/jpeg')
+            srcArr.push(objectUrl)
+            if (i === photosArr.length-1) {
+                setSrcAttrArr(srcArr);
+            } else {
+                continue;
+            }
+        }
+    }
+
+    const makePhotoElms = (arr) => {
+        return arr.map((src, i) => {
+            console.log('map', src);
+            return <img key={i} className='responsive-img' src={src}/>
+        })
+        // console.log(srcAttrArr.length);
+        // return srcAttrArr.map((src, i) => {
+        //     console.log('map', src);
+        //     return <img key={i} className='responsive-img' src={src}/>
+        // })
+    }
+    // const getFileFromGdrive = (imageId, imageName, imageType) => {
+    //     console.log(imageId);
+    //     const fileId = imageId;
+    //     //const dest = fs.createWriteStream('/tmp/photo.jpg');
+    //     gapi.client.drive.files.get({
+    //       fileId: fileId,
+    //       alt: 'media'
+    //   }).then((response) => {
+    //         const objectUrl = URL.createObjectURL(new Blob([new Uint8Array(response.body.length).map((_, i) => response.body.charCodeAt(i))], {type: 'image/jpeg'}));
+    //         imgDisplay.current.src = objectUrl
+    //
+    //     }).catch((err) => console.log(err))
+    // }
 
     return (
         <div className='col s12'>
@@ -127,6 +195,7 @@ function ProjectPictures (props) {
                             Existing Conditions
                             and Planning
                         </div>
+                        {makePhotoElms(srcAttrArr)}
                     </div>
                     <div className='col s12 m4'>
                         <div className='card'>
