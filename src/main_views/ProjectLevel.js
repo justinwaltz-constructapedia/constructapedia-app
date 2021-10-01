@@ -10,6 +10,7 @@ import SimpleCheckboxSection from './notebook/SimpleCheckboxSection.js';
 import NotesSection from './notebook/NotesSection.js';
 import Bookmarks from './notebook/Bookmarks.js';
 import UrlLinks from './notebook/UrlLinks.js';
+import ProjectPictures from './notebook/ProjectPictures.js';
 import AddModal from '../modals/AddModal.js';
 import PlanDetailsMenu from './notebook/PlanDetailsMenu.js';
 //Import Styles
@@ -45,7 +46,7 @@ function reducer (state, action) {
     }
 }
 
-function ProjectLevel({ handleMainAppView, savePlanChanges, getSowObj }) {
+function ProjectLevel({ handleMainAppView, savePlanChanges, getSowObj, mainDriveFolderId, createDriveFolder}) {
     //useContext hook
     const [contextState, contextDispatch] = useContext(PlanContext);
     const {plans, selectedPlanIndex, selectedSowId} = contextState;
@@ -84,9 +85,7 @@ function ProjectLevel({ handleMainAppView, savePlanChanges, getSowObj }) {
     }, [state.sowBreadcrumbsArr])
     //Sets the state and info to render the add modal for the desired section
     function openAddModal(e) {
-        console.log(e.currentTarget);
         const addModalInstance = M.Modal.getInstance(addModal.current);
-        console.log(addModalInstance);
         switch (e.currentTarget.id) {
             case 'add-substep-btn':
                 dispatch({type:'field',field:'addModalHeader',payload:'Add New WorkStep'});
@@ -132,7 +131,6 @@ function ProjectLevel({ handleMainAppView, savePlanChanges, getSowObj }) {
                             list_type: addModalCheckTypeValue,
                         }
                     ];
-                    console.log(newChecks);
                     updatedFieldObj = { checks:newChecks  };
                     savePlanChanges(parentId, updatedFieldObj);
                     break;
@@ -157,7 +155,6 @@ function ProjectLevel({ handleMainAppView, savePlanChanges, getSowObj }) {
     }
 
     function selectSubPlan (stepId, stepTitle, e) {
-        console.log(e.currentTarget.id);
         switch (e.currentTarget.id) {
             case 'sow-back-btn':
                 dispatch({type:'breadcrumb', field:'back' , payload:stepTitle})
@@ -197,7 +194,6 @@ function ProjectLevel({ handleMainAppView, savePlanChanges, getSowObj }) {
         );
         const updateObj = {};
         updateObj[itemFieldName] = newItemFieldList;
-        console.log(updateObj);
         try {
             await savePlanChanges(contextState.selectedPlanId, updateObj)
         } catch (error) {
@@ -235,7 +231,14 @@ function ProjectLevel({ handleMainAppView, savePlanChanges, getSowObj }) {
             }
         );
     }
+    const saveToSowImages = (photosArr, newParentFolderId) => {
+        if (newParentFolderId) {
+            savePlanChanges(selectedSowId, {google_drive_folder_id: newParentFolderId,images: photosArr})
+        } else {
+            savePlanChanges(selectedSowId, {images: photosArr})
+        }
 
+    }
     const makeSelectedProjectUl = (sowObj) => {
         return (
             <ul
@@ -392,38 +395,20 @@ function ProjectLevel({ handleMainAppView, savePlanChanges, getSowObj }) {
                                             <p>Project Description</p>
                                         </div>
                                     </div>
-                                    <div className='col s12'>
-                                        <div className='card-panel center red-text text-accent-4'>
-                                            <i className='material-icons'>
-                                                photo_library
-                                            </i>
-                                            <p>Project Pictures</p>
-                                            <div className='row'>
-                                                <div className='col s12 m4'>
-                                                    <div className='card'>
-                                                        Existing Conditions
-                                                        and Planning
-                                                    </div>
-                                                </div>
-                                                <div className='col s12 m4'>
-                                                    <div className='card'>
-                                                        Progress Photos
-                                                    </div>
-                                                </div>
-                                                <div className='col s12 m4'>
-                                                    <div className='card'>
-                                                        Finished Photos
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    <ProjectPictures
+                                        mainDriveFolderId={mainDriveFolderId}
+                                        createDriveFolder={createDriveFolder}
+                                        saveToSowImages={saveToSowImages}
+                                        sowTitle={sowObj.title}
+                                        projectGdriveFolderId={sowObj.google_drive_folder_id}
+                                        photos={sowObj.images}
+                                    />
                                 </div>
                             </section>
                         </div>
                     </div>
                 </li>
-                <li className=''>
+                <li className='active'>
                     <div className='collapsible-header red-text text-accent-4'>
                         <i className='material-icons'>child_friendly</i>
                         <b> Finished Project Requierements</b>
