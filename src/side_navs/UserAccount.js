@@ -66,24 +66,24 @@ function UserAccount(props) {
                 <div className='section'>
                     <h6 className='indigo-text text-darken-3 center-align'>Linked Accounts</h6>
 
-                        <div className="container">
-                            <button
-                                className='btn waves-effect waves-light indigo white-text'
-                                onClick={props.handleGoogleSignOutClick}
-                                type='button'
-                            >
-                                Sign Out Google Drive
-                            </button>
-                        </div>
-                        <div className="container">
-                            <button
-                                className='btn waves-effect waves-light indigo white-text'
-                                onClick={props.handleClientLoad}
-                                type='button'
-                            >
-                                Link Google Drive
-                            </button>
-                        </div>
+                        {/*// <div className="container">
+                        //     <button
+                        //         className='btn waves-effect waves-light indigo white-text'
+                        //         onClick={props.handleGoogleSignOutClick}
+                        //         type='button'
+                        //     >
+                        //         Sign Out Google Drive
+                        //     </button>
+                        // </div>
+                        // <div className="container">
+                        //     <button
+                        //         className='btn waves-effect waves-light indigo white-text'
+                        //         onClick={props.handleClientLoad}
+                        //         type='button'
+                        //     >
+                        //         Link Google Drive
+                        //     </button>
+                        // </div>*/}
 
                 </div>
             </li>

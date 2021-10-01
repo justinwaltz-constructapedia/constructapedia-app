@@ -19,4 +19,5 @@ function scrapper(link) {
     }
   );
 }
+
 export { scrapper };

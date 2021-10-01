@@ -45,32 +45,31 @@ function checkAccessToken () {
 */
 function getUserData () {
     console.log(access_token)
-
     if (access_token) {
         /*
         return checkAccessToken().then( (res) => {
             console.log(res)
             if (res === true) {
         */
-                return fetch( `https://constructapediawebapi.herokuapp.com/user/${user_id}`, {
-                    headers: {
-                      "Content-Type": "application/json",
-                      "Authorization": `Bearer ${access_token}`
-                    }
-                } )
-                .then( (httpResponse) => {
-                  if (httpResponse.ok) {
-                    return httpResponse.json();
-                  } else {
-                    return Promise.reject("Fetch did not succeed");
-                  }
-                } )
-                .then( (json) => {
-                    const userData = json.result
-                    delete userData._id;
-                    return json.result;
-                  })
-                .catch(err => console.log(err));
+        return fetch( `https://constructapediawebapi.herokuapp.com/user/${user_id}`, {
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${access_token}`
+            }
+        } )
+        .then( (httpResponse) => {
+          if (httpResponse.ok) {
+            return httpResponse.json();
+          } else {
+            return Promise.reject("Fetch did not succeed");
+          }
+        } )
+        .then( (json) => {
+            const userData = json.result
+            delete userData._id;
+            return json.result;
+          })
+        .catch(err => console.log(err));
 
     }
     /*
@@ -83,7 +82,8 @@ function getUserData () {
 }
 
 function putUserUpdate (dataToUpdate) {
-    console.log("sending put request to update user")
+    console.log("sending put request to update user", dataToUpdate)
+    console.log('access_token', access_token);
     return fetch( `https://constructapediawebapi.herokuapp.com/user/${user_id}`, {
         method: "PUT",
         headers: {

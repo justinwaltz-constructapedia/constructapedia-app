@@ -1,6 +1,5 @@
 import React, {useReducer, createContext, useEffect} from 'react';
 import { getUserPlans } from './api/projectsApi';
-
 export const PlanContext = createContext();
 
 function reducer (state, action) {
@@ -16,12 +15,10 @@ function reducer (state, action) {
                 ...state,
                 [action.field]: action.payload
             };
-        // case 'addItem':
+        // case 'addImage':
         //     return {
         //         ...state,
-        //         selectedSow: {
-        //             ...state.selectedSow,
-        //             [action.field]: action.payload[action.field]
+        //         plans: {
         //             //[action.field]: state.plan[action.field].push(action.payload)
         //         }
         //     }
