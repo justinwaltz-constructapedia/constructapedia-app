@@ -25,7 +25,9 @@ function ProjectPictures (props) {
         M.FormSelect.init(photoCategorySelect.current);
     },[]);
     useEffect(() => {
-        populateSrcAttrArr(props.photos);
+        if (gapi.client) {
+            populateSrcAttrArr(props.photos);
+        }
     },[])
 
     // useEffect(() => {
@@ -195,7 +197,7 @@ function ProjectPictures (props) {
                             Existing Conditions
                             and Planning
                         </div>
-                        {makePhotoElms(srcAttrArr)}
+                        {gapi.client && makePhotoElms(srcAttrArr)}
                     </div>
                     <div className='col s12 m4'>
                         <div className='card'>
