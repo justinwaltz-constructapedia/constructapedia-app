@@ -6,11 +6,12 @@ import M from 'materialize-css';
 import 'materialize-css/dist/css/materialize.min.css';
 
 function ProjectPictures (props) {
+    const initialPhotoSections = {existingConditions:[],progress:[],finished:[]}
     //useState Hooks
     const [selectedFiles, setSelectedFiles] = useState([]);
     const [selectedFilesInfo, setSelectedFilesInfo] = useState([]);
     const [newPhotoStage, setNewPhotoStage] = useState('existingConditions');
-    const [srcAttrArr, setSrcAttrArr] = useState([])
+    const [photoSections, setPhotoSections] = useState(initialPhotoSections)
     //useContext hook
     const [contextState, contextDispatch] = useContext(PlanContext);
     const {plans, selectedPlanIndex, selectedSowId} = contextState;
@@ -25,29 +26,18 @@ function ProjectPictures (props) {
         M.FormSelect.init(photoCategorySelect.current);
     },[]);
     useEffect(() => {
-        if (gapi.client) {
-            populateSrcAttrArr(props.photos);
+        if (gapi.client && props.photos.length > 0) {
+            console.log('Running populatePhotoDisplayArrays...');
+            populatePhotoDisplayArrays(props.photos);
         }
-    },[])
+        var elems = document.querySelectorAll('.materialboxed');
+        var instances = M.Materialbox.init(elems);
+        // return function cleanup() {
+        //     console.log('cleanup');
+        //     setPhotoSections({existingConditions:[],progress:[],finished:[]})
+        // }
+    },[props.photos])
 
-    // useEffect(() => {
-    //     const getFileFromGdrive = (imageId, imageName, imageType) => {
-    //         console.log(imageId);
-    //         const fileId = imageId;
-    //         //const dest = fs.createWriteStream('/tmp/photo.jpg');
-    //         gapi.client.drive.files.get({
-    //           fileId: fileId,
-    //           alt: 'media'
-    //       }).then((response) => {
-    //             const objectUrl = URL.createObjectURL(new Blob([new Uint8Array(response.body.length).map((_, i) => response.body.charCodeAt(i))], {type: 'image/jpeg'}));
-    //             imgDisplay.current.src = objectUrl
-    //
-    //         }).catch((err) => console.log(err))
-    //     }
-    //     for (var i = 0; i < props.photos.length; i++) {
-    //         getFileFromGdrive(props.photos[i].gdriveId, props.photos[i].name, 'image/jpeg');
-    //     }
-    // }, [props.photos])
     const onFileChange = async (event) => {
         let fileReader;
         const filesList = event.target.files
@@ -145,69 +135,89 @@ function ProjectPictures (props) {
             return objectUrl
         }).catch((err) => console.log(err))
     }
-    const populateSrcAttrArr = async (photosArr) => {
-        let isGettingFiles = true
-        let srcArr = [];
-        for (var i = 0; i < photosArr.length; i++) {
-            const objectUrl = await getFileFromGdrive(photosArr[i].gdriveId, photosArr[i].name, 'image/jpeg')
-            srcArr.push(objectUrl)
-            if (i === photosArr.length-1) {
-                setSrcAttrArr(srcArr);
-            } else {
-                continue;
+    const populatePhotoDisplayArrays = async (photosArr) => {
+        const existingConditionsArr = [];
+        const progressArr = [];
+        const finishedArr = [];
+        console.log("photosArr length: ", photosArr.length);
+        // if (photosArr.length === 0) {
+        //     setPhotoSections({
+        //         existingConditions:existingConditionsArr,
+        //         progress:progressArr,
+        //         finished:finishedArr
+        //     });
+        // } else {
+            for (var i = 0; i < photosArr.length; i++) {
+                const objectUrl = await getFileFromGdrive(photosArr[i].gdriveId, photosArr[i].name, 'image/jpeg')
+                switch (photosArr[i].stage) {
+                    case 'existingConditions':
+                        existingConditionsArr.push(objectUrl)
+                        break;
+                    case 'progress':
+                        progressArr.push(objectUrl)
+                        break;
+                    case 'finished':
+                        finishedArr.push(objectUrl)
+                        break;
+                    default:
+
+                }
+                if (i === photosArr.length-1) {
+                    // console.log(`Setting PhotoSections:
+                    //             ${existingConditionsArr}
+                    //             ${progressArr}
+                    //             ${finishedArr}`);
+                    setPhotoSections({
+                        existingConditions:existingConditionsArr,
+                        progress:progressArr,
+                        finished:finishedArr
+                    });
+                } else {
+                    continue;
+                }
             }
-        }
+        // }
     }
 
     const makePhotoElms = (arr) => {
         return arr.map((src, i) => {
-            console.log('map', src);
-            return <img key={i} className='responsive-img' src={src}/>
+            return <img key={i} className='materialboxed' width='100%' src={src}/>
         })
-        // console.log(srcAttrArr.length);
-        // return srcAttrArr.map((src, i) => {
-        //     console.log('map', src);
-        //     return <img key={i} className='responsive-img' src={src}/>
-        // })
     }
-    // const getFileFromGdrive = (imageId, imageName, imageType) => {
-    //     console.log(imageId);
-    //     const fileId = imageId;
-    //     //const dest = fs.createWriteStream('/tmp/photo.jpg');
-    //     gapi.client.drive.files.get({
-    //       fileId: fileId,
-    //       alt: 'media'
-    //   }).then((response) => {
-    //         const objectUrl = URL.createObjectURL(new Blob([new Uint8Array(response.body.length).map((_, i) => response.body.charCodeAt(i))], {type: 'image/jpeg'}));
-    //         imgDisplay.current.src = objectUrl
-    //
-    //     }).catch((err) => console.log(err))
-    // }
 
     return (
         <div className='col s12'>
             <div className='card-panel center red-text text-accent-4'>
-                <i className='material-icons'>
-                    photo_library
-                </i>
-                <p>Project Pictures</p>
+                <div className='row'>
+                    <i className='material-icons'>
+                        photo_library
+                    </i>
+                    <p>Project Pictures</p>
+                    <div className='col s1'>
+                        <i className='small material-icons red-text text-accent-4'>
+                            edit
+                        </i>
+                    </div>
+                </div>
                 <div className='row'>
                     <div className='col s12 m4'>
                         <div className='card'>
                             Existing Conditions
                             and Planning
                         </div>
-                        {gapi.client && makePhotoElms(srcAttrArr)}
+                        {gapi.client && makePhotoElms(photoSections.existingConditions)}
                     </div>
                     <div className='col s12 m4'>
                         <div className='card'>
                             Progress Photos
                         </div>
+                        {gapi.client && makePhotoElms(photoSections.progress)}
                     </div>
                     <div className='col s12 m4'>
                         <div className='card'>
                             Finished Photos
                         </div>
+                        {gapi.client && makePhotoElms(photoSections.finished)}
                     </div>
                     <div className = "row">
                         <form className = "col s12">
@@ -261,3 +271,37 @@ function ProjectPictures (props) {
 }
 
 export default ProjectPictures;
+
+
+// useEffect(() => {
+//     const getFileFromGdrive = (imageId, imageName, imageType) => {
+//         console.log(imageId);
+//         const fileId = imageId;
+//         //const dest = fs.createWriteStream('/tmp/photo.jpg');
+//         gapi.client.drive.files.get({
+//           fileId: fileId,
+//           alt: 'media'
+//       }).then((response) => {
+//             const objectUrl = URL.createObjectURL(new Blob([new Uint8Array(response.body.length).map((_, i) => response.body.charCodeAt(i))], {type: 'image/jpeg'}));
+//             imgDisplay.current.src = objectUrl
+//
+//         }).catch((err) => console.log(err))
+//     }
+//     for (var i = 0; i < props.photos.length; i++) {
+//         getFileFromGdrive(props.photos[i].gdriveId, props.photos[i].name, 'image/jpeg');
+//     }
+// }, [props.photos])
+
+// const getFileFromGdrive = (imageId, imageName, imageType) => {
+//     console.log(imageId);
+//     const fileId = imageId;
+//     //const dest = fs.createWriteStream('/tmp/photo.jpg');
+//     gapi.client.drive.files.get({
+//       fileId: fileId,
+//       alt: 'media'
+//   }).then((response) => {
+//         const objectUrl = URL.createObjectURL(new Blob([new Uint8Array(response.body.length).map((_, i) => response.body.charCodeAt(i))], {type: 'image/jpeg'}));
+//         imgDisplay.current.src = objectUrl
+//
+//     }).catch((err) => console.log(err))
+// }

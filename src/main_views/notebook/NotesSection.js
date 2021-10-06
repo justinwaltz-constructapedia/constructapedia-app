@@ -78,7 +78,6 @@ function NotesSection(props) {
                         value={noteValues[i]}
                         noteIndex={i}
                         handleNoteChange={handleNoteChange}
-                        deleteItemInPlan={props.deleteItemInPlan}
                     />
                 );
             } else {
@@ -137,8 +136,9 @@ function Note(props) {
                 <button
                     className='btn-flat right waves-effect waves-light'
                     type='button'
-                    onClick={() =>
-                        props.deleteItemInPlan('notes', props.noteIndex)
+                    onClick={() => {
+                            console.log('Delete not implemented');
+                        }
                     }
                 >
                     <i className='material-icons indigo-text text-lighten-5'>

@@ -29,28 +29,22 @@ function AppBody(props) {
     function handleMainAppView(view) {
         setMainAppView(view);
     }
-    //Recursively finds and returns the Scope of work from in the main Projects sub_plans Arr
-    function getSowObj (plansArr) {
-        let sowObj;
-        for (var i = 0; i < plansArr.length; i++) {
-            if (plansArr[i].id === contextState.selectedSowId){
-                sowObj = plansArr[i]
-                break;
-            } else if (plansArr[i].sub_plans && plansArr[i].sub_plans.length > 0) {
-                sowObj = getSowObj(plansArr[i].sub_plans)
-            } else {
-                continue;
-            }
-        }
-        return sowObj;
-    }
+    // //Recursively finds and returns the Scope of work from in the main Projects sub_plans Arr
+    // function getSowObj (plansArr) {
+    //     let sowObj;
+    //     for (var i = 0; i < plansArr.length; i++) {
+    //         if (plansArr[i].id === contextState.selectedSowId){
+    //             sowObj = plansArr[i]
+    //             break;
+    //         } else if (plansArr[i].sub_plans && plansArr[i].sub_plans.length > 0) {
+    //             sowObj = getSowObj(plansArr[i].sub_plans)
+    //         } else {
+    //             continue;
+    //         }
+    //     }
+    //     return sowObj;
+    // }
 
-    //Changes which of the user's plans are displayed
-    function selectPlan(selectedPlanIndex) {
-        contextDispatch({type:'field',field:'selectedSowId', payload:contextState.plans[selectedPlanIndex].id});
-        contextDispatch({type:'field',field:'selectedPlanIndex', payload:selectedPlanIndex});
-        handleMainAppView('ProjectDetails')
-    }
     function savePlanChanges(planId, sowUpdateObj) {
         return putPlanUpdate(planId, sowUpdateObj).then((res) => {
             console.log("plan update put");
@@ -70,16 +64,16 @@ function AppBody(props) {
 
     function addScrapedDataToPlan (scrapedData) {
         console.log(scrapedData);
-        let currentPlan;
-        if (contextState.plans[contextState.selectedPlanIndex].id === contextState.selectedSowId) {
-            currentPlan = {...contextState.plans[contextState.selectedPlanIndex]}
-        } else {
-            currentPlan = getSowObj([...contextState.plans[contextState.selectedPlanIndex].sub_plans]);
-        }
+        let currentPlan = {...contextState.selectedSow}
+        // if (contextState.plans[contextState.selectedPlanIndex].id === contextState.selectedSowId) {
+        //     currentPlan = {...contextState.plans[contextState.selectedPlanIndex]}
+        // } else {
+        //     currentPlan = getSowObj([...contextState.plans[contextState.selectedPlanIndex].sub_plans]);
+        // }
         const fieldsToUpdate = Object.keys(scrapedData);
         const updatedPlanFields = {};
         fieldsToUpdate.forEach((fieldName, i) => {
-            console.log('appBody 102',scrapedData[fieldName]);
+            console.log('appBody 76',scrapedData[fieldName]);
             if (fieldName !== 'title') {
                 let planField;
                 if (fieldName === 'checks') {
@@ -88,14 +82,13 @@ function AppBody(props) {
                         return arr;
                     },[...scrapedData[fieldName]])
                 } else {
-                    //planField = scrapedData[fieldName];
                     planField = scrapedData[fieldName].concat([...currentPlan[fieldName]]);
                 }
-                console.log('appbody ln 114', planField);
+                console.log('appbody ln 87', planField);
                 updatedPlanFields[fieldName] = planField;
             }
         });
-        console.log('appbody 118 updatedplanfields', updatedPlanFields);
+        console.log('appbody 91 updatedplanfields', updatedPlanFields);
         savePlanChanges(contextState.selectedSowId, updatedPlanFields);
         handleMainAppView("ProjectDetails");
     }
@@ -103,7 +96,7 @@ function AppBody(props) {
      * Create a google drive folder
      */
     const createDriveFolder = (name, parentFolderId) => {
-        console.log('AppBody ln 106',name, parentFolderId);
+        console.log('AppBody ln 99',name, parentFolderId);
         let folderMetaData;
         if (parentFolderId) {
             folderMetaData = {
@@ -129,7 +122,7 @@ function AppBody(props) {
                 console.log('Folder Id: ', file.id);
             }
         }).then((res) => {
-            console.log('res ',res);
+            console.log('AppBoby ln125 res ',res);
             return JSON.parse(res.body);
         }).then((json) => {
             return json
@@ -142,7 +135,7 @@ function AppBody(props) {
                 {mainAppView === 'HomePage' && (
                     <>
                         <HomePage
-                            selectPlan={selectPlan}
+                            //selectPlan={selectPlan}
                             handleMainAppView={handleMainAppView}
                         />
                         <GoogleDriveLogin
@@ -154,7 +147,6 @@ function AppBody(props) {
                 )}
                 {mainAppView === 'NewProject' && (
                     <NewProject
-                        selectPlan={selectPlan}
                         mainAppView = {mainAppView}
                         handleMainAppView={handleMainAppView}
                         savePlanChanges={savePlanChanges}
@@ -162,10 +154,8 @@ function AppBody(props) {
                 )}
                 {mainAppView === 'ProjectDetails' && (
                     <ProjectLevel
-                        selectPlan={selectPlan}
                         handleMainAppView={handleMainAppView}
                         savePlanChanges={savePlanChanges}
-                        getSowObj={getSowObj}
                         mainDriveFolderId={props.user.google_drive_folder_id}
                         createDriveFolder={createDriveFolder}
                     />
