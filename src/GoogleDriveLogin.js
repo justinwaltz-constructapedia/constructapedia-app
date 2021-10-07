@@ -74,6 +74,7 @@ function GoogleDriveFiles (props) {
     const updateSigninStatus = (isSignedIn) => {
         if (isSignedIn) {
             // Set the signed in user
+            console.log('current google user',gapi.auth2.getAuthInstance().currentUser);
             dispatch({type:'field', field:'signedInGoogleUser', payload:gapi.auth2.getAuthInstance().currentUser.le.wt.Ad});
             dispatch({type:'field', field:'isLoadingGoogleDriveApi', payload:false});
             if (!props.mainDriveFolder) {
@@ -124,17 +125,6 @@ function GoogleDriveFiles (props) {
 
     const handleClientLoad = async () => {
         gapi.load('client:auth2', initClient);
-        // dispatch({type:'field', field:'isLoadingGoogleDriveApi', payload:true});
-        // const currentGdriveUser = await signInToGoogleDrive()
-        // console.log('GoogleDriveLogin ln160',currentGdriveUser);
-        // dispatch({type:'field', field:'signedInGoogleUser', payload:currentGdriveUser.le.wt.Ad});
-        // dispatch({type:'field', field:'isLoadingGoogleDriveApi', payload:false});
-        // if (!props.mainDriveFolder) {
-        //     const mainDriveFolderId = props.createDriveFolder('Constructapedia').then((response) => {
-        //         console.log('GoogleDriveFiles ln 139 ', response.id);
-        //         props.updateUser({google_drive_folder_id: response.id})
-        //     })
-        // }
     };
 
     if ((isLoadingGoogleDriveApi)) {

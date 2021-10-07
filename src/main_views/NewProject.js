@@ -8,7 +8,7 @@ import { postPlan, getUserPlans } from '../api/projectsApi';
 //import {googleSearch} from '../api/searchApi.js';
 function NewProject(props) {
     //useContext hook
-    const [contextDispatch] = useContext(PlanContext);
+    const [contextState, contextDispatch] = useContext(PlanContext);
     const [planTitleValue, setPlanTitleValue] = useState('');
 
     function addUserPlan(plan) {

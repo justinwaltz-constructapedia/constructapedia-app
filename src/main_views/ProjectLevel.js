@@ -204,6 +204,53 @@ function ProjectLevel({ handleMainAppView, savePlanChanges, mainDriveFolderId, c
     //         console.log(error);
     //     }
     // }
+    
+    // const getFileFromGdrive = (imageId, imageName) => {
+    //     const fileId = imageId;
+    //     //const dest = fs.createWriteStream('/tmp/photo.jpg');
+    //     return gapi.client.drive.files.get({
+    //         fileId: fileId,
+    //         alt: 'media'
+    //     }).then((response) => {
+    //         const objectUrl = URL.createObjectURL(new Blob([new Uint8Array(response.body.length).map((_, i) => response.body.charCodeAt(i))], {type: 'image/jpeg'}));
+    //         return objectUrl
+    //     }).catch((err) => console.log(err))
+    // }
+    // const populatePhotoDisplayArrays = async (photosArr) => {
+    //     const existingConditionsArr = [];
+    //     const progressArr = [];
+    //     const finishedArr = [];
+    //     // if (photosArr.length === 0) {
+    //     //     setPhotoSections(initialPhotoSections);
+    //     // } else {
+    //         for (var i = 0; i < photosArr.length; i++) {
+    //             const objectUrl = await getFileFromGdrive(photosArr[i].gdriveId, photosArr[i].name, 'image/jpeg')
+    //             switch (photosArr[i].stage) {
+    //                 case 'existingConditions':
+    //                     existingConditionsArr.push(objectUrl)
+    //                     break;
+    //                 case 'progress':
+    //                     progressArr.push(objectUrl)
+    //                     break;
+    //                 case 'finished':
+    //                     finishedArr.push(objectUrl)
+    //                     break;
+    //                 default:
+    //
+    //             }
+    //             if (i === photosArr.length-1) {
+    //                 setPhotoSections({
+    //                     existingConditions:existingConditionsArr,
+    //                     progress:progressArr,
+    //                     finished:finishedArr
+    //                 });
+    //             } else {
+    //                 continue;
+    //             }
+    //         }
+    //     // }
+    // }
+
 
     const makeSowNav = () => {
         return (
@@ -404,7 +451,6 @@ function ProjectLevel({ handleMainAppView, savePlanChanges, mainDriveFolderId, c
                                         saveToSowImages={saveToSowImages}
                                         sowTitle={sowObj.title}
                                         projectGdriveFolderId={sowObj.google_drive_folder_id}
-                                        photos={sowObj.images}
                                         savePlanChanges={savePlanChanges}
                                     />
                                 </div>

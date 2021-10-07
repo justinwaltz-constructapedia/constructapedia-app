@@ -43,21 +43,17 @@ function reducer (state, action) {
         case 'selectSow':
             //Recursively finds and returns the Scope of work from in the main Projects sub_plans Arr
             let selectedSowObj;
+            let googleFolder = {...state.projectGdriveFolder};
             switch (action.field) {
                 case 'project':
                     selectedSowObj = state.plans.find(plan => plan.id === action.payload);
+                    googleFolder = {id: selectedSowObj.google_drive_folder_id, title:selectedSowObj.title};
                     break;
                 case 'subStep':
                     selectedSowObj = getSowObj(state.selectedSow.sub_plans, action.payload)
                     break;
                 case 'back':
                     selectedSowObj = getSowObj(state.plans, action.payload);
-                    // selectedSowObj = state.plans.find(plan => plan.id === action.payload);
-                    // console.log('PlanContext ln53 selectedSowObj: ', selectedSowObj, 'payload: ', action.payload);
-                    // if (!selectedSowObj) {
-                    //     selectedSowObj = getSowObj(state.plans, action.payload);
-                    //     console.log('PlanContext ln56 selectedSowObj: ', selectedSowObj);
-                    // }
                     break;
                 default:
                     selectedSowObj = null;
@@ -65,7 +61,8 @@ function reducer (state, action) {
             return {
                 ...state,
                 selectedSow: selectedSowObj,
-                selectedSowId: action.payload
+                selectedSowId: action.payload,
+                projectGdriveFolder: googleFolder
             }
         // case 'delete':
         //     return {
@@ -93,6 +90,7 @@ export const PlanProvider = (props) => {
         plans: [],
         selectedSowId: null,
         selectedSow: null,
+        projectGdriveFolder: {},
         error: ''
     }
     const [contextState, contextDispatch] = useReducer(reducer, initialState)

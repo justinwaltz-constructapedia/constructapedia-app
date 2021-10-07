@@ -184,6 +184,7 @@ function ResultListItem(props) {
                     list: scrapedData.Tools
                 }
             ],
+
             bookmarks: [{url:url, title: "Imported Data" }]
         })
     }
