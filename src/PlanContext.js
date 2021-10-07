@@ -2,6 +2,24 @@ import React, {useReducer, createContext, useEffect} from 'react';
 import { getUserPlans } from './api/projectsApi';
 export const PlanContext = createContext();
 
+//Recursively finds and returns the Scope of work from in the main Projects sub_plans Arr
+function getSowObj (plansArr, sowIdToFind) {
+    let sowObj;
+    console.log(sowIdToFind);
+    for (var i = 0; i < plansArr.length; i++) {
+        console.log(plansArr[i]);
+        if (plansArr[i].id === sowIdToFind){
+            sowObj = plansArr[i]
+            break;
+        } else if (plansArr[i].sub_plans && plansArr[i].sub_plans.length > 0) {
+            sowObj = getSowObj(plansArr[i].sub_plans, sowIdToFind)
+        } else {
+            continue;
+        }
+    }
+    return sowObj;
+}
+
 function reducer (state, action) {
     switch (action.type) {
         case 'saving':
@@ -22,10 +40,30 @@ function reducer (state, action) {
         //             //[action.field]: state.plan[action.field].push(action.payload)
         //         }
         //     }
-        // case 'selectProject':
-        //     return {
-        //
-        //     }
+        case 'selectSow':
+            //Recursively finds and returns the Scope of work from in the main Projects sub_plans Arr
+            let selectedSowObj;
+            let googleFolder = {...state.projectGdriveFolder};
+            switch (action.field) {
+                case 'project':
+                    selectedSowObj = state.plans.find(plan => plan.id === action.payload);
+                    googleFolder = {id: selectedSowObj.google_drive_folder_id, title:selectedSowObj.title};
+                    break;
+                case 'subStep':
+                    selectedSowObj = getSowObj(state.selectedSow.sub_plans, action.payload)
+                    break;
+                case 'back':
+                    selectedSowObj = getSowObj(state.plans, action.payload);
+                    break;
+                default:
+                    selectedSowObj = null;
+            }
+            return {
+                ...state,
+                selectedSow: selectedSowObj,
+                selectedSowId: action.payload,
+                projectGdriveFolder: googleFolder
+            }
         // case 'delete':
         //     return {
         //         ...state,
@@ -51,9 +89,8 @@ export const PlanProvider = (props) => {
     const initialState = {
         plans: [],
         selectedSowId: null,
-        selectedPlanIndex: -1,
-        selectedPlanId: null,
-        isSaving: false,
+        selectedSow: null,
+        projectGdriveFolder: {},
         error: ''
     }
     const [contextState, contextDispatch] = useReducer(reducer, initialState)
