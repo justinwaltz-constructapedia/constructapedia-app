@@ -11,56 +11,66 @@ function NewProject(props) {
     const [contextState, contextDispatch] = useContext(PlanContext);
     const [planTitleValue, setPlanTitleValue] = useState('');
 
-    function addUserPlan(plan) {
-        console.log(plan);
-        return postPlan(plan)
-            .then((res) => {
-                console.log(res.id);
-                return res.id;
-            })
-            .then((createdPlanId) => {
-                getUserPlans()
-                    .then((updatedPlans) => {
-                        console.log(updatedPlans);
-                        contextDispatch({type:'field',field:'plans',payload:updatedPlans});
-                        return updatedPlans;
-                    })
-                    .catch((err) => console.log(err));
-                return createdPlanId;
-            })
-            .catch((err) => console.log(err));
-    }
+    // function addUserPlan(plan) {
+    //     console.log(plan);
+    //     return postPlan(plan)
+    //         .then((res) => {
+    //             console.log('1',res.id);
+    //             return res.id;
+    //         })
+    //         .then((createdPlanId) => {
+    //             getUserPlans()
+    //                 .then((updatedPlans) => {
+    //                     console.log(updatedPlans);
+    //                     contextDispatch({type:'field',field:'plans',payload:updatedPlans});
+    //                     return updatedPlans;
+    //                 })
+    //                 .catch((err) => console.log(err));
+    //             return createdPlanId;
+    //         })
+    //         .catch((err) => console.log(err));
+    // }
     async function createNewPlan(importedPlan) {
-        let newPlanObj = {};
         if (importedPlan || planTitleValue.trim().length > 0) {
-            newPlanObj.title = (planTitleValue.trim().length > 0) ? planTitleValue : importedPlan.title;
-            const newPlanId = await addUserPlan(newPlanObj);
-            console.log(`newPlanId: ${newPlanId}
-                            importedPlan: ${importedPlan}
-                            newPlanObj: ${newPlanObj}`);
+            const newPlanTitle = (planTitleValue.trim().length > 0) ? planTitleValue : importedPlan.title;
+            console.log('1', newPlanTitle);
+            const newPlanRes = await postPlan({title:newPlanTitle});
+            const newPlanId = newPlanRes.id
+            console.log('2', newPlanId);
             if (importedPlan) {
                 delete importedPlan.title;
-                console.log(`After Delete...
-                            importedPlan: ${importedPlan}
-                            newPlanObj: ${newPlanObj}`);
-
+                const updatedPlanObj = {};
                 for (let key in importedPlan) {
-                    const object = importedPlan[key];
-                    if ( key === 'sub_plans') {
-                        for (let objKey in object) {
-                            object[objKey].parent = newPlanId;
-                        }
+                    if ( key === 'steps') {
+                        continue;
                     } else {
-                        newPlanObj[key] = importedPlan[key];
+                        updatedPlanObj[key] = importedPlan[key];
                     }
                 }
-                const updatedPlanObj = {...importedPlan};
-                console.log(updatedPlanObj);
+                console.log(`3
+                                newPlanId: ${newPlanId}
+                                importedPlan: ${importedPlan}
+                                updatedPlanObj: ${updatedPlanObj}`);
                 const response = await props.savePlanChanges(
                     newPlanId,
                     updatedPlanObj
                 );
-                console.log(response);
+                console.log('4', response);
+                for (let i = 0; i < importedPlan.steps.length; i++) {
+                    console.log(`5
+                                title: ${importedPlan.steps[i].title}
+                                parent: ${newPlanId}
+                                step body: ${importedPlan.steps[i].body}
+                    `);
+                    await postPlan({
+                        title: importedPlan.steps[i].title,
+                        parent: newPlanId,
+                        notes: [{contents:importedPlan.steps[i].body}],
+                        import_url: importedPlan.import_url
+                    })
+                }
+                const updatedUserPlans = await getUserPlans()
+                contextDispatch({type:'field', field: 'plans', payload: updatedUserPlans})
                 if (response === 1) {
                     props.handleMainAppView('HomePage');
                 } else {
