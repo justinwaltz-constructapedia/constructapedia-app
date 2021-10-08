@@ -161,7 +161,7 @@ function ResultListItem(props) {
     //NOTE: Needs to handle adding to existing plan if SearchResults was rendered from PlanDetails
     async function scrapePage(url) {
         const scrapedData = await scrapper(url);
-        console.log(scrapedData);
+        console.log('SearchResults ln 164 scrapedData', scrapedData);
         props.handleScrapedData({
             title: scrapedData.title,
             checks: [
@@ -184,7 +184,8 @@ function ResultListItem(props) {
                     list: scrapedData.Tools
                 }
             ],
-
+            steps: scrapedData.steps,
+            import_url: url,
             bookmarks: [{url:url, title: "Imported Data" }]
         })
     }

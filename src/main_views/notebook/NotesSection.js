@@ -124,13 +124,14 @@ function Note(props) {
     return (
         <div className='row'>
             <div className='col s11'>
-                <textarea
+                {/*<textarea
                     className='readonly'
                     value={props.value}
                     onChange={(e) =>
                         props.handleNoteChange(e.target.value, props.noteIndex)
                     }
-                />
+                />*/}
+                <p>{props.value}</p>
             </div>
             <div className='col s1'>
                 <button

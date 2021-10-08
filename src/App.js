@@ -118,6 +118,7 @@ class App extends React.Component {
                 </div>
             );
             //View to return if no user is logged in
+            //DEV NOTE :: the header and sidenav components could probaly just be reused as they are no different at this point
         } else {
             return (
                 <div>

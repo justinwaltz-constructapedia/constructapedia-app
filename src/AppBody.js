@@ -29,21 +29,6 @@ function AppBody(props) {
     function handleMainAppView(view) {
         setMainAppView(view);
     }
-    // //Recursively finds and returns the Scope of work from in the main Projects sub_plans Arr
-    // function getSowObj (plansArr) {
-    //     let sowObj;
-    //     for (var i = 0; i < plansArr.length; i++) {
-    //         if (plansArr[i].id === contextState.selectedSowId){
-    //             sowObj = plansArr[i]
-    //             break;
-    //         } else if (plansArr[i].sub_plans && plansArr[i].sub_plans.length > 0) {
-    //             sowObj = getSowObj(plansArr[i].sub_plans)
-    //         } else {
-    //             continue;
-    //         }
-    //     }
-    //     return sowObj;
-    // }
 
     function savePlanChanges(planId, sowUpdateObj) {
         return putPlanUpdate(planId, sowUpdateObj).then((res) => {
@@ -61,7 +46,7 @@ function AppBody(props) {
             }
         });
     }
-
+    //DEV NOTE:: could possibly be combined with the function to create a new plan from scrapedData
     function addScrapedDataToPlan (scrapedData) {
         console.log(scrapedData);
         let currentPlan = {...contextState.selectedSow}
