@@ -17,7 +17,7 @@ function getSowObj (plansArr, sowIdToFind) {
             continue;
         }
     }
-    return sowObj;
+    return {...sowObj};
 }
 
 function reducer (state, action) {
@@ -29,10 +29,20 @@ function reducer (state, action) {
                 isSaving: true
             }
         case 'field':
-            return {
-                ...state,
-                [action.field]: action.payload
-            };
+            if (action.field === 'plans' && state.selectedSow) {
+                const selectedSowObj = getSowObj(action.payload, state.selectedSow.id);
+                console.log('PlanContext ln34 selectedSow', selectedSowObj);
+                return {
+                    ...state,
+                    [action.field]: action.payload,
+                    selectedSow: selectedSowObj
+                };
+            } else {
+                return {
+                    ...state,
+                    [action.field]: action.payload
+                };
+            }
         // case 'addImage':
         //     return {
         //         ...state,
