@@ -16,16 +16,16 @@ import { gapi } from 'gapi-script';
 /**
  * [AppBody description]
  * "Source of truth" for plans/projects info and handling
- * @param       {[Functional Component]} props [from App.js]
+ * {[Functional Component]} props [from App.js]
  */
 function AppBody(props) {
-//useContext hook
+    //useContext hook
     const [contextState, contextDispatch] = useContext(PlanContext);
-//State Hooks
+    //State Hooks
     const [mainAppView, setMainAppView] = useState('HomePage');
 
-//Functions for props to lift state
-    //Handling views of child components
+    //Functions for props to lift state
+        //Handling views of child components
     function handleMainAppView(view) {
         setMainAppView(view);
     }

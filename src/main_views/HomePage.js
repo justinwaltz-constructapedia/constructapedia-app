@@ -35,7 +35,7 @@ function HomePage(props) {
     return (
         <div className='row'>
             <div className='col s12'>
-                <div className='container create-prj-override'>
+                <div className='section'>
                     <button
                         className='btn waves-effect waves-light indigo white-text'
                         onClick={() => {

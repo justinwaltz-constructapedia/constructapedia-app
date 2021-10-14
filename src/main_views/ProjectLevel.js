@@ -231,9 +231,9 @@ function ProjectLevel({ handleMainAppView, savePlanChanges, mainDriveFolderId, c
     }
     const saveToSowImages = (photosArr, newParentFolderId) => {
         if (newParentFolderId) {
-            savePlanChanges(selectedSowId, {google_drive_folder_id: newParentFolderId,images: photosArr})
+            return savePlanChanges(selectedSowId, {google_drive_folder_id: newParentFolderId,images: photosArr})
         } else {
-            savePlanChanges(selectedSowId, {images: photosArr})
+            return savePlanChanges(selectedSowId, {images: photosArr})
         }
 
     }
