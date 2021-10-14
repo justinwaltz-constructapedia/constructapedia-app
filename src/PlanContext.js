@@ -4,27 +4,19 @@ export const PlanContext = createContext();
 
 //Recursively finds and returns the Scope of work from in the main Projects sub_plans Arr
 function getSowObj (plansArr, sowIdToFind) {
-    console.log(sowIdToFind);
     let isFound = false;
     let sowObj = {};
     function recursivelySearchProjects (arrToSearch) {
         for (var i = 0; i < plansArr.length; i++) {
             if (isFound) {
-                console.log(sowObj);
-                console.log(isFound);
                 return;
             } else if (arrToSearch[i].id === sowIdToFind){
-                console.log('found');
-                console.log(arrToSearch[i]);
                 sowObj = {...arrToSearch[i]}
-                console.log('sowObj: ', sowObj);
                 isFound = true;
                 return;
             } else if (arrToSearch[i].sub_plans && arrToSearch[i].sub_plans.length > 0) {
-                console.log('searching subplans from previous log...');
                 recursivelySearchProjects(arrToSearch[i].sub_plans)
             } else {
-                console.log('no subplans for provious log, continuing...');
                 continue;
             }
         }

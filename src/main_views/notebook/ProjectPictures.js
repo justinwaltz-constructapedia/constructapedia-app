@@ -82,9 +82,17 @@ function ProjectPictures (props) {
                 setSelectedFilesInfo([]);
                 //Update State
                 setSelectedFiles([]);
-                //Update Ref
-                imgSingleInput.current.value = '';
-                // imgSingleInput.current.files = {};
+                // //Update Ref
+                // const inputFiles = {...imgSingleInput.current.files};
+                // for (var key in inputFiles) {
+                //     if (inputFiles.hasOwnProperty(key)) {
+                //         delete inputFiles[key];
+                //     }
+                // }
+                // console.log(inputFiles);
+                //imgSingleInput.current.files = inputFiles;
+                const inputDisplay = document.getElementById('single-img-name-input');
+                inputDisplay.value = '';
             }
         }
     }
@@ -145,7 +153,6 @@ function ProjectPictures (props) {
 
     const getFileFromGdrive = (imageId, imageName, imageType) => {
         const fileId = imageId;
-        //const dest = fs.createWriteStream('/tmp/photo.jpg');
         return gapi.client.drive.files.get({
             fileId: fileId,
             alt: 'media'
@@ -162,14 +169,8 @@ function ProjectPictures (props) {
             'fileId': fileId
         });
         request.execute(function(resp) {
-            console.log(resp);
             const currentPhotos = [...selectedSow.images];
-            console.log(currentPhotos.length);
-            // function filterById (obj) {
-            //         return fileId !== obj.gdriveId;
-            // }
             const filteredPhotos = currentPhotos.filter(photo => photo.gdriveId !== fileId)
-            console.log(filteredPhotos.length);
             props.saveToSowImages(filteredPhotos);
         })
     }
@@ -289,7 +290,7 @@ function ProjectPictures (props) {
                                         <input ref={imgSingleInput} type = "file" onChange={onFileChange}/>
                                     </div>
                                     <div className = "file-path-wrapper">
-                                        <input className = "file-path validate" type = "text" placeholder = "Upload file" />
+                                        <input id='single-img-name-input' className = "file-path validate" type = "text" placeholder = "Upload file" />
                                     </div>
                                 </div>
                             </div>
