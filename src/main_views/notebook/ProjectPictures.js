@@ -83,7 +83,7 @@ function ProjectPictures (props) {
                 setSelectedFiles([]);
                 //Update Ref
                 imgSingleInput.current.value = '';
-                imgSingleInput.current.files = {};
+                // imgSingleInput.current.files = {};
             }
         }
     }
@@ -142,52 +142,57 @@ function ProjectPictures (props) {
         });
     }
 
-    const getFileFromGdrive = (imageId, imageName) => {
+    const getFileFromGdrive = (imageId, imageName, imageType) => {
         const fileId = imageId;
         //const dest = fs.createWriteStream('/tmp/photo.jpg');
         return gapi.client.drive.files.get({
             fileId: fileId,
             alt: 'media'
         }).then((response) => {
-            const objectUrl = URL.createObjectURL(new Blob([new Uint8Array(response.body.length).map((_, i) => response.body.charCodeAt(i))], {type: 'image/jpeg'}));
+            const objectUrl = URL.createObjectURL(new Blob([new Uint8Array(response.body.length).map((_, i) => response.body.charCodeAt(i))], {type: imageType}));
             return objectUrl
         }).catch((err) => console.log(err))
     }
 
     const deleteFileFromGdrive = (fileId) => {
         console.log(fileId);
-        // var request = gapi.client.drive.files.delete({
-        //     'fileId': fileId
-        // });
-        // request.execute(function(resp) {
-            // console.log(resp);
+        setImagesAreLoading(true);
+        var request = gapi.client.drive.files.delete({
+            'fileId': fileId
+        });
+        request.execute(function(resp) {
+            console.log(resp);
             const currentPhotos = [...selectedSow.images];
+            console.log(currentPhotos.length);
             // function filterById (obj) {
             //         return fileId !== obj.gdriveId;
             // }
             const filteredPhotos = currentPhotos.filter(photo => photo.gdriveId !== fileId)
-            console.log(filteredPhotos);
+            console.log(filteredPhotos.length);
+            props.saveToSowImages(filteredPhotos);
+        })
     }
     const populatePhotoDisplayArrays = async (photosArr) => {
         const existingConditionsArr = [];
         const progressArr = [];
         const finishedArr = [];
         for (var i = 0; i < photosArr.length; i++) {
-            const objectUrl = await getFileFromGdrive(photosArr[i].gdriveId, photosArr[i].name, 'image/jpeg')
+            const objectUrl = await getFileFromGdrive(photosArr[i].gdriveId, photosArr[i].name, photosArr[i].type)
             switch (photosArr[i].stage) {
                 case 'existingConditions':
-                    existingConditionsArr.push(objectUrl)
+                    existingConditionsArr.push({name:photosArr[i].name, id:photosArr[i].gdriveId, src:objectUrl})
                     break;
                 case 'progress':
-                    progressArr.push(objectUrl)
+                    progressArr.push({name:photosArr[i].name, id:photosArr[i].gdriveId, src:objectUrl})
                     break;
                 case 'finished':
-                    finishedArr.push(objectUrl)
+                    finishedArr.push({name:photosArr[i].name, id:photosArr[i].gdriveId, src:objectUrl})
                     break;
                 default:
 
             }
             if (i === photosArr.length-1) {
+                console.log(existingConditionsArr);
                 setImagesAreLoading(true);
                 setPhotoSections({
                     existingConditions:existingConditionsArr,
@@ -202,22 +207,23 @@ function ProjectPictures (props) {
     }
 
     const makePhotoElms = (arr) => {
-        return arr.map((src, i) => {
+        return arr.map((obj, i) => {
             return (
-                <div key={i} className="card">
+                <div key={obj.id} className="card">
                     <div className="card-image">
-                        <img className="materialboxed" width="100%" src={src}/>
+                        <img className="materialboxed" width="100%" src={obj.src}/>
                             <span className="card-title activator" style={{width: "100%"}}>
-                                Card Title
+                                {obj.name}
                                 <i className="material-icons right">more_vert</i>
                             </span>
                     </div>
                     <div className="card-reveal">
                         <span className="card-title grey-text text-darken-4">
-                            {}
+                            {obj.name}
                             <i className="material-icons right">close</i>
                         </span>
-                        <p>Here is some more information about this photo that is only revealed once clicked on.</p>
+                        <p><b>Caption: </b>{obj.caption !== undefined && obj.caption}</p>
+                        <i className="material-icons" onClick={()=>deleteFileFromGdrive(obj.id)}>delete_forever</i>
                     </div>
                 </div>
 
@@ -233,13 +239,9 @@ function ProjectPictures (props) {
                         photo_library
                     </i>
                     <p>Project Pictures</p>
-                    <div className='col s1'>
-                        <i className='small material-icons red-text text-accent-4'>
-                            edit
-                        </i>
-                    </div>
                 </div>
-                <div className='row'>
+                { (selectedSow.images.length > 0) ?
+                    <div className='row'>
                         <div className='col s12 m4'>
                             <div className='card'>
                                 Existing Conditions
@@ -259,56 +261,59 @@ function ProjectPictures (props) {
                             </div>
                             {gapi.client && makePhotoElms(photoSections.finished)}
                         </div>
-                    { imagesAreLoading &&
-                        <div className='section center'>
-                            <Preloader/>
-                        </div>
-                    }
-                    <div className = "row">
-                        <form className = "col s12">
-                            <div className = "row">
-                                <div className='col s12 m6'>
-                                    <label>Single File Input</label>
-                                    <div className = "file-field input-field">
-                                        <div className = "btn">
-                                            <span>Browse</span>
-                                            <input ref={imgSingleInput} type = "file" onChange={onFileChange}/>
-                                        </div>
-                                        <div className = "file-path-wrapper">
-                                            <input className = "file-path validate" type = "text" placeholder = "Upload file" />
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className = "col s12 m6">
-                                    <label>Multi File Input</label>
-                                    <div className = "file-field input-field">
-                                        <div className = "btn disabled">
-                                            <span>Browse</span>
-                                            <input disabled type = "file" multiple onChange={onFileChange}/>
-                                        </div>
-                                        <div className = "file-path-wrapper">
-                                            <input className = "file-path validate" type = "text" placeholder = "Upload multiple files" />
-                                        </div>
-                                    </div>
-                                </div>
+                        { imagesAreLoading &&
+                            <div className='section center'>
+                                <Preloader/>
                             </div>
-                            <div className='row valign-wrapper'>
-                                <div className='input-field col s4 offset-s2'>
-                                    <select ref={photoCategorySelect}
-                                            value={newPhotoStage}
-                                            onChange={(e)=>setNewPhotoStage(e.target.value)}>
-                                        <option value="existingConditions">Existing Conditions</option>
-                                        <option value="progress">Progress</option>
-                                        <option value="finished">Finished</option>
-                                    </select>
-                                    <label>Project Stage</label>
-                                </div>
-                                <button className = "btn left" onClick={(e)=>handleFileUploads(e)}>
-                                    Upload
-                                </button>
-                            </div>
-                        </form>
+                        }
                     </div>
+                    :
+                    <p> No Saved Images </p>
+                }
+                <div className = "row">
+                    <form className = "col s12">
+                        <div className = "row">
+                            <div className='col s12 m6'>
+                                <label>Single File Input</label>
+                                <div className = "file-field input-field">
+                                    <div className = "btn">
+                                        <span>Browse</span>
+                                        <input ref={imgSingleInput} type = "file" onChange={onFileChange}/>
+                                    </div>
+                                    <div className = "file-path-wrapper">
+                                        <input className = "file-path validate" type = "text" placeholder = "Upload file" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div className = "col s12 m6">
+                                <label>Multi File Input</label>
+                                <div className = "file-field input-field">
+                                    <div className = "btn disabled">
+                                        <span>Browse</span>
+                                        <input disabled type = "file" multiple onChange={onFileChange}/>
+                                    </div>
+                                    <div className = "file-path-wrapper">
+                                        <input className = "file-path validate" type = "text" placeholder = "Upload multiple files" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div className='row valign-wrapper'>
+                            <div className='input-field col s4 offset-s2'>
+                                <select ref={photoCategorySelect}
+                                        value={newPhotoStage}
+                                        onChange={(e)=>setNewPhotoStage(e.target.value)}>
+                                    <option value="existingConditions">Existing Conditions</option>
+                                    <option value="progress">Progress</option>
+                                    <option value="finished">Finished</option>
+                                </select>
+                                <label>Project Stage</label>
+                            </div>
+                            <button className = "btn left" onClick={(e)=>handleFileUploads(e)}>
+                                Upload
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
