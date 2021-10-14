@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext, useRef } from 'react';
 //Import for useContext
 import {PlanContext} from '../../PlanContext.js'
 import { gapi } from 'gapi-script';
+// import GoogleDriveLogin from '../../GoogleDriveLogin.js';
 import Preloader from '../../utility_components/Preloader.js';
 import M from 'materialize-css';
 import 'materialize-css/dist/css/materialize.min.css';
@@ -13,7 +14,7 @@ function ProjectPictures (props) {
     const [selectedFilesInfo, setSelectedFilesInfo] = useState([]);
     const [newPhotoStage, setNewPhotoStage] = useState('existingConditions');
     const [photoSections, setPhotoSections] = useState(initialPhotoSections);
-    const [imagesAreLoading, setImagesAreLoading] = useState(true);
+    const [imagesAreLoading, setImagesAreLoading] = useState(false);
     //useContext hook
     const [contextState, contextDispatch] = useContext(PlanContext);
     const {plans, selectedSow, selectedSowId, projectGdriveFolder} = contextState;
@@ -81,9 +82,17 @@ function ProjectPictures (props) {
                 setSelectedFilesInfo([]);
                 //Update State
                 setSelectedFiles([]);
-                //Update Ref
-                imgSingleInput.current.value = '';
-                // imgSingleInput.current.files = {};
+                // //Update Ref
+                // const inputFiles = {...imgSingleInput.current.files};
+                // for (var key in inputFiles) {
+                //     if (inputFiles.hasOwnProperty(key)) {
+                //         delete inputFiles[key];
+                //     }
+                // }
+                // console.log(inputFiles);
+                //imgSingleInput.current.files = inputFiles;
+                const inputDisplay = document.getElementById('single-img-name-input');
+                inputDisplay.value = '';
             }
         }
     }
@@ -144,7 +153,6 @@ function ProjectPictures (props) {
 
     const getFileFromGdrive = (imageId, imageName, imageType) => {
         const fileId = imageId;
-        //const dest = fs.createWriteStream('/tmp/photo.jpg');
         return gapi.client.drive.files.get({
             fileId: fileId,
             alt: 'media'
@@ -161,14 +169,8 @@ function ProjectPictures (props) {
             'fileId': fileId
         });
         request.execute(function(resp) {
-            console.log(resp);
             const currentPhotos = [...selectedSow.images];
-            console.log(currentPhotos.length);
-            // function filterById (obj) {
-            //         return fileId !== obj.gdriveId;
-            // }
             const filteredPhotos = currentPhotos.filter(photo => photo.gdriveId !== fileId)
-            console.log(filteredPhotos.length);
             props.saveToSowImages(filteredPhotos);
         })
     }
@@ -206,6 +208,42 @@ function ProjectPictures (props) {
         }
     }
 
+    const photoSectionDisplays = () => {
+        if (!gapi.client) {
+            return <p> Link your Google Drive to save images </p>
+            // <GoogleDriveLogin />
+        } else if (selectedSow.images.length === 0) {
+            return <p> No Saved Images </p>
+        } else {
+            return (<div className='row'>
+                <div className='col s12 m4'>
+                    <div className='card'>
+                        Existing Conditions
+                        and Planning
+                    </div>
+                    {gapi.client && makePhotoElms(photoSections.existingConditions)}
+                </div>
+                <div className='col s12 m4'>
+                    <div className='card'>
+                        Progress Photos
+                    </div>
+                    {gapi.client && makePhotoElms(photoSections.progress)}
+                </div>
+                <div className='col s12 m4'>
+                    <div className='card'>
+                        Finished Photos
+                    </div>
+                    {gapi.client && makePhotoElms(photoSections.finished)}
+                </div>
+                { imagesAreLoading &&
+                    <div className='section center'>
+                        <Preloader/>
+                    </div>
+                }
+            </div>)
+        }
+    }
+
     const makePhotoElms = (arr) => {
         return arr.map((obj, i) => {
             return (
@@ -240,36 +278,7 @@ function ProjectPictures (props) {
                     </i>
                     <p>Project Pictures</p>
                 </div>
-                { (selectedSow.images.length > 0) ?
-                    <div className='row'>
-                        <div className='col s12 m4'>
-                            <div className='card'>
-                                Existing Conditions
-                                and Planning
-                            </div>
-                            {gapi.client && makePhotoElms(photoSections.existingConditions)}
-                        </div>
-                        <div className='col s12 m4'>
-                            <div className='card'>
-                                Progress Photos
-                            </div>
-                            {gapi.client && makePhotoElms(photoSections.progress)}
-                        </div>
-                        <div className='col s12 m4'>
-                            <div className='card'>
-                                Finished Photos
-                            </div>
-                            {gapi.client && makePhotoElms(photoSections.finished)}
-                        </div>
-                        { imagesAreLoading &&
-                            <div className='section center'>
-                                <Preloader/>
-                            </div>
-                        }
-                    </div>
-                    :
-                    <p> No Saved Images </p>
-                }
+                {photoSectionDisplays()}
                 <div className = "row">
                     <form className = "col s12">
                         <div className = "row">
@@ -281,7 +290,7 @@ function ProjectPictures (props) {
                                         <input ref={imgSingleInput} type = "file" onChange={onFileChange}/>
                                     </div>
                                     <div className = "file-path-wrapper">
-                                        <input className = "file-path validate" type = "text" placeholder = "Upload file" />
+                                        <input id='single-img-name-input' className = "file-path validate" type = "text" placeholder = "Upload file" />
                                     </div>
                                 </div>
                             </div>
@@ -321,125 +330,3 @@ function ProjectPictures (props) {
 }
 
 export default ProjectPictures;
-
-// <div className="fixed-action-btn" style={{position: "absolute", display: "inline-block", right: "24px"}}>
-//     <a className="btn-floating btn-large red">
-//         <i className="large material-icons">mode_edit</i>
-//     </a>
-//     <ul>
-//         <li><a className="btn-floating red"><i className="material-icons">delete_forever</i></a></li>
-//         <li><a className="btn-floating yellow darken-1"><i className="material-icons">format_quote</i></a></li>
-//         <li><a className="btn-floating green"><i className="material-icons">publish</i></a></li>
-//         <li><a className="btn-floating blue"><i className="material-icons">attach_file</i></a></li>
-//     </ul>
-// </div>
-
-// function ProjectPhotosSubsection (props) {
-//     // const [isLoading, setIsLoading] = useState(true);
-//     const [photos, setPhotos] = useState([])
-//
-//     useEffect(() => {
-//         const srcUrls = []
-//         for (var i = 0; i < props.photos.length; i++) {
-//             // const objectUrl =
-//             props.getFileFromGdrive(props.photos[i].gdriveId, props.photos[i].name).then((imageUrl) => {
-//                 console.log('ln277 ', imageUrl);
-//                 srcUrls.push(imageUrl)
-//                 let isLoading = true;
-//                 if (i === props.photos.length-1) {
-//                     isLoading = false
-//                 }
-//                 return isLoading
-//             }).then((stillLoading) => {
-//                 if (!stillLoading) {
-//                     const newArr = srcUrls.reduce((arr, url, i) => {
-//                         arr.push({...props.photos[i], src:url})
-//                         console.log(arr);
-//                         return arr
-//                     },[])
-//                     console.log(newArr);
-//                     setPhotos(newArr);
-//                 } else {
-//                     return;
-//                 }
-//             })
-//             // switch (photosArr[i].stage) {
-//             //     case 'existingConditions':
-//             //         existingConditionsArr.push(objectUrl)
-//             //         break;
-//             //     case 'progress':
-//             //         progressArr.push(objectUrl)
-//             //         break;
-//             //     case 'finished':
-//             //         finishedArr.push(objectUrl)
-//             //         break;
-//             //     default:
-//             //
-//             // }
-//             console.log('ln293', srcUrls.length);
-//             if (i === props.photos.length-1) {
-//                 console.log('ln295 building new arr: ', srcUrls.length);
-//                 const newArr = srcUrls.reduce((arr, url, i) => {
-//                     arr.push({...props.photos[i], src:url})
-//                     console.log(arr);
-//                     return arr
-//                 },[])
-//                 console.log(newArr);
-//                 setPhotos(newArr);
-//                 break;
-//             } else {
-//                 continue;
-//             }
-//         }
-//     },[props.photos])
-//
-//
-//     const photoDisplay = photos.map((photoObj, i) => {
-//         return (
-//             <img key={i + photoObj.gdriveId} className='materialboxed' width='100%' src={photoObj.src}/>
-//         )
-//     })
-//
-//     // const makePhotoDisplay = () => {
-//     //
-//     // }
-//     return (
-//         <div>
-//             {photoDisplay}
-//         </div>
-//     )
-// }
-
-
-// useEffect(() => {
-//     const getFileFromGdrive = (imageId, imageName, imageType) => {
-//         console.log(imageId);
-//         const fileId = imageId;
-//         //const dest = fs.createWriteStream('/tmp/photo.jpg');
-//         gapi.client.drive.files.get({
-//           fileId: fileId,
-//           alt: 'media'
-//       }).then((response) => {
-//             const objectUrl = URL.createObjectURL(new Blob([new Uint8Array(response.body.length).map((_, i) => response.body.charCodeAt(i))], {type: 'image/jpeg'}));
-//             imgDisplay.current.src = objectUrl
-//
-//         }).catch((err) => console.log(err))
-//     }
-//     for (var i = 0; i < selectedSow.photos.length; i++) {
-//         getFileFromGdrive(selectedSow.photos[i].gdriveId, selectedSow.photos[i].name, 'image/jpeg');
-//     }
-// }, [selectedSow.photos])
-
-// const getFileFromGdrive = (imageId, imageName, imageType) => {
-//     console.log(imageId);
-//     const fileId = imageId;
-//     //const dest = fs.createWriteStream('/tmp/photo.jpg');
-//     gapi.client.drive.files.get({
-//       fileId: fileId,
-//       alt: 'media'
-//   }).then((response) => {
-//         const objectUrl = URL.createObjectURL(new Blob([new Uint8Array(response.body.length).map((_, i) => response.body.charCodeAt(i))], {type: 'image/jpeg'}));
-//         imgDisplay.current.src = objectUrl
-//
-//     }).catch((err) => console.log(err))
-// }

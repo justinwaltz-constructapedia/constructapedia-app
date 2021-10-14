@@ -32,12 +32,9 @@ function AppBody(props) {
 
     function savePlanChanges(planId, sowUpdateObj) {
         return putPlanUpdate(planId, sowUpdateObj).then((res) => {
-            console.log("plan update put");
             if (res === 1) {
                 return getUserPlans()
                     .then((updatedPlans) => {
-                        console.log("got updated user plans");
-                        console.log(updatedPlans);
                         contextDispatch({type:'field',field:'plans',payload:updatedPlans});
                         return res;
                     })
