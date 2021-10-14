@@ -24,6 +24,7 @@ function Authorization(props) {
     const [name, setName] = useState('');
     const [rememberMe, setRememberMe] = useState(true);
     const [sidenavIsLoading, setSidenavIsLoading] = useState(false);
+    const [loginFailed, setLoginFailed] = useState(false);
 //Effect Hooks
     //Intitialzes Materialize side nav and collapsible
         //Runs on initial render only
@@ -50,9 +51,10 @@ function Authorization(props) {
         setSidenavIsLoading(true);
         //Sign user in to server
         postAuthLogin(email, password, rememberMe)
-        .then((success) => {
-            console.log(success);
-            if (success === true) {
+        .then((message) => {
+            console.log(message);
+            if (message === true) {
+                setLoginFailed(false);
                 //get user data from server
                 getUserData()
                 .then((user) => {
@@ -64,14 +66,18 @@ function Authorization(props) {
                     const instance = M.Sidenav.getInstance(sidenav.current);
                     instance.close(0);//Use .destroy() instead?
                     //Log user in to the app
-                    props.handleLogin(success, user);
+                    props.handleLogin(message, user);
                 })
                 .catch((err) => console.log(err));
             } else {
-                console.log('failed sign in', success);
+                console.log('failed sign in', message);
+                setLoginFailed(true);
             }
             setSidenavIsLoading(false);
-            });
+            })
+            .catch((err) => {
+                console.log(err);
+            })
         //Maybe a redirect here or in handleLogin to get the /#signInForm out of the URL
     }
     //Processes New User Sign-up
@@ -154,7 +160,8 @@ function Authorization(props) {
                                 <br></br>
                                 <br></br>
                             </form>
-                            {sidenavIsLoading && <Preloader />}
+                            {sidenavIsLoading && <div className='center'><Preloader /></div>}
+                            {loginFailed && <p className='center'>Login failed</p>}
                         </div>
                     </li>
                     <div className='divider'></div>
