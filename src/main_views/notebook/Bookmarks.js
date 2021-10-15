@@ -274,7 +274,7 @@ export default function Bookmarks ({ bookmarks, savePlanChanges }) {
                                     <td>
                                         <div className='input-field inline'>
                                             <input
-                                                placeholder='Input URL'
+                                                placeholder='www.example.com'
                                                 id='add-bookmark-url'
                                                 type='text'
                                                 className='validate'

@@ -160,7 +160,7 @@ function ProjectLevel({ handleMainAppView, savePlanChanges, mainDriveFolderId, c
                 dispatch({type:'breadcrumb', field:'add' , payload:stepTitle})
                 contextDispatch({type:'selectSow', field:'subStep', payload:stepId});
         }
-
+        window.scroll(0, 0);
     }
 
     function deleteSubPlan (id) {
@@ -390,7 +390,7 @@ function ProjectLevel({ handleMainAppView, savePlanChanges, mainDriveFolderId, c
                 <li className='active'>
                     <div className='collapsible-header red-text text-accent-4'>
                         <i className='material-icons center'>
-                            pregnant_woman
+                            build
                         </i>
                         <b>Project Details</b>
                     </div>
@@ -421,7 +421,7 @@ function ProjectLevel({ handleMainAppView, savePlanChanges, mainDriveFolderId, c
                 </li>
                 <li className='active'>
                     <div className='collapsible-header red-text text-accent-4'>
-                        <i className='material-icons'>child_friendly</i>
+                        <i className='material-icons'>thumb_up</i>
                         <b> Finished Project Requierements</b>
                     </div>
                     <div className='collapsible-body'>
@@ -518,7 +518,7 @@ function ProjectLevel({ handleMainAppView, savePlanChanges, mainDriveFolderId, c
         return (
             <div>
                 <div className='col s12'>
-                    <div className='row'>
+                    <div className='section'>
                         <div className='col s12'>
                             <button
                                 type='button'

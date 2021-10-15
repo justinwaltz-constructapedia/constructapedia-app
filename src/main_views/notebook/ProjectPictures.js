@@ -260,7 +260,7 @@ function ProjectPictures (props) {
                             {obj.name}
                             <i className="material-icons right">close</i>
                         </span>
-                        <p><b>Caption: </b>{obj.caption !== undefined && obj.caption}</p>
+                        <p><b>Note: </b>{obj.caption !== undefined && obj.caption}</p>
                         <i className="material-icons" onClick={()=>deleteFileFromGdrive(obj.id)}>delete_forever</i>
                     </div>
                 </div>
@@ -283,7 +283,7 @@ function ProjectPictures (props) {
                     <form className = "col s12">
                         <div className = "row">
                             <div className='col s12 m6'>
-                                <label>Single File Input</label>
+                                <label>Single Image Input</label>
                                 <div className = "file-field input-field">
                                     <div className = "btn">
                                         <span>Browse</span>
@@ -295,7 +295,7 @@ function ProjectPictures (props) {
                                 </div>
                             </div>
                             <div className = "col s12 m6">
-                                <label>Multi File Input</label>
+                                <label>Multi Image Input</label>
                                 <div className = "file-field input-field">
                                     <div className = "btn disabled">
                                         <span>Browse</span>
