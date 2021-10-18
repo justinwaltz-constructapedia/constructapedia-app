@@ -35,6 +35,14 @@ function reducer (state, action) {
                 case 'add':
                     newBreadcrumbArr.push(action.payload)
                     break;
+                case 'jump':
+                    function search (crumb) {
+                        return crumb.id === action.payload
+                    }
+                    const indexToJumpTo = newBreadcrumbArr.findIndex(search);
+                    console.log(indexToJumpTo);
+                    newBreadcrumbArr.splice(indexToJumpTo + 1)
+                    break;
                 default:
                     break;
             }
@@ -56,7 +64,7 @@ function ProjectLevel({ handleMainAppView, savePlanChanges, mainDriveFolderId, c
     const initialState = {
         addModalHeader: '',
         addModalType: '',
-        sowBreadcrumbsArr: [selectedSow.title]
+        sowBreadcrumbsArr: [{title:selectedSow.title, id:selectedSow.id}]
     }
     const [state, dispatch] = useReducer(reducer, initialState)
     //Ref Hooks for Materialize functionality
@@ -152,14 +160,16 @@ function ProjectLevel({ handleMainAppView, savePlanChanges, mainDriveFolderId, c
 
     function selectSubPlan (stepId, stepTitle, e) {
         console.log(stepId, e.currentTarget.id);
-        switch (e.currentTarget.id) {
-            case 'sow-back-btn':
-                dispatch({type:'breadcrumb', field:'back' , payload:stepTitle})
-                contextDispatch({type:'selectSow', field:'back', payload:stepId});
-                break;
-            default:
-                contextDispatch({type:'selectSow', field:'subStep', payload:stepId});
-                dispatch({type:'breadcrumb', field:'add' , payload:stepTitle})
+        const elementId = e.currentTarget.id
+        if (elementId === 'sow-back-btn') {
+            dispatch({type:'breadcrumb', field:'back'})
+            contextDispatch({type:'selectSow', field:'back', payload:stepId});
+        } else if (elementId.includes('breadcrumb')) {
+            dispatch({type:'breadcrumb', field:'jump' , payload:stepId})
+            contextDispatch({type:'selectSow', field:'back', payload:stepId});
+        } else {
+            contextDispatch({type:'selectSow', field:'subStep', payload:stepId});
+            dispatch({ type:'breadcrumb', field:'add' , payload:{title:stepTitle, id:stepId} })
         }
         window.scroll(0, 0);
     }
@@ -207,7 +217,7 @@ function ProjectLevel({ handleMainAppView, savePlanChanges, mainDriveFolderId, c
                     <div className="col s12">
                         {state.sowBreadcrumbsArr.map((breadcrumb, i) => {
                             return (
-                                <a key={breadcrumb + i} href="#project" className="breadcrumb ">{breadcrumb}</a>
+                                <a key={breadcrumb.id} id={'breadcrumb'+i} href='#project' className='breadcrumb' onClick={(e)=>{selectSubPlan( breadcrumb.id, breadcrumb.title, e)}}>{breadcrumb.title}</a>
                             )
                         })}
                     </div>
