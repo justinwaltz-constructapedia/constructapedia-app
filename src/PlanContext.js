@@ -4,27 +4,19 @@ export const PlanContext = createContext();
 
 //Recursively finds and returns the Scope of work from in the main Projects sub_plans Arr
 function getSowObj (plansArr, sowIdToFind) {
-    let isFound = false;
-    let sowObj = {};
-    function recursivelySearchProjects (arrToSearch) {
-        for (var i = 0; i < plansArr.length; i++) {
-            if (isFound) {
-                return;
-            } else if (arrToSearch[i].id === sowIdToFind){
-                sowObj = {...arrToSearch[i]}
-                isFound = true;
-                return;
-            } else if (arrToSearch[i].sub_plans && arrToSearch[i].sub_plans.length > 0) {
-                recursivelySearchProjects(arrToSearch[i].sub_plans)
-            } else {
-                continue;
+    console.log('getSowObj');
+    for (const sow of plansArr) {
+        if (sow.id === sowIdToFind){
+            console.log("id match");
+            return sow;
+        } else if (sow.sub_plans && sow.sub_plans.length > 0) {
+            const foundSow = getSowObj(sow.sub_plans, sowIdToFind);
+            if (foundSow) {
+                console.log("foundSow");
+                return foundSow;
             }
         }
     }
-    recursivelySearchProjects(plansArr);
-    console.log('returning sow...');
-    console.log(sowObj);
-    return {...sowObj};
 }
 
 function reducer (state, action) {
@@ -67,13 +59,18 @@ function reducer (state, action) {
                     googleFolder = {id: selectedSowObj.google_drive_folder_id, title:selectedSowObj.title};
                     break;
                 case 'subStep':
+                    console.log('1', state.selectedSow);
+                    console.log('2', action.payload);
                     selectedSowObj = getSowObj(state.selectedSow.sub_plans, action.payload)
+                    console.log('end',selectedSowObj);
                     break;
                 case 'back':
+                    console.log('1', state.selectedSow);
+                    console.log('2', action.payload);
                     selectedSowObj = getSowObj(state.plans, action.payload);
                     break;
                 default:
-                    selectedSowObj = null;
+                    selectedSowObj = state.selectedSow;
             }
             return {
                 ...state,

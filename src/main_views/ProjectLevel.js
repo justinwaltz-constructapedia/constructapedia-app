@@ -151,14 +151,15 @@ function ProjectLevel({ handleMainAppView, savePlanChanges, mainDriveFolderId, c
     }
 
     function selectSubPlan (stepId, stepTitle, e) {
+        console.log(stepId, e.currentTarget.id);
         switch (e.currentTarget.id) {
             case 'sow-back-btn':
                 dispatch({type:'breadcrumb', field:'back' , payload:stepTitle})
                 contextDispatch({type:'selectSow', field:'back', payload:stepId});
                 break;
             default:
-                dispatch({type:'breadcrumb', field:'add' , payload:stepTitle})
                 contextDispatch({type:'selectSow', field:'subStep', payload:stepId});
+                dispatch({type:'breadcrumb', field:'add' , payload:stepTitle})
         }
         window.scroll(0, 0);
     }
