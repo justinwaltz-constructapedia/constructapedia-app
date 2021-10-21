@@ -8,16 +8,18 @@ import Preloader from '../utility_components/Preloader.js';
 //Import Functions
 import { getUserData } from '../api/userApi.js';
 import { postAuthLogin, postAuthSignUp } from '../api/authApi';
+import { GoogleLogin, GoogleLogout } from 'react-google-login';
+import { withRouter } from "react-router-dom";
 
 //Functional Component
-    //Handles user sign up and login
+//Handles user sign up and login
 function Authorization(props) {
-//Ref hooks
+    //Ref hooks
     //Materialize sidenav
     const sidenav = useRef(null);
     //Materialize collapsible
     const authDropdown = useRef(null);
-//State Hooks
+    //State Hooks
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
@@ -25,9 +27,39 @@ function Authorization(props) {
     const [rememberMe, setRememberMe] = useState(true);
     const [sidenavIsLoading, setSidenavIsLoading] = useState(false);
     const [loginFailed, setLoginFailed] = useState(false);
-//Effect Hooks
+    
+    const responseGoogle = async googleUser => {
+
+        const res = await fetch ("", {
+            method: "POST",
+            body: JSON.stringify({
+            token: googleUser.tokenId
+            }),
+            headers: {
+            "Content-Type":"application/json"
+            }
+            })
+            const data = await res.json()
+            // based on what we get back we can save the user data accordingly
+        // console.log(JSON.stringify(googleUser));
+        // const idToken = googleUser.getAuthResponse().id_token;
+        // const googleEmail = googleUser.profileObj.email;
+        // console.log('The id_token is ' + idToken)
+        // localStorage.setItem('access_token', idToken);
+        // localStorage.setItem('user_id', googleEmail);
+        // props.history.push(props.onLogin);
+    };
+
+    const responseGoogleLogout = (response) => {
+        console.log('Logout response:' + JSON.stringify(response));
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('user_id');
+        console.log('Logged out')
+        props.history.push(props.onLogout)
+    };
+    //Effect Hooks
     //Intitialzes Materialize side nav and collapsible
-        //Runs on initial render only
+    //Runs on initial render only
     useEffect(() => {
         const sidenavOptions = {
             inDuration: 250,
@@ -39,7 +71,7 @@ function Authorization(props) {
         M.Collapsible.init(authDropdown.current);
     }, []);
 
-//Component functionality
+    //Component functionality
     //Processes changed values for all form elements
     function handleChange(event) {
         const input = event.target;
@@ -94,7 +126,31 @@ function Authorization(props) {
         });
     }
 
-//Return view of this component:
+    function GoogleLgn() {
+        console.log("asdhasdjhv")
+        if (localStorage.getItem('googleEmail') == null)
+            return (<div>
+                <GoogleLogin
+                    clientId="50139972732-2rf17no6c3aqkeumvuepi94pi32makrv.apps.googleusercontent.com"
+                    buttonText="Login with Google"
+                    onSuccess={responseGoogle}
+                    onFailure={responseGoogle}
+                    cookiePolicy={'single_host_origin'}
+                />
+            </div>)
+        else {
+            console.log('Logged in to Google with' + localStorage.getItem('googleEmail'));
+            return (<div>
+                <GoogleLogout
+                    clientId="50139972732-2rf17no6c3aqkeumvuepi94pi32makrv.apps.googleusercontent.com"
+                    buttonText="Logout with Google"
+                    onLogoutSuccess={responseGoogleLogout}
+                />
+            </div>)
+        }
+    }
+
+    //Return view of this component:
     //Includes forms to sign in and create a new user account
     return (
         <ul ref={sidenav} id='slide-out' className='sidenav'>
@@ -107,10 +163,10 @@ function Authorization(props) {
             </li>
             <div className='divider'></div>
             <li>
-                <ul ref={authDropdown} className='collapsible collapsible-accordion'>
+                <ul ref={authDropdown} className='collapsible collapsible-accordion '>
                     <li className='active'>
                         <div className='collapsible-header waves-effect waves-light indigo-text text-darken-3'>
-                            Login In<i className='material-icons'>arrow_drop_down</i>
+                            Login Ins<i className='material-icons'>arrow_drop_down</i>
                         </div>
                         <div className='collapsible-body'>
                             <form
@@ -128,7 +184,7 @@ function Authorization(props) {
                                         className='white'
                                         onChange={(e) => setEmail(e.target.value)}
                                     />
-                                <label htmlFor='email'>Email</label>
+                                    <label htmlFor='email'>Email</label>
                                 </div>
                                 <div className='input-field'>
                                     <input
@@ -157,6 +213,8 @@ function Authorization(props) {
                                 >
                                     Sign In
                                 </button>
+                                <br></br>
+                                <GoogleLgn />
                                 <br></br>
                                 <br></br>
                             </form>
