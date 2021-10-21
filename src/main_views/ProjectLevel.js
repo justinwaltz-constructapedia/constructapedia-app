@@ -287,12 +287,100 @@ function ProjectLevel({ handleMainAppView, savePlanChanges, mainDriveFolderId, c
                 </li>
                 <li className='active'>
                     <div className='collapsible-header indigo-text'>
+                        <i className='material-icons center indigo-text'>
+                            traffic
+                        </i>
+                        <b>Worksteps</b> (Execution)
+                    </div>
+                    <div className='collapsible-body'>
+                        <section>
+                        {sowObj.sub_plans.length > 0 &&
+                            sowObj.sub_plans.map((subPlan, i) => {
+                                return (
+                                    <li key={subPlan.id} className='collection-item'>
+                                        <div className='indigo-text text-darken-3'>
+                                            <a
+                                                href='#subplannotebook'
+                                                className='waves-effect waves-light btn-flat indigo-text text-darken-3'
+                                                onClick={(e) => selectSubPlan(subPlan.id, subPlan.title, e)}
+                                            >
+                                                <h6 className='valign-wrapper'>
+                                                    {subPlan.title}
+                                                    <i className='material-icons'>chevron_right</i>
+                                                </h6>
+                                            </a>
+
+                                            <button
+                                                className='btn-flat center-align right waves-effect waves-light  hide-on-small-and-down '
+                                                onClick={() => {
+                                                    deleteSubPlan(subPlan.id);
+                                                }}
+                                            >
+                                                <i className='material-icons grey-text text-lighten-4'>delete_forever</i>
+                                            </button>
+                                        </div>
+                                    </li>
+                                );
+                            })
+                        }
+                        </section>
+                    </div>
+                </li>
+                <li className='active'>
+                    <div className='collapsible-header indigo-text'>
+                        <i className='material-icons center indigo-text'>
+                            offline_pin
+                        </i>
+                        <b>Checklists</b> (Planning)
+                    </div>
+                    <div className='collapsible-body'>
+                        <section>
+                            <div className='row'>
+                                {makeChecksSections(sowObj.checks)}
+                            </div>
+                        </section>
+                    </div>
+                </li>
+                <li className='active'>
+                    <div className='collapsible-header red-text text-accent-4'>
+                        <i className='material-icons center'>
+                            build
+                        </i>
+                        <b>Project Details</b>
+                    </div>
+                    <div className='collapsible-body'>
+                        <div>
+                            <section className='section section-details'>
+                                <div className='row'>
+                                    <div className='col s12'>
+                                        <div className='card-panel center red-text text-accent-4'>
+                                            <i className='material-icons'>
+                                                description
+                                            </i>
+                                            <p>Project Description</p>
+                                        </div>
+                                    </div>
+                                    <ProjectPictures
+                                        mainDriveFolderId={mainDriveFolderId}
+                                        createDriveFolder={createDriveFolder}
+                                        saveToSowImages={saveToSowImages}
+                                        sowTitle={sowObj.title}
+                                        projectGdriveFolderId={sowObj.google_drive_folder_id}
+                                        savePlanChanges={savePlanChanges}
+                                    />
+                                </div>
+                            </section>
+                        </div>
+                    </div>
+                </li>
+                <li className='active'>
+                    <div className='collapsible-header indigo-text'>
                         <div className='row'>
                             <div className='col s8'>
                                 <i className='material-icons center indigo-text'>
                                     note
                                 </i>
-                                <b>Details</b>
+                                <b>Notes</b>
                             </div>
                             {sowObj.import_url &&
                                 <div className='col s4'>
@@ -340,94 +428,6 @@ function ProjectLevel({ handleMainAppView, savePlanChanges, mainDriveFolderId, c
                             bookmarks = {sowObj.bookmarks}
                             savePlanChanges={savePlanChanges}
                         />
-                    </div>
-                </li>
-                <li className='active'>
-                    <div className='collapsible-header indigo-text'>
-                        <i className='material-icons center indigo-text'>
-                            offline_pin
-                        </i>
-                        <b>Checklists</b> (Planning)
-                    </div>
-                    <div className='collapsible-body'>
-                        <section>
-                            <div className='row'>
-                                {makeChecksSections(sowObj.checks)}
-                            </div>
-                        </section>
-                    </div>
-                </li>
-                <li className='active'>
-                    <div className='collapsible-header indigo-text'>
-                        <i className='material-icons center indigo-text'>
-                            traffic
-                        </i>
-                        <b>Worksteps</b> (Execution)
-                    </div>
-                    <div className='collapsible-body'>
-                        <section>
-                        {sowObj.sub_plans.length > 0 &&
-                            sowObj.sub_plans.map((subPlan, i) => {
-                                return (
-                                    <li key={subPlan.id} className='collection-item'>
-                                        <div className='indigo-text text-darken-3'>
-                                            <a
-                                                href='#subplannotebook'
-                                                className='waves-effect waves-light btn-flat indigo-text text-darken-3'
-                                                onClick={(e) => selectSubPlan(subPlan.id, subPlan.title, e)}
-                                            >
-                                                <h6 className='valign-wrapper'>
-                                                    {subPlan.title}
-                                                    <i className='material-icons'>chevron_right</i>
-                                                </h6>
-                                            </a>
-
-                                            <button
-                                                className='btn-flat center-align right waves-effect waves-light  hide-on-small-and-down '
-                                                onClick={() => {
-                                                    deleteSubPlan(subPlan.id);
-                                                }}
-                                            >
-                                                <i className='material-icons grey-text text-lighten-4'>delete_forever</i>
-                                            </button>
-                                        </div>
-                                    </li>
-                                );
-                            })
-                        }
-                        </section>
-                    </div>
-                </li>
-                <li className='active'>
-                    <div className='collapsible-header red-text text-accent-4'>
-                        <i className='material-icons center'>
-                            build
-                        </i>
-                        <b>Project Details</b>
-                    </div>
-                    <div className='collapsible-body'>
-                        <div>
-                            <section className='section section-details'>
-                                <div className='row'>
-                                    <div className='col s12'>
-                                        <div className='card-panel center red-text text-accent-4'>
-                                            <i className='material-icons'>
-                                                description
-                                            </i>
-                                            <p>Project Description</p>
-                                        </div>
-                                    </div>
-                                    <ProjectPictures
-                                        mainDriveFolderId={mainDriveFolderId}
-                                        createDriveFolder={createDriveFolder}
-                                        saveToSowImages={saveToSowImages}
-                                        sowTitle={sowObj.title}
-                                        projectGdriveFolderId={sowObj.google_drive_folder_id}
-                                        savePlanChanges={savePlanChanges}
-                                    />
-                                </div>
-                            </section>
-                        </div>
                     </div>
                 </li>
                 <li className='active'>
