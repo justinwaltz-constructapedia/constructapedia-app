@@ -16,43 +16,25 @@ import { gapi } from 'gapi-script';
 /**
  * [AppBody description]
  * "Source of truth" for plans/projects info and handling
- * @param       {[Functional Component]} props [from App.js]
+ * {[Functional Component]} props [from App.js]
  */
 function AppBody(props) {
-//useContext hook
+    //useContext hook
     const [contextState, contextDispatch] = useContext(PlanContext);
-//State Hooks
+    //State Hooks
     const [mainAppView, setMainAppView] = useState('HomePage');
 
-//Functions for props to lift state
-    //Handling views of child components
+    //Functions for props to lift state
+        //Handling views of child components
     function handleMainAppView(view) {
         setMainAppView(view);
     }
-    // //Recursively finds and returns the Scope of work from in the main Projects sub_plans Arr
-    // function getSowObj (plansArr) {
-    //     let sowObj;
-    //     for (var i = 0; i < plansArr.length; i++) {
-    //         if (plansArr[i].id === contextState.selectedSowId){
-    //             sowObj = plansArr[i]
-    //             break;
-    //         } else if (plansArr[i].sub_plans && plansArr[i].sub_plans.length > 0) {
-    //             sowObj = getSowObj(plansArr[i].sub_plans)
-    //         } else {
-    //             continue;
-    //         }
-    //     }
-    //     return sowObj;
-    // }
 
     function savePlanChanges(planId, sowUpdateObj) {
         return putPlanUpdate(planId, sowUpdateObj).then((res) => {
-            console.log("plan update put");
             if (res === 1) {
                 return getUserPlans()
                     .then((updatedPlans) => {
-                        console.log("got updated user plans");
-                        console.log(updatedPlans);
                         contextDispatch({type:'field',field:'plans',payload:updatedPlans});
                         return res;
                     })
@@ -61,7 +43,7 @@ function AppBody(props) {
             }
         });
     }
-
+    //DEV NOTE:: could possibly be combined with the function to create a new plan from scrapedData
     function addScrapedDataToPlan (scrapedData) {
         console.log(scrapedData);
         let currentPlan = {...contextState.selectedSow}

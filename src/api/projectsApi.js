@@ -21,7 +21,7 @@ function postPlan(plan) {
       }
     } )
     .then( (json) => {
-        console.log(typeof json.result, json.result)
+        // console.log(typeof json.result, json.result)
         return json.result;
       })
     .catch(err => console.log(err));
@@ -76,8 +76,7 @@ function getUserPlans() {
 //API call to update a single plan in DB, update object contains entire field(s) on the plan doc
 function putPlanUpdate(planId, planUpdateObj) {
     const access_token = localStorage.getItem('access_token');
-    console.log(access_token);
-    console.log(planUpdateObj)
+    // console.log(planUpdateObj)
     return fetch( `https://constructapediawebapi.herokuapp.com/plan/${planId}`, {
         method: "PUT",
         headers: {
@@ -94,7 +93,7 @@ function putPlanUpdate(planId, planUpdateObj) {
         }
     })
     .then( (json) => {
-        console.log(json, json.result)
+        // console.log(json, json.result)
         return json.result;
     })
     .catch(err => console.log(err));

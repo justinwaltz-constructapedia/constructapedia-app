@@ -4,20 +4,19 @@ export const PlanContext = createContext();
 
 //Recursively finds and returns the Scope of work from in the main Projects sub_plans Arr
 function getSowObj (plansArr, sowIdToFind) {
-    let sowObj;
-    console.log(sowIdToFind);
-    for (var i = 0; i < plansArr.length; i++) {
-        console.log(plansArr[i]);
-        if (plansArr[i].id === sowIdToFind){
-            sowObj = plansArr[i]
-            break;
-        } else if (plansArr[i].sub_plans && plansArr[i].sub_plans.length > 0) {
-            sowObj = getSowObj(plansArr[i].sub_plans, sowIdToFind)
-        } else {
-            continue;
+    console.log('getSowObj');
+    for (const sow of plansArr) {
+        if (sow.id === sowIdToFind){
+            console.log("id match");
+            return sow;
+        } else if (sow.sub_plans && sow.sub_plans.length > 0) {
+            const foundSow = getSowObj(sow.sub_plans, sowIdToFind);
+            if (foundSow) {
+                console.log("foundSow");
+                return foundSow;
+            }
         }
     }
-    return sowObj;
 }
 
 function reducer (state, action) {
@@ -29,10 +28,20 @@ function reducer (state, action) {
                 isSaving: true
             }
         case 'field':
-            return {
-                ...state,
-                [action.field]: action.payload
-            };
+            if (action.field === 'plans' && state.selectedSow) {
+                const selectedSowObj = getSowObj(action.payload, state.selectedSow.id);
+                console.log('PlanContext ln34 selectedSow', selectedSowObj);
+                return {
+                    ...state,
+                    [action.field]: action.payload,
+                    selectedSow: selectedSowObj
+                };
+            } else {
+                return {
+                    ...state,
+                    [action.field]: action.payload
+                };
+            }
         // case 'addImage':
         //     return {
         //         ...state,
@@ -50,13 +59,18 @@ function reducer (state, action) {
                     googleFolder = {id: selectedSowObj.google_drive_folder_id, title:selectedSowObj.title};
                     break;
                 case 'subStep':
+                    console.log('1', state.selectedSow);
+                    console.log('2', action.payload);
                     selectedSowObj = getSowObj(state.selectedSow.sub_plans, action.payload)
+                    console.log('end',selectedSowObj);
                     break;
                 case 'back':
+                    console.log('1', state.selectedSow);
+                    console.log('2', action.payload);
                     selectedSowObj = getSowObj(state.plans, action.payload);
                     break;
                 default:
-                    selectedSowObj = null;
+                    selectedSowObj = state.selectedSow;
             }
             return {
                 ...state,

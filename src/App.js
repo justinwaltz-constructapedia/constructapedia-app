@@ -8,13 +8,11 @@ import Sidenav from './side_navs/Sidenav.js';
 //import Footer from './Footer.js';
 import AppBody from './AppBody.js';
 import Preloader from './utility_components/Preloader.js';
+import ErrorBoundary from './ErrorBoundary.js';
 //Imported Functions
 import { getUserData, putUserUpdate } from './api/userApi';
 //Import Style
-import { getColorTheme } from './classColorThemeVariables.js';
 import './Custom.css';
-
-
 
 //Only Class Component in the Application; No Hooks
 //"Source of truth" for user info and handling
@@ -28,10 +26,10 @@ class App extends React.Component {
             isLoggedIn: false,
             isLoading: false,
             user: {},
-            selectedColorTheme: getColorTheme('base'),
             isAuthorized: false
         };
     }
+
     //Life Cycle Methods
     componentDidMount() {
         console.log("componentDidMount....................");
@@ -90,32 +88,36 @@ class App extends React.Component {
 
         //Render time variables
         const isLoggedIn = this.state.isLoggedIn;
-        //Not currently being used for theme changes
-        // const colorTheme = this.state.selectedColorTheme;
 
         //View to return if user is logged in
         if (isLoggedIn) {
             return (
                 <div>
                     <PlanProvider>
-                        <Header
-                            isLoggedIn={isLoggedIn}
-                            handleLoginClick={this.handleLogin}
-                            handleLogoutClick={this.handleLogout}
-                            handleLogout={this.handleLogout}
-                        />
-                        <Sidenav
-                            user={this.state.user}
-                            isLoggedIn={isLoggedIn}
-                            handleLogin={this.handleLogin}
-                            handleLogout={this.handleLogout}
-                        />
-                        <AppBody
-                            user={this.state.user}
-                            updateUser={this.updateUser}
-                            isLoading={this.state.isLoading}
-                            updateUser={this.updateUser}
-                        />
+                        <ErrorBoundary>
+                            <Header
+                                isLoggedIn={isLoggedIn}
+                                handleLoginClick={this.handleLogin}
+                                handleLogoutClick={this.handleLogout}
+                                handleLogout={this.handleLogout}
+                            />
+                        </ErrorBoundary>
+                        <ErrorBoundary>
+                            <Sidenav
+                                user={this.state.user}
+                                isLoggedIn={isLoggedIn}
+                                handleLogin={this.handleLogin}
+                                handleLogout={this.handleLogout}
+                            />
+                        </ErrorBoundary>
+                        <ErrorBoundary>
+                            <AppBody
+                                user={this.state.user}
+                                updateUser={this.updateUser}
+                                isLoading={this.state.isLoading}
+                                updateUser={this.updateUser}
+                            />
+                        </ErrorBoundary>
                     </PlanProvider>
                     <footer className='section footer-tm left'>
                         <p>Constructapedia &copy; &trade; 2020</p>
@@ -123,6 +125,7 @@ class App extends React.Component {
                 </div>
             );
             //View to return if no user is logged in
+            //DEV NOTE :: the header and sidenav components could probaly just be reused as they are no different at this point
         } else {
             return (
                 <div>

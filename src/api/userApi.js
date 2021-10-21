@@ -1,6 +1,5 @@
 //Gets access_token and refreshes if needed
-const user_id = localStorage.getItem('user_id');
-let access_token = localStorage.getItem('access_token');
+
 /*
 function checkAccessToken () {
         return new Promise((resolve,reject) => {
@@ -44,6 +43,8 @@ function checkAccessToken () {
 }
 */
 function getUserData () {
+    const user_id = localStorage.getItem('user_id');
+    const access_token = localStorage.getItem('access_token');
     console.log(access_token)
     if (access_token) {
         /*
@@ -82,6 +83,8 @@ function getUserData () {
 }
 
 function putUserUpdate (dataToUpdate) {
+    const user_id = localStorage.getItem('user_id');
+    const access_token = localStorage.getItem('access_token');
     console.log("sending put request to update user", dataToUpdate)
     console.log('access_token', access_token);
     return fetch( `https://constructapediawebapi.herokuapp.com/user/${user_id}`, {

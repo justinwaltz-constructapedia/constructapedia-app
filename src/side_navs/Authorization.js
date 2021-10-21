@@ -26,9 +26,8 @@ function Authorization(props) {
     const [name, setName] = useState('');
     const [rememberMe, setRememberMe] = useState(true);
     const [sidenavIsLoading, setSidenavIsLoading] = useState(false);
-
-
-
+    const [loginFailed, setLoginFailed] = useState(false);
+    
     const responseGoogle = async googleUser => {
 
         const res = await fetch ("", {
@@ -84,28 +83,33 @@ function Authorization(props) {
         setSidenavIsLoading(true);
         //Sign user in to server
         postAuthLogin(email, password, rememberMe)
-            .then((success) => {
-                console.log(success);
-                if (success === true) {
-                    //get user data from server
-                    getUserData()
-                        .then((user) => {
-                            console.log(user, ' signed in on server!');
-                            setEmail('');
-                            setPassword('');
-                            setConfirmPassword('');
-                            setName('');
-                            const instance = M.Sidenav.getInstance(sidenav.current);
-                            instance.close(0);//Use .destroy() instead?
-                            //Log user in to the app
-                            props.handleLogin(success, user);
-                        })
-                        .catch((err) => console.log(err));
-                } else {
-                    console.log('failed sign in', success);
-                }
-                setSidenavIsLoading(false);
-            });
+        .then((message) => {
+            console.log(message);
+            if (message === true) {
+                setLoginFailed(false);
+                //get user data from server
+                getUserData()
+                .then((user) => {
+                    console.log(user, ' signed in on server!');
+                    setEmail('');
+                    setPassword('');
+                    setConfirmPassword('');
+                    setName('');
+                    const instance = M.Sidenav.getInstance(sidenav.current);
+                    instance.close(0);//Use .destroy() instead?
+                    //Log user in to the app
+                    props.handleLogin(message, user);
+                })
+                .catch((err) => console.log(err));
+            } else {
+                console.log('failed sign in', message);
+                setLoginFailed(true);
+            }
+            setSidenavIsLoading(false);
+            })
+            .catch((err) => {
+                console.log(err);
+            })
         //Maybe a redirect here or in handleLogin to get the /#signInForm out of the URL
     }
     //Processes New User Sign-up
@@ -214,7 +218,8 @@ function Authorization(props) {
                                 <br></br>
                                 <br></br>
                             </form>
-                            {sidenavIsLoading && <Preloader />}
+                            {sidenavIsLoading && <div className='center'><Preloader /></div>}
+                            {loginFailed && <p className='center'>Login failed</p>}
                         </div>
                     </li>
                     <div className='divider'></div>

@@ -35,6 +35,14 @@ function reducer (state, action) {
                 case 'add':
                     newBreadcrumbArr.push(action.payload)
                     break;
+                case 'jump':
+                    function search (crumb) {
+                        return crumb.id === action.payload
+                    }
+                    const indexToJumpTo = newBreadcrumbArr.findIndex(search);
+                    console.log(indexToJumpTo);
+                    newBreadcrumbArr.splice(indexToJumpTo + 1)
+                    break;
                 default:
                     break;
             }
@@ -56,7 +64,7 @@ function ProjectLevel({ handleMainAppView, savePlanChanges, mainDriveFolderId, c
     const initialState = {
         addModalHeader: '',
         addModalType: '',
-        sowBreadcrumbsArr: [selectedSow.title]
+        sowBreadcrumbsArr: [{title:selectedSow.title, id:selectedSow.id}]
     }
     const [state, dispatch] = useReducer(reducer, initialState)
     //Ref Hooks for Materialize functionality
@@ -106,12 +114,6 @@ function ProjectLevel({ handleMainAppView, savePlanChanges, mainDriveFolderId, c
     async function addNewSection(addModalValue, addModalCheckTypeValue) {
         const parentId = selectedSowId;
         const sowObj = {...selectedSow}
-        // let sowObj;
-        // if (selectedSowId === plans[selectedPlanIndex].id) {
-        //     sowObj = plans[selectedPlanIndex]
-        // } else {
-        //     sowObj = getSowObj(plans[selectedPlanIndex].sub_plans)
-        // }
         let updatedFieldObj;
         //Needs to account for being under different levels
         if (addModalValue.trim().length > 0) {
@@ -157,16 +159,19 @@ function ProjectLevel({ handleMainAppView, savePlanChanges, mainDriveFolderId, c
     }
 
     function selectSubPlan (stepId, stepTitle, e) {
-        switch (e.currentTarget.id) {
-            case 'sow-back-btn':
-                dispatch({type:'breadcrumb', field:'back' , payload:stepTitle})
-                contextDispatch({type:'selectSow', field:'back', payload:stepId});
-                break;
-            default:
-                dispatch({type:'breadcrumb', field:'add' , payload:stepTitle})
-                contextDispatch({type:'selectSow', field:'subStep', payload:stepId});
+        console.log(stepId, e.currentTarget.id);
+        const elementId = e.currentTarget.id
+        if (elementId === 'sow-back-btn') {
+            dispatch({type:'breadcrumb', field:'back'})
+            contextDispatch({type:'selectSow', field:'back', payload:stepId});
+        } else if (elementId.includes('breadcrumb')) {
+            dispatch({type:'breadcrumb', field:'jump' , payload:stepId})
+            contextDispatch({type:'selectSow', field:'back', payload:stepId});
+        } else {
+            contextDispatch({type:'selectSow', field:'subStep', payload:stepId});
+            dispatch({ type:'breadcrumb', field:'add' , payload:{title:stepTitle, id:stepId} })
         }
-
+        window.scroll(0, 0);
     }
 
     function deleteSubPlan (id) {
@@ -204,53 +209,6 @@ function ProjectLevel({ handleMainAppView, savePlanChanges, mainDriveFolderId, c
     //         console.log(error);
     //     }
     // }
-    
-    // const getFileFromGdrive = (imageId, imageName) => {
-    //     const fileId = imageId;
-    //     //const dest = fs.createWriteStream('/tmp/photo.jpg');
-    //     return gapi.client.drive.files.get({
-    //         fileId: fileId,
-    //         alt: 'media'
-    //     }).then((response) => {
-    //         const objectUrl = URL.createObjectURL(new Blob([new Uint8Array(response.body.length).map((_, i) => response.body.charCodeAt(i))], {type: 'image/jpeg'}));
-    //         return objectUrl
-    //     }).catch((err) => console.log(err))
-    // }
-    // const populatePhotoDisplayArrays = async (photosArr) => {
-    //     const existingConditionsArr = [];
-    //     const progressArr = [];
-    //     const finishedArr = [];
-    //     // if (photosArr.length === 0) {
-    //     //     setPhotoSections(initialPhotoSections);
-    //     // } else {
-    //         for (var i = 0; i < photosArr.length; i++) {
-    //             const objectUrl = await getFileFromGdrive(photosArr[i].gdriveId, photosArr[i].name, 'image/jpeg')
-    //             switch (photosArr[i].stage) {
-    //                 case 'existingConditions':
-    //                     existingConditionsArr.push(objectUrl)
-    //                     break;
-    //                 case 'progress':
-    //                     progressArr.push(objectUrl)
-    //                     break;
-    //                 case 'finished':
-    //                     finishedArr.push(objectUrl)
-    //                     break;
-    //                 default:
-    //
-    //             }
-    //             if (i === photosArr.length-1) {
-    //                 setPhotoSections({
-    //                     existingConditions:existingConditionsArr,
-    //                     progress:progressArr,
-    //                     finished:finishedArr
-    //                 });
-    //             } else {
-    //                 continue;
-    //             }
-    //         }
-    //     // }
-    // }
-
 
     const makeSowNav = () => {
         return (
@@ -259,7 +217,7 @@ function ProjectLevel({ handleMainAppView, savePlanChanges, mainDriveFolderId, c
                     <div className="col s12">
                         {state.sowBreadcrumbsArr.map((breadcrumb, i) => {
                             return (
-                                <a key={breadcrumb + i} href="#project" className="breadcrumb ">{breadcrumb}</a>
+                                <a key={breadcrumb.id} id={'breadcrumb'+i} href='#project' className='breadcrumb' onClick={(e)=>{selectSubPlan( breadcrumb.id, breadcrumb.title, e)}}>{breadcrumb.title}</a>
                             )
                         })}
                     </div>
@@ -284,9 +242,9 @@ function ProjectLevel({ handleMainAppView, savePlanChanges, mainDriveFolderId, c
     }
     const saveToSowImages = (photosArr, newParentFolderId) => {
         if (newParentFolderId) {
-            savePlanChanges(selectedSowId, {google_drive_folder_id: newParentFolderId,images: photosArr})
+            return savePlanChanges(selectedSowId, {google_drive_folder_id: newParentFolderId,images: photosArr})
         } else {
-            savePlanChanges(selectedSowId, {images: photosArr})
+            return savePlanChanges(selectedSowId, {images: photosArr})
         }
 
     }
@@ -325,64 +283,6 @@ function ProjectLevel({ handleMainAppView, savePlanChanges, mainDriveFolderId, c
                         <i className='small material-icons white-text text-accent-4'>
                             edit
                         </i>
-                    </div>
-                </li>
-                <li>
-                    <div className='collapsible-header indigo-text'>
-                        <i className='material-icons center indigo-text'>
-                            note
-                        </i>
-                        <b>Notes</b>
-                    </div>
-                    <div className='collapsible-body indigo-text'>
-                        <NotesSection
-                            updateNotes={updateNotes}
-                            notes={sowObj.notes}
-                        />
-                    </div>
-                </li>
-                <li className='active'>
-                    <div className='collapsible-header indigo-text'>
-                        <i className='material-icons center indigo-text'>
-                            video_library
-                        </i>
-                        <b>Videos</b>
-                    </div>
-                    <div className='collapsible-body'>
-                        <UrlLinks
-                            planId={sowObj.id}
-                            savePlanChanges={savePlanChanges}
-                            videoUrls={sowObj.video_urls}
-                        />
-                    </div>
-                </li>
-                <li className='active'>
-                    <div className='collapsible-header indigo-text'>
-                        <i className='material-icons center indigo-text'>
-                            bookmark
-                        </i>
-                        <b>Bookmarked Sites</b>
-                    </div>
-                    <div className='collapsible-body'>
-                        <Bookmarks
-                            bookmarks = {sowObj.bookmarks}
-                            savePlanChanges={savePlanChanges}
-                        />
-                    </div>
-                </li>
-                <li className='active'>
-                    <div className='collapsible-header indigo-text'>
-                        <i className='material-icons center indigo-text'>
-                            offline_pin
-                        </i>
-                        <b>Checklists</b> (Planning)
-                    </div>
-                    <div className='collapsible-body'>
-                        <section>
-                            <div className='row'>
-                                {makeChecksSections(sowObj.checks)}
-                            </div>
-                        </section>
                     </div>
                 </li>
                 <li className='active'>
@@ -427,9 +327,24 @@ function ProjectLevel({ handleMainAppView, savePlanChanges, mainDriveFolderId, c
                     </div>
                 </li>
                 <li className='active'>
+                    <div className='collapsible-header indigo-text'>
+                        <i className='material-icons center indigo-text'>
+                            offline_pin
+                        </i>
+                        <b>Checklists</b> (Planning)
+                    </div>
+                    <div className='collapsible-body'>
+                        <section>
+                            <div className='row'>
+                                {makeChecksSections(sowObj.checks)}
+                            </div>
+                        </section>
+                    </div>
+                </li>
+                <li className='active'>
                     <div className='collapsible-header red-text text-accent-4'>
                         <i className='material-icons center'>
-                            pregnant_woman
+                            build
                         </i>
                         <b>Project Details</b>
                     </div>
@@ -459,8 +374,65 @@ function ProjectLevel({ handleMainAppView, savePlanChanges, mainDriveFolderId, c
                     </div>
                 </li>
                 <li className='active'>
+                    <div className='collapsible-header indigo-text'>
+                        <div className='row'>
+                            <div className='col s8'>
+                                <i className='material-icons center indigo-text'>
+                                    note
+                                </i>
+                                <b>Notes</b>
+                            </div>
+                            {sowObj.import_url &&
+                                <div className='col s4'>
+                                    <span>Initially Imported From: </span>
+                                    <a href={sowObj.import_url}
+                                        className='truncate' target='_blank'
+                                    >
+                                        {sowObj.import_url}
+                                    </a>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                    <div className='collapsible-body indigo-text'>
+                        <NotesSection
+                            updateNotes={updateNotes}
+                            notes={sowObj.notes}
+                        />
+                    </div>
+                </li>
+                <li className='active'>
+                    <div className='collapsible-header indigo-text'>
+                        <i className='material-icons center indigo-text'>
+                            video_library
+                        </i>
+                        <b>Videos</b>
+                    </div>
+                    <div className='collapsible-body'>
+                        <UrlLinks
+                            planId={sowObj.id}
+                            savePlanChanges={savePlanChanges}
+                            videoUrls={sowObj.video_urls}
+                        />
+                    </div>
+                </li>
+                <li className='active'>
+                    <div className='collapsible-header indigo-text'>
+                        <i className='material-icons center indigo-text'>
+                            bookmark
+                        </i>
+                        <b>Bookmarked Sites</b>
+                    </div>
+                    <div className='collapsible-body'>
+                        <Bookmarks
+                            bookmarks = {sowObj.bookmarks}
+                            savePlanChanges={savePlanChanges}
+                        />
+                    </div>
+                </li>
+                <li className='active'>
                     <div className='collapsible-header red-text text-accent-4'>
-                        <i className='material-icons'>child_friendly</i>
+                        <i className='material-icons'>thumb_up</i>
                         <b> Finished Project Requierements</b>
                     </div>
                     <div className='collapsible-body'>
@@ -557,7 +529,7 @@ function ProjectLevel({ handleMainAppView, savePlanChanges, mainDriveFolderId, c
         return (
             <div>
                 <div className='col s12'>
-                    <div className='row'>
+                    <div className='section'>
                         <div className='col s12'>
                             <button
                                 type='button'
