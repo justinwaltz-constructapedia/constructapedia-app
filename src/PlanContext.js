@@ -78,14 +78,14 @@ function reducer (state, action) {
                 selectedSowId: action.payload,
                 projectGdriveFolder: googleFolder
             }
-        // case 'delete':
-        //     return {
-        //         ...state,
-        //         plans:{
-        //             ...state.plans,
-        //             [action.field]: state.plans[action.field].filter((_, index) => index !== action.payload)
-        //         }
-        //     }
+        case 'delete':
+            return {
+                ...state,
+                plans:{
+                    ...state.plans,
+                    [action.field]: state.plans[action.field].filter((_, index) => index !== action.payload)
+                }
+            }
         case 'error':
             return {
                 ...state,

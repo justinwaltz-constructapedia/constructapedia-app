@@ -32,12 +32,15 @@ class App extends React.Component {
 
     //Life Cycle Methods
     componentDidMount() {
+        console.log("componentDidMount....................");
         console.log(localStorage);
         const rememberMe = localStorage.getItem('rememberMe') === 'true';
-        if (rememberMe) {
+        if (rememberMe || localStorage.getItem('user_id') !== null) {
+            console.log("aosihedoasi")
             this.setState({ isLoading: true });
             getUserData()
                 .then((userData) => {
+                    console.log(userData);
                     this.handleLogin(true, userData);
                     this.setState({ isLoading: false });
                 })
@@ -81,6 +84,8 @@ class App extends React.Component {
         putUserUpdate(dbUpdateObj)
     }
     render() {
+        console.log("render....................");
+
         //Render time variables
         const isLoggedIn = this.state.isLoggedIn;
 

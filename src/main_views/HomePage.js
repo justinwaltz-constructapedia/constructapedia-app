@@ -15,7 +15,7 @@ function HomePage(props) {
     //useContext hook
         const [contextState, contextDispatch] = useContext(PlanContext);
     //Deletes userplan from db, gets updated plan list then updates context state
-    function removeUserPlan(planId) {
+    function deleteProject(planId) {
         console.log('deleting plan with id: ', planId);
         deletePlan(planId).then((res) => {
             console.log(res);
@@ -73,7 +73,7 @@ function HomePage(props) {
                                         <button
                                             className='btn-flat center-align right waves-effect waves-light  hide-on-small-and-down '
                                             onClick={() => {
-                                                removeUserPlan(plan.id);
+                                                deleteProject(plan.id);
                                             }}
                                         >
                                             <i className='material-icons grey-text text-lighten-4'>delete_forever</i>
