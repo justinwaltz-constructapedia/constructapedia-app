@@ -7,7 +7,7 @@ import 'materialize-css/dist/css/materialize.min.css';
 import Preloader from '../utility_components/Preloader.js';
 //Import Functions
 import { getUserData } from '../api/userApi.js';
-import { postAuthLogin, postAuthSignUp } from '../api/authApi';
+import { postAuthLogin, postAuthSignUp, googleUserLogin } from '../api/authApi';
 import { GoogleLogin, GoogleLogout } from 'react-google-login';
 import { withRouter } from "react-router-dom";
 
@@ -27,19 +27,29 @@ function Authorization(props) {
     const [rememberMe, setRememberMe] = useState(true);
     const [sidenavIsLoading, setSidenavIsLoading] = useState(false);
     const [loginFailed, setLoginFailed] = useState(false);
-    
-    const responseGoogle = async googleUser => {
 
-        const res = await fetch ("", {
-            method: "POST",
-            body: JSON.stringify({
-            token: googleUser.tokenId
-            }),
-            headers: {
-            "Content-Type":"application/json"
-            }
-            })
-            const data = await res.json()
+    const responseGoogle = async googleUser => {
+        console.log(googleUser);
+        const googleUserInfo = {
+            client_id:googleUser.googleId,
+            client_tokens: googleUser.tokenObj,
+            name:googleUser.profileObj.name,
+            email:googleUser.profileObj.email
+        }
+        const res = await googleUserLogin(googleUserInfo, rememberMe);
+        // const data = await res.json()
+        // console.log(data);
+        signUserInToApp(res);
+        // const res = await fetch ("", {
+        //     method: "POST",
+        //     body: JSON.stringify({
+        //     token: googleUser.tokenId
+        //     }),
+        //     headers: {
+        //     "Content-Type":"application/json"
+        //     }
+        //     })
+
             // based on what we get back we can save the user data accordingly
         // console.log(JSON.stringify(googleUser));
         // const idToken = googleUser.getAuthResponse().id_token;
@@ -79,37 +89,40 @@ function Authorization(props) {
         setRememberMe(value);
     }
     //Processes user sign-in
+    function signUserInToApp (message) {
+        console.log(message);
+        if (message === true) {
+            setLoginFailed(false);
+            //get user data from server
+            getUserData()
+            .then((user) => {
+                console.log(user, ' signed in on server!');
+                setEmail('');
+                setPassword('');
+                setConfirmPassword('');
+                setName('');
+                const instance = M.Sidenav.getInstance(sidenav.current);
+                instance.close(0);//Use .destroy() instead?
+                //Log user in to the app
+                props.handleLogin(message, user);
+            })
+            .catch((err) => console.log(err));
+        } else {
+            console.log('failed sign in', message);
+            setLoginFailed(true);
+        }
+        setSidenavIsLoading(false);
+    }
+
     function handleSignIn() {
         setSidenavIsLoading(true);
         //Sign user in to server
         postAuthLogin(email, password, rememberMe)
-        .then((message) => {
-            console.log(message);
-            if (message === true) {
-                setLoginFailed(false);
-                //get user data from server
-                getUserData()
-                .then((user) => {
-                    console.log(user, ' signed in on server!');
-                    setEmail('');
-                    setPassword('');
-                    setConfirmPassword('');
-                    setName('');
-                    const instance = M.Sidenav.getInstance(sidenav.current);
-                    instance.close(0);//Use .destroy() instead?
-                    //Log user in to the app
-                    props.handleLogin(message, user);
-                })
-                .catch((err) => console.log(err));
-            } else {
-                console.log('failed sign in', message);
-                setLoginFailed(true);
-            }
-            setSidenavIsLoading(false);
-            })
-            .catch((err) => {
-                console.log(err);
-            })
+        .then((res) => {
+            signUserInToApp(res);
+        }).catch((err) => {
+            console.log(err);
+        })
         //Maybe a redirect here or in handleLogin to get the /#signInForm out of the URL
     }
     //Processes New User Sign-up
@@ -295,6 +308,15 @@ function Authorization(props) {
                                 <br></br>
                                 <br></br>
                             </form>
+                            <button
+                                className='btn'
+                                onClick={async () => {
+                                    const res = await googleUserLogin();
+                                    console.log(res);
+                                }}
+                            >
+                                Google Signin on server
+                            </button>
                             {sidenavIsLoading && <Preloader />}
                         </div>
                     </li>
