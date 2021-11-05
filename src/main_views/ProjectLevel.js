@@ -398,6 +398,7 @@ function ProjectLevel({ handleMainAppView, savePlanChanges, mainDriveFolderId, c
                         <NotesSection
                             updateNotes={updateNotes}
                             notes={sowObj.notes}
+                            solution={sowObj.solution}
                         />
                     </div>
                 </li>

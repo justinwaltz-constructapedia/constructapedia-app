@@ -64,7 +64,6 @@ function GoogleDriveFiles (props) {
        */
     const handleAuthClick = (event) => {
         gapi.auth2.getAuthInstance().signIn();
-
     };
 
       /**
