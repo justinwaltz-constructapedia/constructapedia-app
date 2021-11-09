@@ -1,11 +1,20 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useContext } from 'react';
+import { Editor } from '@tinymce/tinymce-react';
 import './NotesSection.css';
+import { putPlanUpdate } from '../../api/projectsApi.js';
+import { PlanContext } from '../../PlanContext.js';
 
 function NotesSection(props) {
     const [newNoteValue, setNewNoteValue] = useState('');
     const [noteValues, setNoteValues] = useState({});
     const timeOfLastChange = useRef(0);
+    // const [tinyTextValue, setTinyTextValue] = useState("<p>Project Purpose</p>");
+    const editorRef = useRef(null);
+    const [dirty, setDirty] = useState(false);
+    const [contextState, contextDispatch] = useContext(PlanContext);
+    const { selectedSowId } = contextState;
 
+    useEffect(() => setDirty(false), [props.solution]);
     useEffect(() => {
         const notesToSet = [].concat(props.notes);
         setNoteValues(
@@ -53,11 +62,29 @@ function NotesSection(props) {
         }
     }, [noteValues, props]);
 
+    const saveEditor = () => {
+        if (editorRef.current) {
+            const content = editorRef.current.getContent();
+            setDirty(false);
+            editorRef.current.setDirty(false);
+            // an application would save the editor content to the server here
+            console.log(typeof content, content);
+            putPlanUpdate(selectedSowId, {solution: content})
+        }
+    };
+
     function saveNewNote() {
         props.updateNotes(true, { contents: newNoteValue });
         setNewNoteValue('');
     }
-
+    const handleEditorChange = (e) => {
+        const newContent = e.target.getContent()
+        console.log(
+            'Content was updated:',
+            newContent
+        );
+        // setTinyTextValue(newContent);
+    }
     function handleNoteChange(noteValue, noteIndex) {
         const timeOfChange = Date.now();
         timeOfLastChange.current = timeOfChange;
@@ -89,6 +116,31 @@ function NotesSection(props) {
 
     return (
         <section id='input-notes' className='section section-note row'>
+            <div className='row'>
+            {(dirty)? <p>You have unsaved content!</p> : <p>Up to date.</p>}
+            <Editor
+                initialValue={(props.solution)? props.solution : "<p>Project Purpose</p>"}
+                onInit={(evt, editor) => editorRef.current = editor}
+                init={{
+                    height: 500,
+                    menubar: false,
+                    plugins: [
+                        'advlist autolink lists link image',
+                        'charmap print preview anchor help',
+                        'searchreplace visualblocks code',
+                        'insertdatetime media table paste wordcount'
+                    ],
+                    toolbar:
+                        'undo redo | formatselect | bold italic | \
+                        alignleft aligncenter alignright | \
+                        bullist numlist outdent indent | help'
+                    }}
+                onChange={handleEditorChange}
+                onDirty={() => setDirty(true)}
+            />
+            <button className='btn' onClick={saveEditor} disabled={!dirty}>Save</button>
+
+            </div>
             <div className='row'>
                 <div className='col s12'>
                     <div className='input-field inline'>
