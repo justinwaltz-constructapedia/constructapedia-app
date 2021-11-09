@@ -117,6 +117,7 @@ function NotesSection(props) {
     return (
         <section id='input-notes' className='section section-note row'>
             <div className='row'>
+            {(dirty)? <p>You have unsaved content!</p> : <p>Up to date.</p>}
             <Editor
                 initialValue={(props.solution)? props.solution : "<p>Project Purpose</p>"}
                 onInit={(evt, editor) => editorRef.current = editor}
@@ -138,7 +139,7 @@ function NotesSection(props) {
                 onDirty={() => setDirty(true)}
             />
             <button className='btn' onClick={saveEditor} disabled={!dirty}>Save</button>
-            {dirty && <p>You have unsaved content!</p>}
+
             </div>
             <div className='row'>
                 <div className='col s12'>
