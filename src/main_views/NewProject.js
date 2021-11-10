@@ -77,6 +77,8 @@ function NewProject(props) {
                     alert("There was an error saving the imported data.")
                 }
             } else {
+                const updatedUserPlans = await getUserPlans()
+                contextDispatch({type:'field', field: 'plans', payload: updatedUserPlans})
                 props.handleMainAppView('HomePage');
             }
         } else {
