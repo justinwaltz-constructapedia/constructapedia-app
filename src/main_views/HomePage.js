@@ -17,11 +17,32 @@ function HomePage(props) {
     //Deletes userplan from db, gets updated plan list then updates context state
     function deleteProject(planId) {
         console.log('deleting plan with id: ', planId);
-        deletePlan(planId).then((res) => {
-            console.log(res);
-            //Update the list of projects
-            getUserPlans().then((updatedPlans) => {
-                contextDispatch({type:'field',field:'plans',payload:updatedPlans});
+        const idsToDelete = [planId];
+        const planToDelete = contextState.plans.find(({id}) => id === planId)
+        console.log(planToDelete);
+
+        const findSubPlanIds = (plan) => {
+            const returnArr = []
+            if (plan.sub_plans) {
+                plan.sub_plans.forEach((subPlan, i) => {
+                    idsToDelete.push(subPlan.id);
+                    if (subPlan.sub_plans) {
+                        findSubPlanIds(subPlan)
+                    }
+                });
+            }
+        }
+        findSubPlanIds(planToDelete);
+        console.log(idsToDelete);
+        idsToDelete.forEach((id, i, origArr) => {
+            deletePlan(id).then((res) => {
+                console.log(res);
+                //Update the list of projects
+                if (i === origArr.length - 1) {
+                    getUserPlans().then((updatedPlans) => {
+                        contextDispatch({type:'field',field:'plans',payload:updatedPlans});
+                    });
+                }
             });
         });
     }
